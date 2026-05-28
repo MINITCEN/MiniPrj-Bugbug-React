@@ -41,4 +41,8 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     // 헌터 로그인 계정 기준으로 본인이 받은 리뷰 평점만 조회한다.
     @Query("SELECT r.rating FROM Review r WHERE r.hunter.user.id = :userId")
     List<Float> findRatingsByHunterUserId(@Param("userId") Long userId);
+
+    // 메인페이지 신뢰 지표용 전체 평균 평점 집계
+    @Query("SELECT COALESCE(AVG(r.rating), 0.0) FROM Review r")
+    Float getGlobalAverageRating();
 }
