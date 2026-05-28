@@ -90,6 +90,8 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET,
                                 "/requestView/list",
+                                "/api/main/stats",
+                                "/api/request/recent",
                                 "/api/request/wholeList",
                                 "/api/request/detail/**",
                                 "/api/hunters",
