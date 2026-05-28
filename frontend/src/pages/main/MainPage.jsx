@@ -1,9 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import useAuthStore from '../../features/auth/store/useAuthStore'
 import { fetchMainStats } from '../../shared/api/mainApi'
-import { fetchRecentRequests } from '../../shared/api/requestApi'
 import { fetchMosquitoSummary } from '../../shared/api/mosquitoApi'
-import { timeAgo } from '../../shared/lib/timeAgo'
 
 export default function MainPage() {
   const { isLoggedIn } = useAuthStore()
@@ -11,11 +9,6 @@ export default function MainPage() {
   const { data: stats } = useQuery({
     queryKey: ['mainStats'],
     queryFn: fetchMainStats,
-  })
-
-  const { data: recentRequests } = useQuery({
-    queryKey: ['recentRequests'],
-    queryFn: () => fetchRecentRequests(4),
   })
 
   const { data: mosquito } = useQuery({
@@ -30,7 +23,6 @@ export default function MainPage() {
   return (
     <div className="bg-white">
       <HeroSection onRequestClick={handleRequestCta} stats={stats} />
-      <LiveSection requests={recentRequests} isLoggedIn={isLoggedIn} />
       <ProcessSection />
       <MosquitoSection mosquito={mosquito?.detail} />
     </div>
@@ -75,45 +67,6 @@ function HeroSection({ onRequestClick, stats }) {
           <a href="/service-intro" className="px-8 py-3.5 text-gray-600 font-medium rounded-xl hover:bg-gray-100 transition-colors text-base">
             서비스 알아보기 →
           </a>
-        </div>
-      </div>
-    </section>
-  )
-}
-
-/* ─── Live 의뢰 + 목업 ──────────────────────────────── */
-function LiveSection({ requests, isLoggedIn }) {
-  return (
-    <section className="max-w-6xl mx-auto px-4 py-20">
-      <div className="grid md:grid-cols-2 gap-12 items-center">
-        <div className="flex flex-col gap-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="text-2xl font-bold text-gray-900">실시간 의뢰 현황</h2>
-              <p className="text-sm text-gray-500 mt-1">지금 이 순간도 의뢰가 접수되고 있어요</p>
-            </div>
-            <a href="/requestView/list" className="text-sm text-green-600 hover:underline font-medium">전체 보기 →</a>
-          </div>
-          <ul className="flex flex-col gap-3">
-            {requests?.length > 0 ? (
-              requests.map((req) => <RequestCard key={req.requestId} req={req} isLoggedIn={isLoggedIn} />)
-            ) : (
-              Array.from({ length: 4 }).map((_, i) => (
-                <li key={i} className="h-20 bg-gray-100 rounded-xl animate-pulse" />
-              ))
-            )}
-          </ul>
-        </div>
-        <div className="flex justify-center">
-          <div className="w-64 h-[520px] bg-gray-900 rounded-[40px] border-4 border-gray-700 shadow-2xl flex flex-col overflow-hidden relative">
-            <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-6 bg-gray-900 rounded-b-2xl z-10" />
-            <div className="flex-1 bg-black flex items-center justify-center">
-              <p className="text-gray-600 text-xs">영상 준비 중</p>
-            </div>
-            <div className="h-8 bg-gray-900 flex items-center justify-center">
-              <div className="w-24 h-1 bg-gray-600 rounded-full" />
-            </div>
-          </div>
         </div>
       </div>
     </section>
@@ -221,31 +174,6 @@ function MosquitoSection({ mosquito }) {
 }
 
 /* ─── 공통 소형 컴포넌트 ─────────────────────────────── */
-const STATUS_STYLE = {
-  '대기 중': 'bg-red-100 text-red-600',
-  '진행 중': 'bg-orange-100 text-orange-600',
-  '완료':    'bg-green-100 text-green-600',
-}
-
-function RequestCard({ req, isLoggedIn }) {
-  const detailHref = isLoggedIn ? `/requestView/detail/${req.requestId}` : '/login'
-  return (
-    <li className="flex items-center gap-4 p-4 bg-white border border-gray-100 rounded-xl hover:shadow-md transition-shadow">
-      <span className={`shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full ${STATUS_STYLE[req.status] ?? 'bg-gray-100 text-gray-600'}`}>
-        {req.status}
-      </span>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-gray-900 truncate">{req.title}</p>
-        <p className="text-xs text-gray-400 truncate">{req.approxLocation}</p>
-      </div>
-      <div className="flex flex-col items-end gap-1 shrink-0">
-        <time className="text-xs text-gray-400">{timeAgo(req.createdAt)}</time>
-        <a href={detailHref} className="text-xs text-green-600 hover:underline font-medium">상세보기</a>
-      </div>
-    </li>
-  )
-}
-
 function StatItem({ value, label }) {
   return (
     <div className="flex flex-col items-center gap-1">
