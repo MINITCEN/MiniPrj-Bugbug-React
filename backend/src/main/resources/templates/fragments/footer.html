@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<body>
+<footer th:fragment="siteFooter()" class="site-footer">
+    <div class="site-footer__inner">
+        <div class="site-footer__brand-block">
+            <a href="/" class="site-footer__brand" aria-label="버그버그 홈">
+                <span class="site-footer__brand-badge" aria-hidden="true">🛡️</span>
+                <span class="site-footer__brand-text">버그버그</span>
+            </a>
+        </div>
+
+        <nav class="site-footer__links" aria-label="푸터 메뉴">
+            <a href="/terms" class="site-footer__link">이용약관</a>
+            <a href="/privacy" class="site-footer__link">개인정보처리방침</a>
+            <a href="/support" class="site-footer__link">고객센터</a>
+        </nav>
+
+        <div class="site-footer__meta">
+            <p class="site-footer__copyright">© 2024 버그버그. All rights reserved.</p>
+            <div class="site-footer__socials" aria-label="소셜 링크">
+                <a href="https://www.instagram.com/chung_honey/" class="site-footer__social" aria-label="인스타그램">
+                    <span aria-hidden="true">📸</span>
+                </a>
+                <a href="#" class="site-footer__social" aria-label="페이스북">
+                    <span aria-hidden="true">👍</span>
+                </a>
+                <a href="#" class="site-footer__social" aria-label="카카오톡">
+                    <span aria-hidden="true">💬</span>
+                </a>
+            </div>
+        </div>
+    </div>
+    <!-- 로그인한 유저에게만 실시간 채팅 위젯을 띄워줍니다 (공통 적용) -->
+    <div sec:authorize="isAuthenticated()" th:replace="~{fragments/chat-widget :: chat}"></div>
+</footer>
+</body>
+</html>

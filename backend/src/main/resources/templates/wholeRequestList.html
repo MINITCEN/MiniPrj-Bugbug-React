@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>버그버그 - 헌터 구인</title>
+    <link rel="stylesheet" href="/css/common-layout.css">
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" th:href="@{/css/wholeRequestList.css}">
+</head>
+<body>
+<div th:replace="~{fragments/header :: siteHeader('none')}"></div>
+<main class="container">
+
+    <section class="board-area">
+        <div class="title-box">
+            <h1>헌터 구인</h1>
+            <p>도움이 필요한 의뢰들을 확인하고 헌터로 활동해보세요!</p>
+        </div>
+
+        <div class="top-line">
+            <div class="tabs">
+                <a th:href="@{/requestView/list}"
+                   th:classappend="${status == null} ? 'active'">전체</a>
+                <a th:href="@{/requestView/list(status='대기 중')}"
+                   th:classappend="${status == '대기 중'} ? 'active'">대기 중</a>
+                <a th:href="@{/requestView/list(status='예약 중')}"
+                   th:classappend="${status == '예약 중'} ? 'active'">예약 중</a>
+                <a th:href="@{/requestView/list(status='완료')}"
+                   th:classappend="${status == '완료'} ? 'active'">완료</a>
+            </div>
+
+            <div class="board-actions">
+                <select name="sortType"
+                        onchange="location.href=this.value">
+                    <option th:value="@{/requestView/list(status=${status}, sortType='latest')}"
+                            th:selected="${sortType == null or sortType == 'latest'}">
+                        최신 순
+                    </option>
+                    <option th:value="@{/requestView/list(status=${status}, sortType='viewCount')}"
+                            th:selected="${sortType == 'viewCount'}">
+                        조회 수
+                    </option>
+                </select>
+                <a href="/requestView/new" class="write-btn" sec:authorize="hasRole('USER')">
+                    + 의뢰 등록하기
+                </a>
+            </div>
+        </div>
+
+        <table class="request-table">
+            <thead>
+            <tr>
+                <th>상태</th>
+                <th>제목</th>
+                <th>위치</th>
+                <th>등록 시간</th>
+                <th>조회 수</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="request : ${requestList}">
+                <td th:text="${request.status}"></td>
+                <td class="title-cell">
+                    <a th:href="@{/requestView/detail/{id}(id=${request.requestId})}">
+                        <strong th:text="${request.title}">
+                        </strong>
+                        <p th:text="${request.description}"></p>
+                    </a>
+                </td>
+                <td th:text="${request.approxLocation}"></td>
+                <!-- 절대 날짜/시간 포맷과 계산된 상대 시간(timeAgo)을 예시 A 포맷(절대시간 (상대시간))으로 병행하여 노출합니다 -->
+                <td th:text="|${#temporals.format(request.createdAt, 'yyyy-MM-dd HH:mm')} (${request.timeAgo})|"></td>
+                <td th:text="${request.viewCount}"></td>
+            </tr>
+
+            <tr th:if="${requestList == null or #lists.isEmpty(requestList)}">
+                <td colspan="5" class="empty">
+                    등록된 의뢰가 없습니다.
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="pagination" th:if="${requestPage.totalPages > 0}">
+            <a th:if="${requestPage.hasPrevious()}"
+               th:href="@{/requestView/list(page=${requestPage.number - 1}, size=${requestPage.size}, status=${status}, sortType=${sortType})}">
+                ＜
+            </a>
+            <a th:each="pageNum : ${#numbers.sequence(0, requestPage.totalPages - 1)}"
+               th:href="@{/requestView/list(page=${pageNum}, size=${requestPage.size}, status=${status}, sortType=${sortType})}"
+               th:text="${pageNum + 1}"
+               th:classappend="${pageNum == requestPage.number} ? 'active'">
+                1
+            </a>
+            <a th:if="${requestPage.hasNext()}"
+               th:href="@{/requestView/list(page=${requestPage.number + 1}, size=${requestPage.size}, status=${status}, sortType=${sortType})}">
+                ＞
+            </a>
+        </div>
+    </section>
+</main>
+<div th:replace="~{fragments/footer :: siteFooter()}"></div>
+<script src="/js/common-layout.js"></script>
+<script src="/js/login.js"></script>
+</body>
+</html>

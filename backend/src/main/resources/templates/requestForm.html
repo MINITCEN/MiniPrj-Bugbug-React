@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>버그버그 - 의뢰 등록</title>
+    <link rel="stylesheet" href="/css/common-layout.css">
+    <link rel="stylesheet" href="/css/login.css">
+    <link rel="stylesheet" th:href="@{/css/requestForm.css}">
+</head>
+
+<body>
+<script th:src="@{https://dapi.kakao.com/v2/maps/sdk.js(appkey=${kakaoMapKey},libraries='services',autoload=false)}"></script>
+<div th:replace="~{fragments/header :: siteHeader('none')}"></div>
+<main class="container">
+    <div class="page-title">
+        <h1 th:text="${mode == 'edit'} ? '의뢰 수정하기' : '의뢰 등록하기'">의뢰 등록하기</h1>
+        <p th:text="${mode == 'edit'} ? '기존 의뢰 내용을 수정해주세요.' : '헌터에게 요청할 해충 퇴치 의뢰 내용을 자세히 작성해주세요.'">
+            헌터에게 요청할 해충 퇴치 의뢰 내용을 자세히 작성해주세요.
+        </p>
+    </div>
+
+    <form class="form-card"
+          method="post"
+          th:action="${mode == 'edit'} ? @{/requestView/edit/{id}(id=${requestId})} : @{/requestView/new}"
+          enctype="multipart/form-data">
+
+        <input type="hidden"
+               name="status"
+               value="대기 중"
+               th:if="${mode == 'create'}">
+
+        <div class="form-section-header">
+            <h2 class="section-title">의뢰 정보 입력</h2>
+
+            <div class="status-box" th:if="${mode == 'edit'}">
+                <label for="statusSelect">진행 상태</label>
+                <select id="statusSelect"
+                        name="status"
+                        class="status-select">
+                    <option value="대기 중" th:selected="${form.status == '대기 중'}">대기 중</option>
+                    <option value="예약 완료" th:selected="${form.status == '예약 완료'}">예약 완료</option>
+                    <option value="완료" th:selected="${form.status == '완료'}">완료</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-grid">
+            <div class="form-group full">
+                <label>제목 <span class="required">*</span></label>
+                <input type="text"
+                       name="title"
+                       th:value="${form != null ? form.title : ''}"
+                       placeholder="예: 주방에 바퀴벌레가 나타났어요!"
+                       required>
+            </div>
+
+            <div class="form-group full">
+                <label>대략적인 위치 <span class="required">*</span></label>
+
+                <div class="location-search-box">
+                    <input type="text"
+                           id="location"
+                           name="location"
+                           th:value="${form.location}"
+                           placeholder="예: 서울 강남구 역삼동"
+                           required>
+
+                    <button type="button" onclick="searchAddress()">위치 검색</button>
+                </div>
+
+                <div id="map" class="map-box"></div>
+
+                <p id="selectedLocation" class="hint">
+                    위치를 검색하면 지도에 표시됩니다.
+                </p>
+            </div>
+
+            <div class="form-group full">
+                <div class="detail-row full">
+                    <label>상세 내용 <span class="required">*</span></label>
+
+                    <div class="content-editor-box">
+                        <article id="contentEditor"
+                                 class="content-editor"
+                                 contenteditable="true"
+                                 th:text="${mode == 'create'} ?
+                                 '1. 벌레 종류 :
+2. 벌레 크기 :
+3. 발생 위치 :
+4. 벌레 개체 수 :'
+                                 : ${form.content}">
+                        </article>
+
+                        <input type="hidden"
+                               id="contentHidden"
+                               name="content"
+                               th:value="${form.content}">
+                    </div>
+                </div>
+
+                <div class="detail-row full">
+                    <label>첨부 파일</label>
+
+                    <div class="media-upload-section">
+                        <div class="upload-toolbar">
+                            <label for="imageFiles" class="upload-file-btn">이미지 첨부</label>
+
+                            <button type="button"
+                                    id="videoUploadButton"
+                                    class="upload-file-btn">
+                                동영상 첨부
+                            </button>
+                        </div>
+
+                        <input type="file"
+                               id="imageFiles"
+                               name="imageFiles"
+                               accept="image/*"
+                               multiple
+                               hidden>
+
+                        <input type="file"
+                               id="videoFile"
+                               name="videoFile"
+                               accept="video/*"
+                               hidden>
+
+                        <div class="existing-media-grid"
+                             th:if="${mode == 'edit' and mediaUrl != null and ((mediaUrl.imageUrls != null and !#lists.isEmpty(mediaUrl.imageUrls)) or (mediaUrl.videoUrl != null and !#strings.isEmpty(mediaUrl.videoUrl)))}">
+                            <div class="preview-box existing-preview"
+                                 th:each="imageUrl : ${mediaUrl.imageUrls}">
+                                <img class="preview-img"
+                                     th:src="@{${imageUrl}}"
+                                     alt="기존 첨부 이미지">
+                                <button type="button"
+                                        class="remove-file-btn existing-remove-btn"
+                                        data-media-type="image"
+                                        th:data-url="${imageUrl}"
+                                        aria-label="기존 이미지 삭제">
+                                    x
+                                </button>
+                            </div>
+
+                            <div class="preview-box existing-preview video-preview-box"
+                                 th:if="${mediaUrl.videoUrl != null and !#strings.isEmpty(mediaUrl.videoUrl)}">
+                                <video class="preview-video"
+                                       th:src="@{${mediaUrl.videoUrl}}"
+                                       controls>
+                                </video>
+                                <button type="button"
+                                        class="remove-file-btn existing-remove-btn"
+                                        data-media-type="video"
+                                        th:data-url="${mediaUrl.videoUrl}"
+                                        aria-label="기존 동영상 삭제">
+                                    x
+                                </button>
+                            </div>
+                        </div>
+
+                        <div id="previewContainer" class="media-preview-grid"></div>
+
+                        <p class="media-empty" id="mediaEmptyText">
+                            첨부한 이미지와 동영상이 여기에 표시됩니다.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="detail-input-box">
+                    <div class="detail-row full">
+                        <label>추가 요청 사항</label>
+                        <input name="description"
+                               placeholder="필요하면 요청 사항을 입력하세요."
+                               th:value="${form != null ? form.description : ''}">
+                    </div>
+                    <div class="detail-row">
+                        <label>발생 시간</label>
+                        <input type="datetime-local"
+                               name="occurrenceTime"
+                               th:value="${form.occurrenceTime}">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="notice-box">
+            <strong>작성 안내</strong><br>
+            허위 의뢰나 악성 글은 관리자에 의해 삭제될 수 있습니다.<br>
+            작성자 정보는 로그인한 사용자 기준으로 자동 저장됩니다.<br>
+            등록 시 상태는 기본적으로 <strong>대기 중</strong> 상태로 저장됩니다.
+        </div>
+
+        <div class="button-area">
+            <button type="submit" class="btn submit-btn" th:text="${mode == 'edit'} ? '의뢰 수정' : '의뢰 등록'">
+                의뢰 등록
+            </button>
+
+            <button type="reset" class="btn reset-btn">다시 작성</button>
+
+            <a href="/requestView/list" class="btn cancel-btn">
+                목록으로
+            </a>
+        </div>
+    </form>
+</main>
+<div th:replace="~{fragments/footer :: siteFooter()}"></div>
+<script src="/js/common-layout.js"></script>
+<script src="/js/login.js"></script>
+<script src="/js/requestform.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>버그버그 - 나의 의뢰 목록</title>
+    <style>
+        body { margin: 0; background: #f7faf8; color: #172019; font-family: "Segoe UI", Arial, sans-serif; }
+        .container { max-width: 920px; margin: 0 auto; padding: 32px 20px 64px; }
+        .page-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 20px; }
+        .page-head h1 { margin: 0; font-size: 28px; }
+        .back-link { color: #2f6f45; text-decoration: none; font-weight: 700; }
+        .request-card { background: #fff; border: 1px solid #dfe8e2; padding: 20px; margin-bottom: 16px; border-radius: 8px; cursor: pointer; }
+        .request-card:hover { border-color: #9fc8aa; }
+        .request-card h3 { margin: 0 0 8px; font-size: 20px; }
+        .meta { margin: 4px 0; color: #637066; font-size: 14px; }
+        .status { display: inline-block; padding: 3px 8px; margin-right: 8px; border-radius: 999px; background: #edf6ef; color: #216739; font-size: 12px; font-weight: 800; }
+        .review-box { margin-top: 16px; padding: 14px; border: 1px solid #e5eadf; border-radius: 8px; background: #fbfdf9; }
+        .review-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 8px; }
+        .review-title { margin: 0; font-size: 15px; font-weight: 800; }
+        .rating { color: #e08a00; font-weight: 900; }
+        .review-content { margin: 8px 0 12px; line-height: 1.55; white-space: pre-wrap; }
+        .review-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+        .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 24px; }
+        button { padding: 7px 14px; cursor: pointer; border-radius: 6px; border: 1px solid #cbd8ce; background: #fff; font-weight: 700; }
+        button:disabled { background-color: #eee; cursor: not-allowed; }
+        .primary-btn { background: #2e7d32; color: white; border-color: #2e7d32; }
+        .danger-btn { background: #fff5f5; color: #b42318; border-color: #f0b8b2; }
+        .empty { padding: 24px; text-align: center; background: #fff; border: 1px solid #dfe8e2; border-radius: 8px; color: #66736b; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="page-head">
+        <h1>나의 의뢰 목록</h1>
+        <a class="back-link" href="/mypage/dashboard">대시보드로 돌아가기</a>
+    </div>
+
+    <div id="list-container">
+        <p class="empty">데이터를 불러오는 중입니다...</p>
+    </div>
+
+    <div class="pagination">
+        <button id="prev-btn" onclick="loadPage(currentPage - 1)">이전</button>
+        <span id="page-info">1 페이지</span>
+        <button id="next-btn" onclick="loadPage(currentPage + 1)">다음</button>
+    </div>
+</div>
+
+<script>
+    let currentPage = 0;
+
+    function escapeHtml(value) {
+        return String(value ?? "")
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#39;");
+    }
+
+    function formatDate(value) {
+        return value ? String(value).replace("T", " ").slice(0, 16) : "";
+    }
+
+    function reviewSection(req) {
+        if (req.reviewed) {
+            return `
+                <section class="review-box">
+                    <div class="review-head">
+                        <p class="review-title">내가 남긴 리뷰</p>
+                        <span class="rating">별점 ${Math.round(Number(req.reviewRating || 0))} / 5</span>
+                    </div>
+                    <p class="meta">작성일: ${escapeHtml(formatDate(req.reviewCreatedAt))}</p>
+                    <p class="review-content">${escapeHtml(req.reviewContent)}</p>
+                    <div class="review-actions">
+                        <button type="button" onclick="openReviewEditPrompt(${req.reviewId}, ${Number(req.reviewRating || 0)}, '${encodeForJsArg(req.reviewContent)}')">리뷰 수정</button>
+                        <button class="danger-btn" type="button" onclick="deleteReview(${req.reviewId})">리뷰 삭제</button>
+                    </div>
+                </section>
+            `;
+        }
+
+        if (req.reviewable) {
+            return `
+                <section class="review-box">
+                    <p class="review-title">아직 리뷰를 작성하지 않았습니다.</p>
+                    <button class="primary-btn" type="button" onclick="openReviewCreatePrompt(${req.requestId}, ${req.completedHunterId})">리뷰 작성</button>
+                </section>
+            `;
+        }
+
+        if (req.status === "완료" && !req.completedHunterId) {
+            return `<p class="meta">완료 헌터 정보가 없어 리뷰를 작성할 수 없습니다.</p>`;
+        }
+
+        return "";
+    }
+
+    function encodeForJsArg(value) {
+        return encodeURIComponent(String(value ?? "")).replace(/'/g, "%27");
+    }
+
+    function loadPage(page) {
+        fetch(`/api/mypage/requests?page=${page}`)
+            .then(res => res.json())
+            .then(data => {
+                const listContainer = document.getElementById("list-container");
+                listContainer.innerHTML = "";
+
+                if (!data.content || data.content.length === 0) {
+                    listContainer.innerHTML = "<p class='empty'>등록한 의뢰가 없습니다.</p>";
+                } else {
+                    data.content.forEach(req => {
+                        const completedHunterText = req.completedHunterName
+                            ? `<p class="meta">완료 헌터: ${escapeHtml(req.completedHunterName)}</p>`
+                            : "";
+
+                        listContainer.innerHTML += `
+                            <article class="request-card" data-detail-url="/requestView/detail/${req.requestId}" tabindex="0">
+                                <h3><span class="status">${escapeHtml(req.status)}</span>${escapeHtml(req.title)}</h3>
+                                <p class="meta">작성일: ${escapeHtml(formatDate(req.createdAt))}</p>
+                                ${completedHunterText}
+                                ${reviewSection(req)}
+                            </article>
+                        `;
+                    });
+                }
+
+                currentPage = data.number;
+                document.getElementById("page-info").innerText = `${currentPage + 1} / ${data.totalPages === 0 ? 1 : data.totalPages} 페이지`;
+                document.getElementById("prev-btn").disabled = data.first;
+                document.getElementById("next-btn").disabled = data.last;
+            });
+    }
+
+    function readReviewInput(defaultRating = "", defaultContent = "") {
+        const ratingInput = prompt("별점을 입력하세요. 1점 단위, 최대 5점입니다. 예: 4", defaultRating);
+        if (ratingInput === null) {
+            return null;
+        }
+
+        const rating = Number(ratingInput);
+        if (!Number.isInteger(rating) || rating < 1 || rating > 5) {
+            alert("별점은 1점부터 5점까지 정수로 입력해 주세요.");
+            return null;
+        }
+        const content = prompt("리뷰 내용을 입력하세요.", defaultContent);
+        if (content === null) {
+            return null;
+        }
+
+        return { rating, reviewContent: content };
+    }
+
+    function openReviewCreatePrompt(requestId, hunterId) {
+        const payload = readReviewInput();
+        if (!payload) {
+            return;
+        }
+
+        fetch("/api/mypage/reviews", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ requestId, hunterId, ...payload })
+        })
+            .then(handleTextResponse)
+            .then(() => {
+                alert("리뷰가 등록되었습니다.");
+                loadPage(currentPage);
+            })
+            .catch((error) => alert(error.message || "리뷰 등록에 실패했습니다."));
+    }
+
+    function openReviewEditPrompt(reviewId, currentRating, encodedContent) {
+        const payload = readReviewInput(String(Math.round(currentRating)), decodeURIComponent(encodedContent));
+        if (!payload) {
+            return;
+        }
+
+        fetch(`/api/mypage/reviews/${reviewId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        })
+            .then(handleTextResponse)
+            .then(() => {
+                alert("리뷰가 수정되었습니다.");
+                loadPage(currentPage);
+            })
+            .catch((error) => alert(error.message || "리뷰 수정에 실패했습니다."));
+    }
+
+    function deleteReview(reviewId) {
+        if (!confirm("리뷰를 삭제하시겠습니까?")) {
+            return;
+        }
+
+        fetch(`/api/mypage/reviews/${reviewId}`, { method: "DELETE" })
+            .then(handleTextResponse)
+            .then(() => {
+                alert("리뷰가 삭제되었습니다.");
+                loadPage(currentPage);
+            })
+            .catch((error) => alert(error.message || "리뷰 삭제에 실패했습니다."));
+    }
+
+    async function handleTextResponse(res) {
+        if (!res.ok) {
+            throw new Error(await res.text());
+        }
+        return res.text();
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        loadPage(0);
+
+        document.getElementById("list-container").addEventListener("click", (event) => {
+            if (event.target.closest("button")) {
+                return;
+            }
+
+            const card = event.target.closest(".request-card");
+            if (card?.dataset.detailUrl) {
+                window.location.href = card.dataset.detailUrl;
+            }
+        });
+
+        document.getElementById("list-container").addEventListener("keydown", (event) => {
+            if (event.key !== "Enter" && event.key !== " ") {
+                return;
+            }
+
+            const card = event.target.closest(".request-card");
+            if (card?.dataset.detailUrl) {
+                event.preventDefault();
+                window.location.href = card.dataset.detailUrl;
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
