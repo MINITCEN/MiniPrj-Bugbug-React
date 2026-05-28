@@ -188,16 +188,22 @@
     function updateHunterGradeView(data) {
         const count = Number(data.completionCount || 0);
         const grade = data.grade || "루키";
-        const gradeMarks = {
-            "루키": "R",
-            "브론즈": "B",
-            "실버": "S",
-            "골드": "G",
-            "레전드": "L"
+        const gradeImages = {
+            "루키": "/image/bugbug_rookie.png",
+            "브론즈": "/image/bugbug_bronze.png",
+            "실버": "/image/bugbug_silver.png",
+            "골드": "/image/bugbug_gold.png",
+            "레전드": "/image/bugbug_legend.png"
         };
 
         document.getElementById("hunter-grade").textContent = grade;
-        document.getElementById("hunter-grade-mark").textContent = gradeMarks[grade] || "-";
+        
+        const gradeImgElement = document.getElementById("hunter-grade-img");
+        if (gradeImgElement) {
+            gradeImgElement.src = gradeImages[grade] || "/image/bugbug_rookie.png";
+            gradeImgElement.alt = `${grade} 등급 훈장`;
+        }
+        
         document.getElementById("hunter-completion-cnt").textContent = `총 ${count}건 활동`;
         document.getElementById("hunter-rating").textContent = Number(data.averageRating || 0).toFixed(1);
         document.getElementById("hunter-res-count").textContent = `${count}건`;
@@ -285,6 +291,26 @@
             .catch(() => alert("헌터 자격 해제 중 문제가 발생했습니다."));
     }
 
+    function applyHunterWithServerMessage() {
+        if (!confirm("헌터 등록 신청을 진행할까요?")) {
+            return;
+        }
+
+        fetch("/api/mypage/hunter/apply", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ pledgeAgreed: true })
+        })
+            .then(async (res) => {
+                if (!res.ok) {
+                    const message = await res.text();
+                    throw new Error(message || "헌터 신청 처리 중 문제가 발생했습니다.");
+                }
+                alert("헌터 신청이 접수되었습니다.");
+            })
+            .catch((error) => alert(error.message));
+    }
+
     function logout() {
         fetch("/api/auth/logout", { method: "POST" })
             .finally(() => {
@@ -317,7 +343,7 @@
     window.closeProfileModal = closeProfileModal;
     window.openHunterGradeModal = openHunterGradeModal;
     window.closeHunterGradeModal = closeHunterGradeModal;
-    window.applyHunter = applyHunter;
+    window.applyHunter = applyHunterWithServerMessage;
     window.resignHunter = resignHunter;
     window.logout = logout;
 }());
