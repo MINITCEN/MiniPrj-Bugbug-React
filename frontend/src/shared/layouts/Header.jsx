@@ -24,7 +24,7 @@ export default function Header() {
         {/* 로고 */}
         <a href="/" className="flex items-center gap-2">
           <img src="/image/favicon.svg" alt="버그버그 로고" className="w-8 h-8 rounded-lg" />
-          <span className="font-bold text-lg text-green-600">버그버그</span>
+          <span className="font-bold text-lg text-gray-900">버그버그</span>
         </a>
 
         {/* 네비게이션 */}
@@ -87,7 +87,7 @@ export default function Header() {
               </a>
               <a
                 href="/signup"
-                className="text-sm px-3 py-1.5 bg-green-600 rounded-lg text-white hover:bg-green-700 transition-colors"
+                className="text-sm px-3 py-1.5 bg-gray-900 rounded-lg text-white hover:bg-gray-800 transition-colors"
               >
                 회원가입
               </a>
