@@ -73,6 +73,8 @@ public class SecurityConfig {
                                 "/login",
                                 "/signup",
                                 "/api/users/signup",
+                                "/api/users/check-email",
+                                "/api/users/check-nickname",
                                 "/api/auth/login",
                                 "/api/auth/logout",
                                 "/mosquito-map",
