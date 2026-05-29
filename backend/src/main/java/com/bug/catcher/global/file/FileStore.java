@@ -32,6 +32,7 @@ public class FileStore {
             if (imageFile == null || imageFile.isEmpty()) {
                 continue;
             }
+            validateContentType(imageFile, "image/", "이미지 파일만 첨부할 수 있습니다.");
             String imageUrl = storeFile(imageFile, imageUploadDir, "/uploads/request-images/", "이미지 파일 저장 실패");
             imageUrls.add(imageUrl);
         }
@@ -46,7 +47,15 @@ public class FileStore {
         if (videoFile == null || videoFile.isEmpty()) {
             return null;
         }
+        validateContentType(videoFile, "video/", "동영상 파일만 첨부할 수 있습니다.");
         return storeFile(videoFile, videoUploadDir, "/uploads/request-videos/", "동영상 파일 저장 실패");
+    }
+
+    private void validateContentType(MultipartFile file, String allowedPrefix, String errorMessage) {
+        String contentType = file.getContentType();
+        if (contentType == null || !contentType.startsWith(allowedPrefix)) {
+            throw new IllegalArgumentException(errorMessage);
+        }
     }
 
     /**

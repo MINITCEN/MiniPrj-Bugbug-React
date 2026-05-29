@@ -15,7 +15,7 @@ export default function MainPage() {
     staleTime: 1000 * 60 * 60,
   })
 
-  const handleRequestCta = () => navigate(isLoggedIn ? '/requestForm' : '/login')
+  const handleRequestCta = () => navigate(isLoggedIn ? '/requestView/new' : '/login')
 
   return (
     <div

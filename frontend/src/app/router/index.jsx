@@ -4,6 +4,7 @@ import MainPage from '../../pages/main/MainPage'
 import LoginPage from '../../pages/auth/LoginPage'
 import SignupPage from '../../pages/auth/SignupPage'
 import RequestListPage from '../../pages/request/RequestListPage'
+import RequestCreatePage from '../../pages/request/RequestCreatePage'
 import ComingSoonPage from '../../pages/common/ComingSoonPage'
 import ServiceIntroPage from '../../pages/service-intro/ServiceIntroPage'
 
@@ -16,7 +17,7 @@ const router = createBrowserRouter([
       { path: '/mosquito-map', element: <ComingSoonPage /> },
       { path: '/hunter', element: <ComingSoonPage /> },
       { path: '/requestView/list', element: <RequestListPage /> },
-      { path: '/requestForm', element: <ComingSoonPage /> },
+      { path: '/requestView/new', element: <RequestCreatePage /> },
       { path: '/login', element: <LoginPage /> },
       { path: '/signup', element: <SignupPage /> },
       { path: '/mypage/*', element: <ComingSoonPage /> },

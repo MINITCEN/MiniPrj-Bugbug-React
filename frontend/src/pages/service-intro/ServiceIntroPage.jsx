@@ -134,7 +134,7 @@ function CtaSection() {
         지금 바로 시작해보세요
       </h2>
       <Link
-        to="/requestForm"
+        to="/requestView/new"
         className="px-9 py-[18px] text-white font-semibold text-[17px] transition-opacity hover:opacity-90"
         style={{ background: 'var(--ink)', borderRadius: '999px', letterSpacing: '-0.01em' }}
       >
