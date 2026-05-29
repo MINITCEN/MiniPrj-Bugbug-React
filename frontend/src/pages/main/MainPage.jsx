@@ -8,25 +8,43 @@ export default function MainPage() {
   const { isLoggedIn } = useAuthStore()
   const navigate = useNavigate()
 
-  const { data: stats } = useQuery({
-    queryKey: ['mainStats'],
-    queryFn: fetchMainStats,
-  })
-
+  const { data: stats } = useQuery({ queryKey: ['mainStats'], queryFn: fetchMainStats })
   const { data: topMosquito } = useQuery({
     queryKey: ['mosquitoTop'],
     queryFn: fetchTopMosquito,
     staleTime: 1000 * 60 * 60,
   })
 
-  const handleRequestCta = () => {
-    navigate(isLoggedIn ? '/requestForm' : '/login')
-  }
+  const handleRequestCta = () => navigate(isLoggedIn ? '/requestForm' : '/login')
 
   return (
-    <div className="bg-white">
-      <HeroSection onRequestClick={handleRequestCta} stats={stats} />
-      <BottomSection topMosquito={topMosquito} />
+    <div
+      className="min-h-screen"
+      style={{
+        background: `
+          radial-gradient(ellipse 960px 720px at 78% 38%, rgba(46,140,104,.13), transparent 62%),
+          radial-gradient(ellipse 760px 620px at 8% 78%, rgba(229,87,58,.09), transparent 62%),
+          radial-gradient(ellipse 600px 500px at 50% 100%, rgba(29,58,46,.05), transparent 60%),
+          #fbfaf6
+        `,
+      }}
+    >
+      {/* 도트 그리드 */}
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 z-0 opacity-50"
+        style={{
+          backgroundImage: 'radial-gradient(circle, rgba(29,58,46,.055) 1px, transparent 1.2px)',
+          backgroundSize: '28px 28px',
+          maskImage: 'linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%)',
+          WebkitMaskImage: 'linear-gradient(180deg, transparent 0%, #000 18%, #000 82%, transparent 100%)',
+        }}
+      />
+
+      <div className="relative z-10 max-w-screen-xl mx-auto px-20 pt-16 pb-8 flex flex-col gap-12">
+        <HeroSection onRequestClick={handleRequestCta} stats={stats} />
+        <BottomSection topMosquito={topMosquito} />
+      </div>
     </div>
   )
 }
@@ -34,203 +52,205 @@ export default function MainPage() {
 /* ─── Hero ─────────────────────────────────────────── */
 function HeroSection({ onRequestClick, stats }) {
   return (
-    <section className="bg-gradient-to-br from-stone-50 via-white to-green-50/30">
-      <div className="max-w-6xl mx-auto px-4 py-20 flex items-center gap-16">
+    <section className="grid gap-10 items-center" style={{ gridTemplateColumns: '1.4fr 340px' }}>
+      <div className="flex flex-col gap-6">
+        <span className="text-sm font-semibold" style={{ color: 'var(--brand-2)' }}>버그버그</span>
 
-        {/* 좌: 텍스트 영역 */}
-        <div className="flex-1 flex flex-col gap-6 min-w-0">
-          <span className="text-sm text-gray-400 font-medium tracking-widest uppercase">버그버그</span>
-          <h1 className="text-5xl md:text-6xl font-extrabold text-gray-900 leading-tight tracking-tight">
-            의뢰글을 올리면,<br />
-            <span className="text-gray-500">헌터가 찾아옵니다.</span>
-          </h1>
-          <p className="text-base text-gray-500 leading-relaxed max-w-md">
-            해충 상황과 위치를 적어 의뢰글을 올리세요. 검증된 헌터가 직접 채팅으로 연락해 약속을 잡습니다.
-          </p>
-          <div className="flex flex-wrap items-center gap-3">
-            <button
-              onClick={onRequestClick}
-              className="px-7 py-3.5 bg-gray-900 text-white font-semibold rounded-xl hover:bg-gray-800 transition-colors text-sm shadow-sm"
-            >
-              지금 바로 의뢰 등록하기
-            </button>
-            <Link
-              to="/service-intro"
-              className="px-4 py-3.5 text-sm text-gray-500 font-medium hover:text-gray-700 transition-colors"
-            >
-              서비스 알아보기 →
-            </Link>
-          </div>
-          <div className="flex items-center gap-8 pt-2">
-            <StatItem
-              value={stats ? `★ ${stats.averageRating}/5` : '★ —/5'}
-              label="의뢰자 평균 평점"
-            />
-            <div className="w-px h-10 bg-gray-200 self-stretch" />
-            <StatItem
-              value={stats ? `${stats.totalRequests.toLocaleString()}건` : '—'}
-              label="누적 의뢰 수"
-            />
-            <div className="w-px h-10 bg-gray-200 self-stretch" />
-            <StatItem
-              value={stats ? `${stats.activeHunters.toLocaleString()}명` : '—'}
-              label="활동 중인 헌터"
-            />
-          </div>
+        <h1
+          className="leading-[1.05] tracking-[-0.045em]"
+          style={{ fontSize: 'clamp(52px, 5.5vw, 92px)', fontWeight: 800, color: 'var(--ink)' }}
+        >
+          의뢰글을 올리면,<br />
+          <span style={{ fontWeight: 300, color: 'var(--ink-2)' }}>헌터가 찾아옵니다.</span>
+        </h1>
+
+        <p className="text-lg leading-relaxed max-w-2xl" style={{ color: 'var(--ink-2)' }}>
+          해충 상황과 위치를 적어 의뢰글을 올리세요. 검증된 헌터가 직접 채팅으로 연락해 약속을 잡습니다.
+        </p>
+
+        <div className="flex items-center gap-5 mt-2">
+          <button
+            onClick={onRequestClick}
+            className="px-9 py-[18px] text-white font-semibold text-[17px] transition-colors hover:opacity-90"
+            style={{ background: 'var(--ink)', borderRadius: '999px', letterSpacing: '-0.01em' }}
+          >
+            지금 바로 의뢰 등록하기
+          </button>
+          <Link to="/service-intro" className="text-sm font-medium transition-colors hover:opacity-80" style={{ color: 'var(--ink-2)' }}>
+            서비스 알아보기 →
+          </Link>
         </div>
 
-        {/* 우: 폰 목업 */}
-        <div className="hidden md:flex justify-center flex-shrink-0">
-          <PhoneMockup />
+        {/* 신뢰 지표 */}
+        <div
+          className="flex items-center gap-8 pt-6 mt-4"
+          style={{ borderTop: '1px solid var(--hair-2)', maxWidth: 640 }}
+        >
+          <StatItem value={stats ? `★ ${Number(stats.averageRating).toFixed(1)}` : '★ —'} sub="/5" label="의뢰자 평균 평점" />
+          <div className="w-px h-9" style={{ background: 'var(--hair-2)' }} />
+          <StatItem value={stats ? stats.totalRequests.toLocaleString() : '—'} sub="건" label="누적 의뢰 수" />
+          <div className="w-px h-9" style={{ background: 'var(--hair-2)' }} />
+          <StatItem value={stats ? stats.activeHunters.toLocaleString() : '—'} sub="명" label="활동 중인 헌터" />
         </div>
       </div>
+
+      <PhoneMockup />
     </section>
   )
 }
 
+function StatItem({ value, sub, label }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <b className="leading-none" style={{ fontSize: 26, fontWeight: 800, letterSpacing: '-0.035em', color: 'var(--ink)' }}>
+        {value}<small className="text-sm font-semibold ml-0.5" style={{ color: 'var(--ink-2)' }}>{sub}</small>
+      </b>
+      <span className="text-xs" style={{ color: 'var(--ink-2)' }}>{label}</span>
+    </div>
+  )
+}
+
+/* ─── 폰 목업 ─────────────────────────────────────── */
 function PhoneMockup() {
   return (
-    <div className="w-[260px] h-[520px] bg-white rounded-[44px] border-[10px] border-gray-200 shadow-2xl flex flex-col overflow-hidden relative">
-      {/* 다이나믹 아일랜드 */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-24 h-7 bg-gray-900 rounded-b-3xl z-10" />
-      {/* 스크린 */}
-      <div className="flex-1 bg-gray-900 flex items-center justify-center mt-5">
-        <p className="text-gray-600 text-xs">영상 준비 중</p>
-      </div>
-      {/* 홈 바 */}
-      <div className="h-8 bg-gray-900 flex items-center justify-center">
-        <div className="w-20 h-1 bg-gray-600 rounded-full" />
+    <div className="flex justify-center items-center relative">
+      {/* 글로우 */}
+      <div
+        aria-hidden
+        className="absolute rounded-full pointer-events-none"
+        style={{
+          width: 380, height: 380,
+          background: 'radial-gradient(circle, rgba(46,140,104,.22) 0%, rgba(46,140,104,.06) 40%, transparent 70%)',
+          filter: 'blur(20px)',
+        }}
+      />
+      {/* 폰 바디 */}
+      <div
+        className="relative"
+        style={{
+          width: 260, height: 530,
+          background: '#0c0c0e',
+          borderRadius: 42,
+          padding: 10,
+          boxShadow: '0 30px 60px -30px rgba(15,40,30,.35)',
+        }}
+      >
+        {/* 다이나믹 아일랜드 */}
+        <div
+          className="absolute left-1/2 -translate-x-1/2"
+          style={{ top: 8, width: 88, height: 20, background: '#0c0c0e', borderRadius: 12, zIndex: 2 }}
+        />
+        {/* 스크린 — 영상 자리 보존 */}
+        <div className="w-full h-full flex items-center justify-center" style={{ borderRadius: 32, background: '#0c0c0e' }} />
       </div>
     </div>
   )
 }
 
-/* ─── 하단 3열 통합 섹션 ─────────────────────────────── */
+/* ─── 하단 3열 ──────────────────────────────────────── */
 const PROCESS_STEPS = [
-  {
-    step: '01',
-    label: '의뢰글 작성',
-    title: '상황을 적고\n올리세요',
-    desc: '해충 종류, 위치, 사진을 첨부해 의뢰글을 등록합니다. 작성에 3분이면 충분합니다.',
-  },
-  {
-    step: '02',
-    label: '헌터 연락',
-    title: '헌터가 먼저\n채팅을 시작',
-    desc: '의뢰글을 본 검증된 헌터들이 직접 채팅으로 연락합니다. 후기와 경력을 보고 선택하세요.',
-  },
+  { step: '01 · 의뢰글 작성', title: '상황을 적고\n올리세요', desc: '해충 종류, 위치, 사진을 첨부해 의뢰글을 등록합니다. 작성에 3분이면 충분합니다.' },
+  { step: '02 · 헌터 연락',   title: '헌터가 먼저\n채팅을 시작', desc: '의뢰글을 본 검증된 헌터들이 직접 채팅으로 연락합니다. 후기와 경력을 보고 선택하세요.' },
 ]
 
 function BottomSection({ topMosquito }) {
   return (
-    <section className="bg-gray-50 py-20">
-      <div className="max-w-6xl mx-auto px-4">
-        <div className="grid md:grid-cols-3 gap-6">
-          {PROCESS_STEPS.map((s) => (
-            <ProcessCard key={s.step} {...s} />
-          ))}
-          <MosquitoCard top={topMosquito?.[0]} others={topMosquito?.slice(1)} />
-        </div>
-      </div>
+    <section className="grid gap-4" style={{ gridTemplateColumns: '1fr 1fr 1.4fr' }}>
+      {PROCESS_STEPS.map((s) => <ProcessCard key={s.step} {...s} />)}
+      <MosquitoCard top={topMosquito?.[0]} others={topMosquito?.slice(1)} />
     </section>
   )
 }
 
-function ProcessCard({ step, label, title, desc }) {
+function ProcessCard({ step, title, desc }) {
   return (
-    <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 flex flex-col gap-4">
-      <span className="text-xs font-bold text-gray-400 tracking-widest">
-        {step} · {label}
-      </span>
-      <h3 className="text-xl font-bold text-gray-900 leading-snug whitespace-pre-line">
-        {title}
-      </h3>
-      <p className="text-sm text-gray-500 leading-relaxed">{desc}</p>
+    <div
+      className="flex flex-col gap-3.5 p-7 border transition-all duration-200 cursor-default"
+      style={{
+        background: '#fff',
+        borderColor: 'var(--hair-2)',
+        borderRadius: 18,
+        boxShadow: '0 1px 0 rgba(255,255,255,.6) inset, 0 2px 12px -4px rgba(29,58,46,.04)',
+      }}
+      onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--ink)'; e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 8px 24px -12px rgba(29,58,46,.12)' }}
+      onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--hair-2)'; e.currentTarget.style.transform = ''; e.currentTarget.style.boxShadow = '0 1px 0 rgba(255,255,255,.6) inset, 0 2px 12px -4px rgba(29,58,46,.04)' }}
+    >
+      <span className="text-xs font-semibold" style={{ color: 'var(--muted)' }}>{step}</span>
+      <h3 className="text-[22px] font-bold leading-snug tracking-tight whitespace-pre-line">{title}</h3>
+      <p className="text-sm leading-relaxed" style={{ color: 'var(--ink-2)' }}>{desc}</p>
     </div>
   )
 }
 
-/* ─── 모기지수 다크 카드 ────────────────────────────── */
-const MOSQUITO_STATUS_COLOR = {
-  '쾌적': 'bg-green-500',
-  '관심': 'bg-yellow-400',
-  '주의': 'bg-orange-400',
-  '불쾌': 'bg-red-500',
-}
+/* ─── 모기지수 카드 ──────────────────────────────────── */
+const STATUS_COLOR = { '쾌적': '#2e8c68', '관심': '#e5a50a', '주의': '#e5573a', '불쾌': '#e5573a' }
+const STATUS_BG    = { '쾌적': 'rgba(46,140,104,.18)', '관심': 'rgba(229,165,10,.18)', '주의': 'rgba(229,87,58,.22)', '불쾌': 'rgba(229,87,58,.22)' }
 
-function indexBarColor(index) {
-  if (index >= 75) return 'bg-red-500'
-  if (index >= 50) return 'bg-orange-400'
-  if (index >= 25) return 'bg-yellow-400'
-  return 'bg-green-400'
+function barFill(idx) {
+  if (idx >= 75) return 'var(--accent)'
+  if (idx >= 50) return '#e5a50a'
+  return 'var(--brand-2)'
 }
 
 function MosquitoCard({ top, others }) {
-  const statusBadgeColor = MOSQUITO_STATUS_COLOR[top?.status] ?? 'bg-gray-500'
-
   return (
-    <div className="bg-gray-900 rounded-2xl p-8 flex flex-col gap-5 text-white">
-      <span className="text-xs font-bold text-gray-400 tracking-widest">03 · 모기지수</span>
-      <div>
-        <h3 className="text-xl font-bold leading-snug">
+    <div
+      className="p-7 grid gap-6"
+      style={{
+        background: 'var(--ink)',
+        borderRadius: 18,
+        gridTemplateColumns: '1fr 200px',
+        color: '#fff',
+      }}
+    >
+      {/* 왼쪽 */}
+      <div className="flex flex-col gap-1.5">
+        <span className="text-xs font-semibold" style={{ color: 'var(--muted)' }}>03 · 모기지수</span>
+        <h3 className="text-[22px] font-bold leading-snug tracking-tight">
           오늘 모기지수<br />가장 높은 지역
         </h3>
-        <p className="text-xs text-gray-400 mt-2 leading-relaxed">
+        <p className="text-[13px] leading-relaxed" style={{ color: 'rgba(255,255,255,.65)' }}>
           오늘의 모기지수 상위 7개 지역입니다.
         </p>
-      </div>
 
-      <div className="flex items-end justify-between gap-4 mt-auto">
-        {/* 1위 대표 지수 */}
-        <div className="flex flex-col gap-1">
-          <span className="text-xs text-gray-400">{top?.location ?? '—'}</span>
-          <div className="flex items-baseline gap-1">
-            <span className="text-4xl font-extrabold">
+        <div className="mt-auto pt-4 flex items-baseline gap-2.5" style={{ borderTop: '1px solid rgba(255,255,255,.12)', marginTop: 'auto' }}>
+          <div>
+            <div className="text-xs font-semibold mb-0.5" style={{ color: 'rgba(255,255,255,.7)' }}>{top?.location ?? '—'}</div>
+            <div className="font-extrabold leading-none" style={{ fontSize: 42, letterSpacing: '-0.045em' }}>
               {top != null ? Math.round(top.index) : '—'}
-            </span>
-            <span className="text-sm text-gray-400">/100</span>
+              <small className="text-sm font-medium ml-1" style={{ color: 'rgba(255,255,255,.5)' }}> / 100</small>
+            </div>
           </div>
-          {top?.status != null && (
-            <span className={`self-start mt-1 px-2.5 py-0.5 rounded-full text-xs font-bold text-white ${statusBadgeColor}`}>
+          {top?.status && (
+            <span
+              className="ml-auto text-xs font-bold px-2.5 py-1 rounded-full"
+              style={{ background: STATUS_BG[top.status] ?? 'rgba(255,255,255,.15)', color: STATUS_COLOR[top.status] ?? '#fff' }}
+            >
               {top.status}
             </span>
           )}
         </div>
 
-        {/* 2~7위 바 차트 */}
-        <div className="flex flex-col gap-1.5 min-w-[130px]">
-          <span className="text-xs text-gray-400 mb-0.5">전국 현황</span>
-          {(others ?? []).map(({ location, index: idx }) => (
-            <div key={location} className="flex items-center gap-2">
-              <span className="text-xs text-gray-300 w-14 shrink-0">{location}</span>
-              <div className="flex-1 bg-gray-700 rounded-full h-1.5 overflow-hidden">
-                <div
-                  className={`h-1.5 rounded-full ${indexBarColor(idx)}`}
-                  style={{ width: `${idx}%` }}
-                />
-              </div>
-              <span className="text-xs text-gray-300 w-5 text-right shrink-0">{Math.round(idx)}</span>
-            </div>
-          ))}
-        </div>
+        <Link to="/mosquito-map" className="text-xs font-medium mt-2 transition-opacity hover:opacity-70" style={{ color: 'var(--brand-2)' }}>
+          전체 지역 지도 보기 →
+        </Link>
       </div>
 
-      <Link
-        to="/mosquito-map"
-        className="text-xs text-green-400 hover:text-green-300 transition-colors font-medium"
-      >
-        전체 지역 지도 보기 →
-      </Link>
-    </div>
-  )
-}
-
-/* ─── 공통 소형 컴포넌트 ─────────────────────────────── */
-function StatItem({ value, label }) {
-  return (
-    <div className="flex flex-col gap-1">
-      <span className="text-xl font-bold text-gray-900">{value}</span>
-      <span className="text-xs text-gray-500">{label}</span>
+      {/* 오른쪽 — 바 차트 */}
+      <div className="flex flex-col gap-2">
+        <span className="text-[11px] font-bold uppercase tracking-widest mb-1" style={{ color: 'rgba(255,255,255,.5)' }}>전국 현황</span>
+        {(others ?? []).map(({ location, index: idx }) => (
+          <div key={location} className="grid items-center gap-2" style={{ gridTemplateColumns: '44px 1fr 28px' }}>
+            <span className="text-[13px] font-semibold text-white">{location}</span>
+            <div className="h-1.5 rounded-full overflow-hidden" style={{ background: 'rgba(255,255,255,.1)' }}>
+              <div className="h-full rounded-full" style={{ width: `${idx}%`, background: barFill(idx) }} />
+            </div>
+            <span className="text-xs font-bold text-right" style={{ color: 'rgba(255,255,255,.85)', fontVariantNumeric: 'tabular-nums' }}>
+              {Math.round(idx)}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   )
 }
