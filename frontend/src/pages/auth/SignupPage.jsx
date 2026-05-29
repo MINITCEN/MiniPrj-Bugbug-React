@@ -29,6 +29,10 @@ export default function SignupPage() {
 
   const handleCheckEmail = async () => {
     if (!form.email) return
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
+      setEmailCheck({ checked: true, available: false, message: '유효한 이메일 형식이 아닙니다.' })
+      return
+    }
     try {
       const { available } = await checkEmail(form.email)
       setEmailCheck({
@@ -67,8 +71,20 @@ export default function SignupPage() {
       setError('닉네임 중복 확인을 완료해 주세요.')
       return
     }
+    if (form.password !== form.password.trim()) {
+      setError('비밀번호에 앞뒤 공백을 사용할 수 없습니다.')
+      return
+    }
+    if (form.password.length < 8) {
+      setError('비밀번호는 8자 이상 입력해 주세요.')
+      return
+    }
     if (form.password !== form.passwordConfirm) {
       setError('비밀번호가 일치하지 않습니다.')
+      return
+    }
+    if (form.phoneNumber && !/^[0-9\-\s]+$/.test(form.phoneNumber)) {
+      setError('전화번호는 숫자와 하이픈(-)만 입력 가능합니다.')
       return
     }
     if (!form.isPrivacyAgreed) {
@@ -112,7 +128,7 @@ export default function SignupPage() {
           회원가입
         </h1>
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit} noValidate className="flex flex-col gap-4">
           {error && (
             <p
               className="text-sm px-4 py-3 rounded-xl"
@@ -200,6 +216,7 @@ export default function SignupPage() {
                 value={form.nickname}
                 onChange={handleChange}
                 required
+                maxLength={50}
                 placeholder="닉네임을 입력하세요"
                 className="flex-1 px-4 py-3 text-sm rounded-xl border outline-none transition-colors"
                 style={{ borderColor: 'var(--hair-2)', color: 'var(--ink)' }}
