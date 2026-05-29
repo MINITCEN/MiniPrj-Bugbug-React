@@ -4,6 +4,13 @@ import { signup, checkEmail, checkNickname } from '../../shared/api/authApi'
 
 const INIT_CHECK = { checked: false, available: false, message: '' }
 
+function formatPhone(raw) {
+  const digits = raw.replace(/\D/g, '').slice(0, 11)
+  if (digits.length <= 3) return digits
+  if (digits.length <= 7) return `${digits.slice(0, 3)}-${digits.slice(3)}`
+  return `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`
+}
+
 export default function SignupPage() {
   const [form, setForm] = useState({
     email: '',
@@ -24,6 +31,11 @@ export default function SignupPage() {
     setForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }))
     if (name === 'email') setEmailCheck(INIT_CHECK)
     if (name === 'nickname') setNicknameCheck(INIT_CHECK)
+    setError('')
+  }
+
+  const handlePhoneChange = (e) => {
+    setForm((prev) => ({ ...prev, phoneNumber: formatPhone(e.target.value) }))
     setError('')
   }
 
@@ -83,8 +95,8 @@ export default function SignupPage() {
       setError('비밀번호가 일치하지 않습니다.')
       return
     }
-    if (form.phoneNumber && !/^[0-9\-\s]+$/.test(form.phoneNumber)) {
-      setError('전화번호는 숫자와 하이픈(-)만 입력 가능합니다.')
+    if (form.phoneNumber && form.phoneNumber.replace(/\D/g, '').length < 11) {
+      setError('전화번호를 000-0000-0000 형식으로 입력해 주세요.')
       return
     }
     if (!form.isPrivacyAgreed) {
@@ -235,10 +247,11 @@ export default function SignupPage() {
               <span className="ml-1.5 text-xs font-normal" style={{ color: 'var(--muted)' }}>선택</span>
             </label>
             <input
-              type="tel"
-              name="phoneNumber"
+              type="text"
+              inputMode="numeric"
               value={form.phoneNumber}
-              onChange={handleChange}
+              onChange={handlePhoneChange}
+              maxLength={13}
               placeholder="010-0000-0000"
               className="px-4 py-3 text-sm rounded-xl border outline-none transition-colors"
               style={{ borderColor: 'var(--hair-2)', color: 'var(--ink)' }}
