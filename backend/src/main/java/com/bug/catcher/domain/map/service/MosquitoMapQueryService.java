@@ -73,6 +73,14 @@ public class MosquitoMapQueryService {
         .toList();
   }
 
+  // 모기지수 상위 7개 지역을 내림차순으로 반환한다.
+  public List<MosquitoResponse> getTop7() {
+    return getCurrentStatuses().stream()
+        .sorted(Comparator.comparingDouble(MosquitoResponse::index).reversed())
+        .limit(7)
+        .toList();
+  }
+
   // 선택한 지역의 상세 정보와 최근 7일 추이를 함께 조회한다.(우측 패널)
   public MosquitoRegionSummaryResponse getRegionSummary(Long regionId) {
     Region region = regionRepository.findById(regionId)

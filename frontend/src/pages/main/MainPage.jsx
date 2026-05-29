@@ -1,29 +1,32 @@
 import { useQuery } from '@tanstack/react-query'
+import { Link, useNavigate } from 'react-router-dom'
 import useAuthStore from '../../features/auth/store/useAuthStore'
 import { fetchMainStats } from '../../shared/api/mainApi'
-import { fetchMosquitoSummary } from '../../shared/api/mosquitoApi'
+import { fetchTopMosquito } from '../../shared/api/mosquitoApi'
 
 export default function MainPage() {
   const { isLoggedIn } = useAuthStore()
+  const navigate = useNavigate()
 
   const { data: stats } = useQuery({
     queryKey: ['mainStats'],
     queryFn: fetchMainStats,
   })
 
-  const { data: mosquito } = useQuery({
-    queryKey: ['mosquitoSummary'],
-    queryFn: () => fetchMosquitoSummary(),
+  const { data: topMosquito } = useQuery({
+    queryKey: ['mosquitoTop'],
+    queryFn: fetchTopMosquito,
+    staleTime: 1000 * 60 * 60,
   })
 
   const handleRequestCta = () => {
-    window.location.href = isLoggedIn ? '/requestForm' : '/login'
+    navigate(isLoggedIn ? '/requestForm' : '/login')
   }
 
   return (
     <div className="bg-white">
       <HeroSection onRequestClick={handleRequestCta} stats={stats} />
-      <BottomSection mosquito={mosquito?.detail} />
+      <BottomSection topMosquito={topMosquito} />
     </div>
   )
 }
@@ -51,12 +54,12 @@ function HeroSection({ onRequestClick, stats }) {
             >
               지금 바로 의뢰 등록하기
             </button>
-            <a
-              href="/service-intro"
+            <Link
+              to="/service-intro"
               className="px-4 py-3.5 text-sm text-gray-500 font-medium hover:text-gray-700 transition-colors"
             >
               서비스 알아보기 →
-            </a>
+            </Link>
           </div>
           <div className="flex items-center gap-8 pt-2">
             <StatItem
@@ -118,16 +121,7 @@ const PROCESS_STEPS = [
   },
 ]
 
-const NATIONAL_SUMMARY = [
-  { region: '서울', index: 78 },
-  { region: '경기', index: 62 },
-  { region: '대전', index: 54 },
-  { region: '광주', index: 38 },
-  { region: '부산', index: 70 },
-  { region: '제주', index: 34 },
-]
-
-function BottomSection({ mosquito }) {
+function BottomSection({ topMosquito }) {
   return (
     <section className="bg-gray-50 py-20">
       <div className="max-w-6xl mx-auto px-4">
@@ -135,7 +129,7 @@ function BottomSection({ mosquito }) {
           {PROCESS_STEPS.map((s) => (
             <ProcessCard key={s.step} {...s} />
           ))}
-          <MosquitoCard mosquito={mosquito} />
+          <MosquitoCard top={topMosquito?.[0]} others={topMosquito?.slice(1)} />
         </div>
       </div>
     </section>
@@ -162,71 +156,71 @@ const MOSQUITO_STATUS_COLOR = {
   '관심': 'bg-yellow-400',
   '주의': 'bg-orange-400',
   '불쾌': 'bg-red-500',
-  '매우높음': 'bg-red-600',
 }
 
 function indexBarColor(index) {
-  if (index >= 71) return 'bg-red-500'
-  if (index >= 51) return 'bg-orange-400'
-  if (index >= 31) return 'bg-yellow-400'
+  if (index >= 75) return 'bg-red-500'
+  if (index >= 50) return 'bg-orange-400'
+  if (index >= 25) return 'bg-yellow-400'
   return 'bg-green-400'
 }
 
-function MosquitoCard({ mosquito }) {
-  const index = mosquito?.mosquitoIndex ?? 0
-  const status = mosquito?.mosquitoStatus ?? '—'
-  const regionName = mosquito?.regionName ?? '서울 강남구'
-  const statusBadgeColor = MOSQUITO_STATUS_COLOR[status] ?? 'bg-gray-500'
+function MosquitoCard({ top, others }) {
+  const statusBadgeColor = MOSQUITO_STATUS_COLOR[top?.status] ?? 'bg-gray-500'
 
   return (
     <div className="bg-gray-900 rounded-2xl p-8 flex flex-col gap-5 text-white">
       <span className="text-xs font-bold text-gray-400 tracking-widest">03 · 모기지수</span>
       <div>
         <h3 className="text-xl font-bold leading-snug">
-          오늘의 지역별<br />해충 활동 지수
+          오늘 모기지수<br />가장 높은 지역
         </h3>
         <p className="text-xs text-gray-400 mt-2 leading-relaxed">
-          지역별 모기·해충 활동량을 매일 업데이트합니다.<br />우리 동네 상황을 미리 확인하세요.
+          오늘의 모기지수 상위 7개 지역입니다.
         </p>
       </div>
 
       <div className="flex items-end justify-between gap-4 mt-auto">
-        {/* 대표 지수 */}
+        {/* 1위 대표 지수 */}
         <div className="flex flex-col gap-1">
-          <span className="text-xs text-gray-400">{regionName}</span>
+          <span className="text-xs text-gray-400">{top?.location ?? '—'}</span>
           <div className="flex items-baseline gap-1">
-            <span className="text-4xl font-extrabold">{index.toFixed(0)}</span>
+            <span className="text-4xl font-extrabold">
+              {top != null ? Math.round(top.index) : '—'}
+            </span>
             <span className="text-sm text-gray-400">/100</span>
           </div>
-          <span className={`self-start mt-1 px-2.5 py-0.5 rounded-full text-xs font-bold text-white ${statusBadgeColor}`}>
-            {status}
-          </span>
+          {top?.status != null && (
+            <span className={`self-start mt-1 px-2.5 py-0.5 rounded-full text-xs font-bold text-white ${statusBadgeColor}`}>
+              {top.status}
+            </span>
+          )}
         </div>
 
-        {/* 전국 현황 (정적 더미) */}
-        <div className="flex flex-col gap-1.5 min-w-[110px]">
+        {/* 2~7위 바 차트 */}
+        <div className="flex flex-col gap-1.5 min-w-[130px]">
           <span className="text-xs text-gray-400 mb-0.5">전국 현황</span>
-          {NATIONAL_SUMMARY.map(({ region, index: idx }) => (
-            <div key={region} className="flex items-center gap-2">
-              <span className="text-xs text-gray-300 w-6 shrink-0">{region}</span>
+          {(others ?? []).map(({ location, index: idx }) => (
+            <div key={location} className="flex items-center gap-2">
+              <span className="text-xs text-gray-300 w-14 shrink-0">{location}</span>
               <div className="flex-1 bg-gray-700 rounded-full h-1.5 overflow-hidden">
                 <div
                   className={`h-1.5 rounded-full ${indexBarColor(idx)}`}
                   style={{ width: `${idx}%` }}
                 />
               </div>
-              <span className="text-xs text-gray-300 w-5 text-right shrink-0">{idx}</span>
+              <span className="text-xs text-gray-300 w-5 text-right shrink-0">{Math.round(idx)}</span>
             </div>
           ))}
         </div>
       </div>
 
-      <a
-        href="/mosquito-map"
+      <Link
+        to="/mosquito-map"
         className="text-xs text-green-400 hover:text-green-300 transition-colors font-medium"
       >
         전체 지역 지도 보기 →
-      </a>
+      </Link>
     </div>
   )
 }

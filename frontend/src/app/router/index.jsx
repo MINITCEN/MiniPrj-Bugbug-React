@@ -1,12 +1,22 @@
 import { createBrowserRouter } from 'react-router-dom'
 import Layout from '../../shared/layouts/Layout'
 import MainPage from '../../pages/main/MainPage'
+import ComingSoonPage from '../../pages/common/ComingSoonPage'
 
 const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
       { path: '/', element: <MainPage /> },
+      { path: '/service-intro', element: <ComingSoonPage /> },
+      { path: '/mosquito-map', element: <ComingSoonPage /> },
+      { path: '/hunter', element: <ComingSoonPage /> },
+      { path: '/requestView/list', element: <ComingSoonPage /> },
+      { path: '/requestForm', element: <ComingSoonPage /> },
+      { path: '/login', element: <ComingSoonPage /> },
+      { path: '/signup', element: <ComingSoonPage /> },
+      { path: '/mypage/*', element: <ComingSoonPage /> },
+      { path: '*', element: <ComingSoonPage /> },
     ],
   },
 ])
