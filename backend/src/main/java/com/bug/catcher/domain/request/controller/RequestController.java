@@ -8,6 +8,11 @@ import com.bug.catcher.global.auth.CustomUserPrincipal;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,9 +34,22 @@ public class RequestController {
         return requestService.readRequestList();
     }
 
-    @GetMapping(value = "/wholeList")
-    public List<Map<String, Object>> readRequestList() {
-        return requestService.readRequestList();
+    @GetMapping("/wholeList")
+    public Page<Map<String, Object>> readRequestList(
+            @RequestParam(required = false) String status,
+            @RequestParam(defaultValue = "latest") String sortType,
+            @PageableDefault(size = 10) Pageable pageable
+    ) {
+        Sort sort = "viewCount".equals(sortType)
+                ? Sort.by(Sort.Direction.DESC, "viewCount")
+                : Sort.by(Sort.Direction.DESC, "createdAt");
+
+        Pageable sortedPageable = PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                sort
+        );
+        return requestService.readRequestPage(status, sortedPageable);
     }
 
     @GetMapping(value = "/detail/{id}")
