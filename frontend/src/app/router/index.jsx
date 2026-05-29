@@ -4,13 +4,14 @@ import MainPage from '../../pages/main/MainPage'
 import LoginPage from '../../pages/auth/LoginPage'
 import SignupPage from '../../pages/auth/SignupPage'
 import ComingSoonPage from '../../pages/common/ComingSoonPage'
+import ServiceIntroPage from '../../pages/service-intro/ServiceIntroPage'
 
 const router = createBrowserRouter([
   {
     element: <Layout />,
     children: [
       { path: '/', element: <MainPage /> },
-      { path: '/service-intro', element: <ComingSoonPage /> },
+      { path: '/service-intro', element: <ServiceIntroPage /> },
       { path: '/mosquito-map', element: <ComingSoonPage /> },
       { path: '/hunter', element: <ComingSoonPage /> },
       { path: '/requestView/list', element: <ComingSoonPage /> },
