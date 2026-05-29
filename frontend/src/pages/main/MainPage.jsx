@@ -140,65 +140,9 @@ function PhoneMockup() {
           className="absolute left-1/2 -translate-x-1/2"
           style={{ top: 8, width: 88, height: 20, background: '#0c0c0e', borderRadius: 12, zIndex: 2 }}
         />
-        {/* 스크린 */}
-        <div className="w-full h-full bg-white flex flex-col overflow-hidden" style={{ borderRadius: 32 }}>
-          {/* 상태바 */}
-          <div className="flex justify-between px-5 pt-3 text-xs font-semibold" style={{ color: 'var(--ink)' }}>
-            <span>9:41</span><span>● ● ●</span>
-          </div>
-          {/* 콘텐츠 */}
-          <div className="flex-1 flex flex-col gap-2.5 px-3 py-3 overflow-hidden">
-            <div className="flex justify-between items-center px-1 pb-1">
-              <span className="font-bold text-base tracking-tight">내 의뢰</span>
-              <div className="w-7 h-7 rounded-full bg-gray-100 flex items-center justify-center text-[10px] font-bold text-gray-500">YJ</div>
-            </div>
-
-            <PhoneCard badge="채팅 도착" badgeActive time="방금" title="주방 바퀴벌레 잡아주세요" loc="서울 강남구 역삼동" hunter={{ name: '김헌터 · 7년 경력', rating: '★ 4.98 · 47건 완료' }} />
-            <PhoneCard badge="진행중" time="어제" title="베란다 정기 방역 관리" loc="서울 송파구 잠실동" />
-            <PhoneCard badge="완료" time="3일 전" title="화장실 작은벌레 처리" loc="서울 서초구 반포동" />
-
-            {/* 탭바 */}
-            <div
-              className="mt-auto rounded-xl flex justify-around py-2 text-[10px] font-semibold"
-              style={{ background: '#f5f5f7', color: 'var(--muted)' }}
-            >
-              <span className="font-bold" style={{ color: 'var(--ink)' }}>의뢰</span>
-              <span>채팅</span><span>찾기</span><span>내정보</span>
-            </div>
-          </div>
-        </div>
+        {/* 스크린 — 영상 자리 보존 */}
+        <div className="w-full h-full flex items-center justify-center" style={{ borderRadius: 32, background: '#0c0c0e' }} />
       </div>
-    </div>
-  )
-}
-
-function PhoneCard({ badge, badgeActive, time, title, loc, hunter }) {
-  return (
-    <div
-      className="flex flex-col gap-1.5 rounded-2xl p-3 border"
-      style={{ borderColor: badgeActive ? 'var(--ink)' : 'var(--hair-2)', background: '#fff' }}
-    >
-      <div className="flex justify-between items-center">
-        <span
-          className="text-[10px] font-bold px-2 py-0.5 rounded-md"
-          style={badgeActive
-            ? { background: 'var(--ink)', color: '#fff' }
-            : { background: '#f5f5f7', color: 'var(--ink-2)' }}
-        >{badge}</span>
-        <span className="text-[10px]" style={{ color: 'var(--muted)' }}>{time}</span>
-      </div>
-      <div className="text-[12px] font-bold leading-snug tracking-tight">{title}</div>
-      <div className="text-[10px]" style={{ color: 'var(--muted)' }}>{loc}</div>
-      {hunter && (
-        <div className="flex items-center gap-2 mt-1 pt-2" style={{ borderTop: '1px solid var(--hair-2)' }}>
-          <div className="w-6 h-6 rounded-full flex items-center justify-center text-[9px] font-bold text-white flex-shrink-0" style={{ background: 'var(--brand)' }}>KH</div>
-          <div className="flex flex-col flex-1 min-w-0">
-            <span className="text-[10px] font-bold leading-tight tracking-tight">{hunter.name}</span>
-            <span className="text-[9px]" style={{ color: 'var(--muted)' }}>{hunter.rating}</span>
-          </div>
-          <button className="text-[10px] font-semibold text-white px-2.5 py-1 rounded-full flex-shrink-0" style={{ background: 'var(--ink)' }}>채팅</button>
-        </div>
-      )}
     </div>
   )
 }
