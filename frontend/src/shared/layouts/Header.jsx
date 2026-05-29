@@ -5,7 +5,7 @@ import { logout } from '../api/authApi'
 const NAV_LINKS = [
   { label: '서비스 소개', href: '/service-intro', external: true },
   { label: '헌터 찾기', href: '/hunter', external: true },
-  { label: '의뢰글', href: '/requestView/list', external: true },
+  { label: '의뢰 게시판', href: '/requestView/list', external: true },
   { label: '모기지수', href: '/mosquito-map', external: false },
 ]
 
