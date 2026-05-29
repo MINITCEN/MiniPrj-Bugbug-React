@@ -8,3 +8,12 @@ export const login = (email, password) =>
 
 export const logout = () =>
   axiosInstance.post('/auth/logout')
+
+export const signup = (data) =>
+  axiosInstance.post('/users/signup', data).then((res) => res.data)
+
+export const checkEmail = (email) =>
+  axiosInstance.get('/users/check-email', { params: { email } }).then((res) => res.data)
+
+export const checkNickname = (nickname) =>
+  axiosInstance.get('/users/check-nickname', { params: { nickname } }).then((res) => res.data)
