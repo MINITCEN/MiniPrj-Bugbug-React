@@ -3,6 +3,7 @@ import Layout from '../../shared/layouts/Layout'
 import MainPage from '../../pages/main/MainPage'
 import LoginPage from '../../pages/auth/LoginPage'
 import SignupPage from '../../pages/auth/SignupPage'
+import RequestListPage from '../../pages/request/RequestListPage'
 import ComingSoonPage from '../../pages/common/ComingSoonPage'
 import ServiceIntroPage from '../../pages/service-intro/ServiceIntroPage'
 
@@ -14,7 +15,7 @@ const router = createBrowserRouter([
       { path: '/service-intro', element: <ServiceIntroPage /> },
       { path: '/mosquito-map', element: <ComingSoonPage /> },
       { path: '/hunter', element: <ComingSoonPage /> },
-      { path: '/requestView/list', element: <ComingSoonPage /> },
+      { path: '/requestView/list', element: <RequestListPage /> },
       { path: '/requestForm', element: <ComingSoonPage /> },
       { path: '/login', element: <LoginPage /> },
       { path: '/signup', element: <SignupPage /> },
