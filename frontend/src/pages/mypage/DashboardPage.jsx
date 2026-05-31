@@ -11,9 +11,11 @@
  *      - HUNTER: 리뷰 요약 + 최근 활동 + 찜한 의뢰
  *   4. MoreServicesSection   — 기타 서비스 바로가기 (공용)
  *
- * 모달 트리거(개인정보 변경 / 헌터 자격 해제)는 일단 stub.
- * 실제 모달 컴포넌트는 7단계에서 작성하여 여기와 연결됩니다.
+ * 모달:
+ *   - ProfileModal: 개인정보 변경 (공용)
+ *   - HunterResignConfirmModal: 헌터 자격 해제 확인 (HUNTER만)
  */
+import { useState } from 'react'
 import useAuthStore from '../../features/auth/store/useAuthStore'
 
 import MyInfoSection from '../../features/mypage/components/dashboard/MyInfoSection'
@@ -23,27 +25,26 @@ import HunterActivitySection from '../../features/mypage/components/dashboard/Hu
 import HunterSavedRequestsSection from '../../features/mypage/components/dashboard/HunterSavedRequestsSection'
 import MoreServicesSection from '../../features/mypage/components/dashboard/MoreServicesSection'
 
+import ProfileModal from '../../features/mypage/components/modals/ProfileModal'
+import HunterResignConfirmModal from '../../features/mypage/components/modals/HunterResignConfirmModal'
+
 export default function DashboardPage() {
   const { user } = useAuthStore()
   const isHunter = user?.role === 'HUNTER'
 
-  // === 7단계에서 실제 모달과 연결될 stub 핸들러들 ===
-  const handleOpenProfileModal = () => {
-    // TODO(7단계): ProfileModal 열기
-    alert('개인정보 변경 모달은 다음 단계에서 구현됩니다.')
-  }
-  const handleResignHunter = () => {
-    // TODO(7단계): 확인 모달 + useResignHunter mutation
-    alert('헌터 자격 해제는 다음 단계에서 구현됩니다.')
-  }
+  // 모달 열림 상태
+  const [profileOpen, setProfileOpen] = useState(false)
+  const [resignOpen, setResignOpen] = useState(false)
 
   return (
     <div className="flex flex-col gap-6">
       {/* 1. 내 정보 (항상 표시) */}
-      <MyInfoSection onOpenProfileModal={handleOpenProfileModal} />
+      <MyInfoSection onOpenProfileModal={() => setProfileOpen(true)} />
 
       {/* 2. 헌터 공개 정보 (HUNTER만) */}
-      {isHunter && <HunterPublicSection onResignHunter={handleResignHunter} />}
+      {isHunter && (
+        <HunterPublicSection onResignHunter={() => setResignOpen(true)} />
+      )}
 
       {/* 3. 활동 요약 (role별 분기) */}
       {!isHunter ? (
@@ -71,6 +72,18 @@ export default function DashboardPage() {
           개인정보 처리방침 보기
         </button>
       </div>
+
+      {/* 모달들 */}
+      <ProfileModal
+        open={profileOpen}
+        onClose={() => setProfileOpen(false)}
+      />
+      {isHunter && (
+        <HunterResignConfirmModal
+          open={resignOpen}
+          onClose={() => setResignOpen(false)}
+        />
+      )}
     </div>
   )
 }
