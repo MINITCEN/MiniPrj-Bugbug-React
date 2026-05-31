@@ -94,7 +94,6 @@ public class SecurityConfig {
                                 "/requestView/list",
                                 "/api/main/stats",
                                 "/api/request/wholeList",
-                                "/api/request/detail/**",
                                 "/api/hunters",
                                 "/api/hunters/*/profile",
                                 "/api/hunters/*/reviews",
