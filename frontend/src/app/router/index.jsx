@@ -15,9 +15,9 @@ import RequireRole from '../../shared/components/auth/RequireRole'
 // 마이페이지
 import MyPageLayout from '../../pages/mypage/MyPageLayout'
 import DashboardPage from '../../pages/mypage/DashboardPage'
-import RequestListPage from '../../pages/mypage/RequestListPage'
-import ReviewListPage from '../../pages/mypage/ReviewListPage'
-import BookmarkListPage from '../../pages/mypage/BookmarkListPage'
+import MyRequestListPage from '../../pages/mypage/RequestListPage'
+import MyReviewListPage from '../../pages/mypage/ReviewListPage'
+import MyBookmarkListPage from '../../pages/mypage/BookmarkListPage'
 import HunterTaskListPage from '../../pages/mypage/HunterTaskListPage'
 import HunterBookmarkListPage from '../../pages/mypage/HunterBookmarkListPage'
 
@@ -72,7 +72,7 @@ const router = createBrowserRouter([
             path: 'reviews',
             element: (
               <RequireRole role={['USER', 'HUNTER']}>
-                <ReviewListPage />
+                <MyReviewListPage />
               </RequireRole>
             ),
           },
@@ -82,7 +82,7 @@ const router = createBrowserRouter([
             path: 'requests',
             element: (
               <RequireRole role="USER">
-                <RequestListPage />
+                <MyRequestListPage />
               </RequireRole>
             ),
           },
@@ -90,7 +90,7 @@ const router = createBrowserRouter([
             path: 'bookmarks/hunters',
             element: (
               <RequireRole role="USER">
-                <BookmarkListPage />
+                <MyBookmarkListPage />
               </RequireRole>
             ),
           },
