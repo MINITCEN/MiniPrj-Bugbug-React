@@ -1,5 +1,8 @@
+import { useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
 import useAuthStore from '../../features/auth/store/useAuthStore'
+import HunterApplyModal from '../../features/mypage/components/modals/HunterApplyModal'
+import HunterGradeInfoModal from '../../features/mypage/components/modals/HunterGradeInfoModal'
 
 /**
  * 마이페이지 공통 레이아웃.
@@ -15,14 +18,19 @@ import useAuthStore from '../../features/auth/store/useAuthStore'
  *   │ (Footer)                                │
  *   └─────────────────────────────────────────┘
  *
+ * 모달:
+ *  - HunterApplyModal: USER만 (사이드바 CTA에서 호출)
+ *  - HunterGradeInfoModal: 공용 (사이드바 "헌터 등급 제도" 버튼에서 호출)
+ *
  * 사이드바 메뉴는 role(USER / HUNTER)에 따라 달라집니다.
- * - USER: 나의 의뢰 / 나의 리뷰 / 찜한 헌터 + "헌터 등록하기" CTA
- * - HUNTER: 수행 의뢰 / 찜한 의뢰 + "헌터 자격 해제" 버튼
- * - 공통: 내 정보 / 헌터 등급 제도
  */
 export default function MyPageLayout() {
   const { user } = useAuthStore()
   const isHunter = user?.role === 'HUNTER'
+
+  // 모달 열림 상태 (사이드바에서 직접 트리거하는 두 모달)
+  const [applyOpen, setApplyOpen] = useState(false)
+  const [gradeOpen, setGradeOpen] = useState(false)
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
@@ -52,6 +60,18 @@ export default function MyPageLayout() {
                 <SideLink to="/mypage/hunter/bookmarks/requests" mark="S" label="찜한 의뢰" />
               </>
             )}
+
+            {/* 공통: 헌터 등급 제도 안내 (모달) */}
+            <button
+              type="button"
+              onClick={() => setGradeOpen(true)}
+              className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-600 hover:bg-gray-50 transition-colors text-left"
+            >
+              <span className="inline-flex items-center justify-center w-5 h-5 text-[10px] font-bold rounded bg-gray-100">
+                G
+              </span>
+              헌터 등급 제도
+            </button>
           </nav>
 
           {/* USER 전용: 헌터 등록 CTA */}
@@ -63,9 +83,9 @@ export default function MyPageLayout() {
               <p className="mt-1 text-xs text-gray-600 leading-relaxed">
                 헌터로 등록하면 의뢰를 확인하고 보상을 받을 수 있어요.
               </p>
-              {/* 모달 트리거는 추후 단계에서 연결 */}
               <button
                 type="button"
+                onClick={() => setApplyOpen(true)}
                 className="mt-3 w-full px-3 py-2 text-xs font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors"
               >
                 헌터 등록하기
@@ -79,6 +99,10 @@ export default function MyPageLayout() {
           <Outlet />
         </section>
       </div>
+
+      {/* 사이드바에서 호출하는 모달들 */}
+      <HunterApplyModal open={applyOpen} onClose={() => setApplyOpen(false)} />
+      <HunterGradeInfoModal open={gradeOpen} onClose={() => setGradeOpen(false)} />
     </div>
   )
 }
