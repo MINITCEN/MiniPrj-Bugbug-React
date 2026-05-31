@@ -1,12 +1,12 @@
-import { NavLink } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import useAuthStore from '../../features/auth/store/useAuthStore'
 import { logout } from '../api/authApi'
 
 const NAV_LINKS = [
-  { label: '서비스 소개', href: '/service-intro', external: true },
-  { label: '헌터 찾기', href: '/hunter', external: true },
-  { label: '의뢰글', href: '/requestView/list', external: true },
-  { label: '모기지수', href: '/mosquito-map', external: false },
+  { label: '서비스 소개', to: '/service-intro' },
+  { label: '헌터 찾기', to: '/hunter' },
+  { label: '의뢰 게시판', to: '/requestView/list' },
+  { label: '모기지수', to: '/mosquito-map' },
 ]
 
 export default function Header() {
@@ -15,82 +15,86 @@ export default function Header() {
   const handleLogout = async () => {
     await logout()
     clearUser()
+    window.location.href = '/'
   }
 
   return (
-    <header className="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm">
-      <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
+    <header
+      className="sticky top-0 z-50"
+      style={{
+        borderBottom: '1px solid var(--hair-2)',
+        background: 'rgba(251,250,246,.75)',
+        backdropFilter: 'saturate(180%) blur(20px)',
+        WebkitBackdropFilter: 'saturate(180%) blur(20px)',
+      }}
+    >
+      <div className="max-w-screen-xl mx-auto px-20 h-16 flex items-center gap-14">
 
         {/* 로고 */}
-        <a href="/" className="flex items-center gap-2">
-          <img src="/image/favicon.svg" alt="버그버그 로고" className="w-8 h-8 rounded-lg" />
-          <span className="font-bold text-lg text-gray-900">버그버그</span>
-        </a>
+        <Link to="/" className="flex items-center gap-2.5 flex-shrink-0">
+          <img src="/image/favicon.svg" alt="버그버그 로고" className="w-7 h-7 rounded-lg" />
+          <span className="font-bold text-lg tracking-tight" style={{ color: 'var(--ink)', letterSpacing: '-0.03em' }}>버그버그</span>
+        </Link>
 
         {/* 네비게이션 */}
-        <nav className="hidden md:flex items-center gap-6">
-          {NAV_LINKS.map(({ label, href, external }) =>
-            external ? (
-              <a
-                key={href}
-                href={href}
-                className="text-sm text-gray-600 hover:text-green-600 transition-colors"
-              >
-                {label}
-              </a>
-            ) : (
-              <NavLink
-                key={href}
-                to={href}
-                className={({ isActive }) =>
-                  `text-sm transition-colors ${isActive ? 'text-green-600 font-semibold' : 'text-gray-600 hover:text-green-600'}`
-                }
-              >
-                {label}
-              </NavLink>
-            )
-          )}
+        <nav className="hidden md:flex items-center gap-10 flex-1 justify-center">
+          {NAV_LINKS.map(({ label, to }) => (
+            <NavLink
+              key={to}
+              to={to}
+              className={({ isActive }) =>
+                `text-[15px] font-medium transition-colors ${isActive ? 'text-gray-900' : ''}`
+              }
+              style={({ isActive }) => ({ color: isActive ? 'var(--ink)' : 'var(--ink-2)' })}
+            >
+              {label}
+            </NavLink>
+          ))}
           {user?.role === 'ADMIN' && (
-            <a
-              href="/admin/users"
-              className="text-sm text-green-600 font-semibold hover:underline"
+            <NavLink
+              to="/admin/users"
+              className="text-[15px] font-semibold transition-colors"
+              style={({ isActive }) => ({ color: isActive ? '#1a7a55' : 'var(--brand-2)' })}
             >
               관리자 대시보드
-            </a>
+            </NavLink>
           )}
         </nav>
 
         {/* 인증 영역 */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4 flex-shrink-0 ml-auto">
           {isLoggedIn ? (
             <>
               {(user?.role === 'USER' || user?.role === 'HUNTER') && (
-                <a href="/mypage" className="w-9 h-9 rounded-full overflow-hidden border border-gray-200">
-                  <img src="/image/mypage_logo.png" alt="마이페이지" className="w-full h-full object-cover" />
-                </a>
+                <Link to="/mypage" className="w-9 h-9 rounded-full overflow-hidden border" style={{ borderColor: 'var(--hair-2)' }}>
+                  <img src="/image/mypage_logo.png" alt={user?.nickname} className="w-full h-full object-cover" />
+                </Link>
               )}
-              <span className="text-sm text-gray-700 font-medium">{user?.nickname}</span>
+              <span className="text-sm font-medium" style={{ color: 'var(--ink)' }}>{user?.nickname}</span>
               <button
                 onClick={handleLogout}
-                className="text-sm px-3 py-1.5 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+                className="text-sm font-medium px-4 py-1.5 border rounded-full transition-colors hover:bg-gray-50"
+                style={{ borderColor: 'var(--hair)', color: 'var(--ink-2)' }}
               >
                 로그아웃
               </button>
             </>
           ) : (
             <>
-              <a
-                href="/login"
-                className="text-sm px-3 py-1.5 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors"
+              <Link
+                to="/login"
+                className="text-sm font-medium transition-colors"
+                style={{ color: 'var(--ink-2)' }}
               >
                 로그인
-              </a>
-              <a
-                href="/signup"
-                className="text-sm px-3 py-1.5 bg-gray-900 rounded-lg text-white hover:bg-gray-800 transition-colors"
+              </Link>
+              <Link
+                to="/signup"
+                className="text-sm font-semibold text-white px-[18px] py-2 transition-opacity hover:opacity-90"
+                style={{ background: 'var(--ink)', borderRadius: '999px' }}
               >
                 회원가입
-              </a>
+              </Link>
             </>
           )}
         </div>

@@ -1,8 +1,10 @@
 package com.bug.catcher.domain.map.controller;
 
 import com.bug.catcher.domain.map.dto.MosquitoRegionSummaryResponse;
+import com.bug.catcher.domain.map.dto.MosquitoResponse;
 import com.bug.catcher.domain.map.service.MosquitoMapQueryService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +19,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class MosquitoIndexController {
 
   private final MosquitoMapQueryService mosquitoMapQueryService;
+
+  @GetMapping("/top")
+  public ResponseEntity<List<MosquitoResponse>> getTop7() {
+    return ResponseEntity.ok(mosquitoMapQueryService.getTop7());
+  }
 
   @GetMapping("/summary/{regionId}")
   public ResponseEntity<MosquitoRegionSummaryResponse> getRegionSummary(@PathVariable Long regionId) {
