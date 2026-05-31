@@ -5,6 +5,7 @@ import LoginPage from '../../pages/auth/LoginPage'
 import SignupPage from '../../pages/auth/SignupPage'
 import RequestListPage from '../../pages/request/RequestListPage'
 import RequestCreatePage from '../../pages/request/RequestCreatePage'
+import RequestDetailPage from '../../pages/request/RequestDetailPage'
 import ComingSoonPage from '../../pages/common/ComingSoonPage'
 import ServiceIntroPage from '../../pages/service-intro/ServiceIntroPage'
 
@@ -119,6 +120,15 @@ const router = createBrowserRouter([
       { path: '/hunter', element: <ComingSoonPage /> },
       { path: '/requestView/list', element: <RequestListPage /> },
       { path: '/requestView/new', element: <RequestCreatePage /> },
+      {
+        // 미로그인 사용자 접근 시 로그인 페이지로 리다이렉트
+        path: '/requestView/detail/:requestId',
+        element: (
+          <RequireAuth>
+            <RequestDetailPage />
+          </RequireAuth>
+        ),
+      },
       { path: '/login', element: <LoginPage /> },
       { path: '/signup', element: <SignupPage /> },
       { path: '/mypage/*', element: <ComingSoonPage /> },
