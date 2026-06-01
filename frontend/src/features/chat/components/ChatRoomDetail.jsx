@@ -82,7 +82,7 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
   }, [messages])
 
   // 웹소켓 메시지 수신 연동
-  const { sendMessage } = useChatSocket(roomId, (newMessage) => {
+  const { isConnected, sendMessage } = useChatSocket(roomId, (newMessage) => {
     setMessages((prev) => [...prev, newMessage])
   })
 
@@ -157,13 +157,23 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
         </span>
         <div className="flex flex-col items-center justify-center gap-0.5">
           <span className="text-[13.5px] font-black tracking-wide">{otherNickname}</span>
-          <span className="text-[9px] text-[#2E8C68] font-bold bg-[#E8F8F5] px-1.5 py-0.2 rounded-full flex items-center gap-0.8 scale-95 shadow-sm">
-            <span className="relative flex h-1.5 w-1.5 mr-0.5">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2E8C68] opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#2E8C68]"></span>
+          {isConnected ? (
+            <span className="text-[9px] text-[#2E8C68] font-bold bg-[#E8F8F5] px-1.5 py-0.2 rounded-full flex items-center gap-0.8 scale-95 shadow-sm">
+              <span className="relative flex h-1.5 w-1.5 mr-0.5">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2E8C68] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#2E8C68]"></span>
+              </span>
+              실시간 연결 완료
             </span>
-            보통 수분 내 응답
-          </span>
+          ) : (
+            <span className="text-[9px] text-gray-500 font-bold bg-gray-100 px-1.5 py-0.2 rounded-full flex items-center gap-0.8 scale-95 shadow-sm">
+              <span className="relative flex h-1.5 w-1.5 mr-0.5">
+                <span className="animate-pulse absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-gray-400"></span>
+              </span>
+              연결 조율 중...
+            </span>
+          )}
         </div>
         <span onClick={onClose} className="cursor-pointer text-white/80 hover:text-white transition-colors">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -199,8 +209,8 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
       </div>
 
       {/* 메시지 리스트 영역 */}
-      {/* ⚠️ 과거 정독 시 스크롤 고정용 scrollContainerRef 바인딩 */}
-      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-3 flex flex-col gap-3">
+      {/* ⚠️ 과거 정독 시 스크롤 고정용 scrollContainerRef 바인딩. 시원한 가시성을 위해 간격을 gap-4로 확장! */}
+      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4.5 flex flex-col gap-4.5">
         {isLoading && (
           <div className="text-center text-xs text-gray-600">
             이전 대화 내용을 불러오는 중...
@@ -228,15 +238,15 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
                 className={`flex flex-col max-w-[85%] ${isMine ? 'self-end items-end' : 'self-start items-start'}`}
               >
                 {!isMine && (
-                  <div className="text-[11px] text-gray-500 mb-1 pl-1 font-medium">
+                  <div className="text-[11.5px] text-gray-600 mb-1.5 pl-1.5 font-bold select-none">
                     {msg.senderNickname}
                   </div>
                 )}
-                <div className={`flex items-end gap-1.5 ${isMine ? 'flex-row-reverse' : 'flex-row'}`}>
+                <div className={`flex items-end gap-2 ${isMine ? 'flex-row-reverse' : 'flex-row'}`}>
                   {/* 말풍선 본체 */}
-                  {/* ⚠️ 럭셔리 에메랄드 그라데이션 & 웜코튼 소프트 섀도우 버블 */}
+                  {/* ⚠️ 가시성 100% 최적화: 텍스트를 시원한 14px로 키우고 패딩도 넉넉하게 px-4.5 py-2.5로 튠업! */}
                   <div
-                    className={`px-3.8 py-2.2 text-[13px] leading-relaxed break-words shadow-[0_2px_8px_rgba(29,58,46,0.04)] font-medium ${
+                    className={`px-4.5 py-2.5 text-[14px] leading-relaxed break-words shadow-[0_2px_10px_rgba(29,58,46,0.04)] font-medium ${
                       isMine
                         ? 'bg-gradient-to-br from-[#2E8C68] to-[#1D3A2E] text-white rounded-2xl rounded-tr-sm'
                         : 'bg-white text-gray-800 rounded-2xl rounded-tl-sm border border-[#E8E7E3]/85'
@@ -256,7 +266,7 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
 
                   {/* 전송 시간 라벨 */}
                   {msg.createdAt && (
-                    <span className="text-[10px] text-gray-600 select-none whitespace-nowrap mb-0.5">
+                    <span className="text-[10px] text-gray-400 font-semibold select-none whitespace-nowrap mb-0.5">
                       {formatMessageTime(msg.createdAt)}
                     </span>
                   )}
