@@ -45,7 +45,7 @@ export default function HunterListPage() {
   })
 
   const { hunters, totalPages } = useMemo(() => {
-    const all = data?.content ?? (Array.isArray(data) ? data : [])
+    const all = (data?.content ?? (Array.isArray(data) ? data : [])).map((h) => ({ ...h, grade: h.grade ?? '루키' }))
     const filtered = grade ? all.filter((h) => h.grade === grade) : all
     const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
     const hunters = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
