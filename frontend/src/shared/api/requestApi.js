@@ -15,3 +15,9 @@ export const fetchRequestDetail = (requestId) =>
 
 export const deleteRequest = (requestId) =>
   axiosInstance.delete(`/request/remove/${requestId}`).then((res) => res.data)
+
+export const fetchSavedRequest = (requestId) =>
+  axiosInstance.get(`/hunters/requests/${requestId}/bookmarks`).then((res) => res.data)
+
+export const toggleSavedRequest = (requestId) =>
+  axiosInstance.post(`/hunters/requests/${requestId}/bookmarks`).then((res) => res.data)
