@@ -116,17 +116,27 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
       </div>
 
       {/* 예약 현황 상태 바 */}
-      <div className="flex justify-between items-center bg-white px-4 py-2 border-b border-gray-200 text-xs text-gray-600 select-none">
-        <span>
-          {reservedAt ? '📌 매칭 상태: 예약 완료' : '📌 매칭 상태: 대기 중'}
-        </span>
+      {/* ⚠️ 투박한 텍스트 걷어내고 카카오톡에 어울리는 산뜻한 프리미엄 라운드 배지 태그 디자인으로 전면 개편 */}
+      <div className="flex justify-between items-center bg-white px-4 py-2.5 border-b border-gray-200 text-xs select-none">
+        <div className="flex items-center gap-1.5 font-medium text-gray-700">
+          <span className="text-gray-400">매칭 상태</span>
+          {reservedAt ? (
+            <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded-full text-[11px] font-bold">
+              ✔️ 예약 완료
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 bg-gray-100 text-gray-600 border border-gray-200/60 px-2 py-0.5 rounded-full text-[11px] font-bold animate-pulse">
+              ⏳ 대기 중
+            </span>
+          )}
+        </div>
         {!reservedAt && role === 'USER' && (
           <button
             onClick={handleReservationClick}
             disabled={reservationMutation.isPending}
-            className="bg-[#4e73df] text-white rounded px-3 py-1 font-bold cursor-pointer transition-colors hover:bg-blue-700 disabled:opacity-50 border-none"
+            className="bg-[#4e73df] hover:bg-[#3b59b6] text-white rounded-full px-3.5 py-1 text-[11px] font-extrabold cursor-pointer transition-all duration-200 shadow-sm hover:shadow active:scale-95 disabled:opacity-50 border-none"
           >
-            예약 완료하기
+            예약 확정하기
           </button>
         )}
       </div>
