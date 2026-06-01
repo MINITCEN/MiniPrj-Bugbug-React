@@ -19,6 +19,7 @@ import {
 } from '../api/mypageApi'
 import { mypageKeys } from '../api/queryKeys'
 import useAuthStore from '../../auth/store/useAuthStore'
+import { toggleSavedRequest } from '../../../shared/api/requestApi'
 
 /* ───────────── 공용 ───────────── */
 
@@ -122,6 +123,26 @@ export const useToggleSavedHunter = () => {
       qc.invalidateQueries({ queryKey: ['mypage', 'bookmarks', 'hunters'] })
       // 헌터 상세나 목록 페이지에서도 찜 상태 표시 가능성이 있어 함께 갱신
       qc.invalidateQueries({ queryKey: ['hunters'] })
+    },
+  })
+}
+/**
+ * 의뢰 찜 토글 (찜하기 / 찜 해제 둘 다).
+ * HunterBookmarkListPage에서 찜 해제로 호출.
+ *
+ * 무효화 대상:
+ *  - mypage/hunter/bookmarks/requests : 찜한 의뢰 목록
+ *  - savedRequest                     : RequestDetailPage의 찜 상태 (하트 아이콘)
+ *  - requestList                      : 의뢰 목록의 찜 표시 가능성
+ */
+export const useToggleSavedRequest = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: toggleSavedRequest,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['mypage', 'hunter', 'bookmarks', 'requests'] })
+      qc.invalidateQueries({ queryKey: ['savedRequest'] })
+      qc.invalidateQueries({ queryKey: ['requestList'] })
     },
   })
 }
