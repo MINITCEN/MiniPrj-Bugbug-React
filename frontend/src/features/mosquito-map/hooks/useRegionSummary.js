@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { fetchMosquitoSummary } from '../../../shared/api/mosquitoApi'
+import { fetchMosquitoSummary } from '../api/mosquitoApi'
 
 export default function useRegionSummary(regionId) {
   return useQuery({

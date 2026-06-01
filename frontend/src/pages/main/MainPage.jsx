@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { Link, useNavigate } from 'react-router-dom'
 import useAuthStore from '../../features/auth/store/useAuthStore'
 import { fetchMainStats } from '../../shared/api/mainApi'
-import { fetchTopMosquito } from '../../shared/api/mosquitoApi'
+import { fetchTopMosquito } from '../../features/mosquito-map/api/mosquitoApi'
 
 export default function MainPage() {
   const { isLoggedIn } = useAuthStore()
