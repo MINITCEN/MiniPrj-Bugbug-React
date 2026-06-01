@@ -93,6 +93,10 @@ function DetailMap({ location }) {
           center: fallbackCenter,
           level: 4,
         })
+
+         map.setDraggable(false)
+         map.setZoomable(false)
+
         const geocoder = new kakao.maps.services.Geocoder()
 
         geocoder.addressSearch(location, (result, status) => {
@@ -261,7 +265,6 @@ export default function RequestDetailPage() {
 
             {(imageUrls.length > 0 || request.videoUrl) && (
               <div>
-                <h2 className="mb-3 text-base font-bold text-gray-900">첨부 파일</h2>
                 <div className="flex flex-col gap-4">
                   {imageUrls.length > 0 && (
                     <div className="flex flex-wrap gap-3">
@@ -287,7 +290,6 @@ export default function RequestDetailPage() {
 
             <section className="overflow-hidden rounded-md border border-gray-200">
               <InfoItem label="대략적인 위치" value={request.approxLocation} />
-              <InfoItem label="상세 위치" value={request.exactLocation || '헌터와 논의 필요'} />
               <InfoItem label="발생 시간" value={formatDateTime(request.occurrenceTime)} />
               <InfoItem label="추가 정보" value={request.description} />
             </section>
@@ -359,7 +361,7 @@ export default function RequestDetailPage() {
           </div>
         </section>
 
-        <aside className="space-y-4">
+        <aside className="space-y-4 lg:sticky lg:top-24 self-start">
           <section className="rounded-md border border-gray-200 bg-white p-5 shadow-sm">
             <h2 className="mb-3 text-base font-bold text-gray-900">대략적인 위치</h2>
             <DetailMap location={mapLocation} />
@@ -369,12 +371,6 @@ export default function RequestDetailPage() {
             </p>
           </section>
 
-          <section className="rounded-md border border-gray-200 bg-white p-5 shadow-sm">
-            <h2 className="mb-3 text-base font-bold text-gray-900">의뢰 정보</h2>
-            <div className="rounded-md bg-green-50 px-4 py-3 text-sm leading-6 text-green-900">
-              의뢰 상세 정보를 확인한 뒤 헌터 지원 여부를 결정할 수 있습니다.
-            </div>
-          </section>
         </aside>
         </div>
       </div>
