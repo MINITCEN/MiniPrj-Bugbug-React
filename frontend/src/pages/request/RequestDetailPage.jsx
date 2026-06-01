@@ -2,7 +2,12 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import useAuthStore from '../../features/auth/store/useAuthStore'
-import { deleteRequest, fetchRequestDetail } from '../../shared/api/requestApi'
+import {
+  deleteRequest,
+  fetchRequestDetail,
+  fetchSavedRequest,
+  toggleSavedRequest,
+} from '../../shared/api/requestApi'
 
 const KAKAO_MAP_SDK_ID = 'kakao-map-sdk'
 
@@ -152,6 +157,20 @@ export default function RequestDetailPage() {
 
   const isHunter = isLoggedIn && user?.role === 'HUNTER'
 
+  const { data: savedRequest } = useQuery({
+    queryKey: ['savedRequest', requestId],
+    queryFn: () => fetchSavedRequest(requestId),
+    enabled: Boolean(requestId) && isHunter,
+  })
+
+  const savedMutation = useMutation({
+    mutationFn: () => toggleSavedRequest(requestId),
+    onSuccess: (data) => {
+      queryClient.setQueryData(['savedRequest', requestId], data)
+      queryClient.invalidateQueries({ queryKey: ['mypage', 'hunter', 'bookmarks', 'requests'] })
+    },
+  })
+
   const handleDelete = () => {
     const confirmed = window.confirm('삭제된 게시물은 복구할 수 없습니다. 그래도 삭제하시겠습니까?')
     if (!confirmed || deleteMutation.isPending) return
@@ -186,6 +205,7 @@ export default function RequestDetailPage() {
 
   const imageUrls = request.imageUrls ?? []
   const mapLocation = request.approxLocation
+  const isSaved = Boolean(savedRequest?.bookmarked)
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -283,10 +303,15 @@ export default function RequestDetailPage() {
               <>
                 <button
                   type="button"
-                  onClick={() => alert('찜 기능은 준비 중입니다.')}
-                  className="inline-flex h-10 w-36 items-center justify-center rounded-md border border-red-300 bg-white px-4 text-sm font-semibold text-red-700 hover:bg-red-100"
+                  onClick={() => savedMutation.mutate()}
+                  disabled={savedMutation.isPending}
+                  className={`inline-flex h-10 w-36 items-center justify-center rounded-md border px-4 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60 ${
+                    isSaved
+                      ? 'border-red-400 bg-red-50 text-red-700 hover:bg-red-100'
+                      : 'border-red-300 bg-white text-red-700 hover:bg-red-100'
+                  }`}
                 >
-                  ♡ 찜하기
+                  {savedMutation.isPending ? '처리 중' : isSaved ? '♥ 찜 취소' : '♡ 찜하기'}
                 </button>
 
                 <button
@@ -321,6 +346,12 @@ export default function RequestDetailPage() {
           {deleteMutation.isError && (
             <p className="mt-4 text-right text-sm text-red-600">
               {deleteMutation.error?.response?.data?.message || '의뢰 삭제에 실패했습니다.'}
+            </p>
+          )}
+
+          {savedMutation.isError && (
+            <p className="mt-4 text-right text-sm text-red-600">
+              {savedMutation.error?.response?.data?.message || '찜 처리에 실패했습니다.'}
             </p>
           )}
         </section>
