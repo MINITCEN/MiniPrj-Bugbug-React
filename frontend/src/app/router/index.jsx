@@ -8,6 +8,8 @@ import RequestFormPage from '../../pages/request/RequestFormPage'
 import RequestDetailPage from '../../pages/request/RequestDetailPage'
 import ComingSoonPage from '../../pages/common/ComingSoonPage'
 import ServiceIntroPage from '../../pages/service-intro/ServiceIntroPage'
+import AdminUsersPage from '../../pages/admin/AdminUsersPage'
+import AdminApplicationsPage from '../../pages/admin/AdminApplicationsPage'
 import MosquitoMapPage from '../../pages/mosquito-map/MosquitoMapPage'
 
 // 가드
@@ -147,6 +149,8 @@ const router = createBrowserRouter([
       },
       { path: '/login', element: <LoginPage /> },
       { path: '/signup', element: <SignupPage /> },
+      { path: '/admin/users', element: <AdminUsersPage /> },
+      { path: '/admin/applications', element: <AdminApplicationsPage /> },
       { path: '/mypage/*', element: <ComingSoonPage /> },
       { path: '*', element: <ComingSoonPage /> },
     ],

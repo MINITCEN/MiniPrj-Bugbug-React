@@ -1,4 +1,6 @@
 .claude/
 CLAUDE.md
 backend/.env
+.antigravitycli/
+.idea
 backend/uploads/
