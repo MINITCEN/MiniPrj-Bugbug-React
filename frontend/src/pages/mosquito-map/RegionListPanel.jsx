@@ -28,7 +28,7 @@ export default function RegionListPanel({ regions, selectedRegionId, onSelect })
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="구 이름 입력"
+          placeholder="구 이름 입력 (ex. 강남구)"
           className="flex-1 bg-transparent outline-none text-sm"
           style={{ color: 'var(--ink)' }}
         />
