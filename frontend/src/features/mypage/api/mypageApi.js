@@ -85,3 +85,15 @@ export const fetchMyHunterProfile = () =>
 /** 내 헌터 리뷰 요약 (별점별 카운트 Map<Integer, Long>) */
 export const fetchMyHunterReviewSummary = () =>
   axiosInstance.get('/mypage/hunter/review-summary').then((res) => res.data)
+
+/* ───────────── 찜 토글 (마이페이지에서 사용하지만 URL은 /api/hunters/**) ───────────── */
+ 
+/**
+ * 헌터 찜 토글.
+ * 백엔드: POST /api/hunters/{hunterId}/bookmarks
+ * 같은 엔드포인트가 찜하기/찜 해제 모두 처리 (토글 방식).
+ *
+ * BookmarkListPage에서는 "찜 해제" 액션으로 호출됨.
+ */
+export const toggleSavedHunter = (hunterId) =>
+  axiosInstance.post(`/hunters/${hunterId}/bookmarks`).then((res) => res.data)

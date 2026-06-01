@@ -1,18 +1,89 @@
 /**
- * 찜한 헌터 (USER)
+ * 찜한 헌터 목록 페이지.
  * 경로: /mypage/bookmarks/hunters
- *
- * TODO: 다음 단계에서 실제 내용 작성 예정.
- *   - 데이터: features/mypage/hooks/queries.js 의 훅 사용
- *   - 변경: features/mypage/hooks/mutations.js 의 훅 사용
+ * 권한: USER 전용
  */
+import { useState } from 'react'
+import { useMySavedHunters } from '../../features/mypage/hooks/queries'
+import HunterBookmarkCard from '../../features/mypage/components/cards/HunterBookmarkCard'
+import Pagination from '../../features/mypage/components/Pagination'
+import EmptyState from '../../features/mypage/components/EmptyState'
+import BookmarkRemoveConfirmModal from '../../features/mypage/components/modals/BookmarkRemoveConfirmModal'
+
 export default function BookmarkListPage() {
+  const [page, setPage] = useState(0)
+  const { data, isLoading, isError } = useMySavedHunters(page)
+
+  // 어떤 헌터를 해제할지 모달에 전달하기 위해 함께 보관
+  const [removeTarget, setRemoveTarget] = useState(null)
+
+  const items = data?.content ?? []
+  const totalPages = data?.totalPages ?? 0
+
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold text-gray-900">찜한 헌터 (USER)</h1>
-      <p className="mt-2 text-sm text-gray-500">
-        이 페이지는 다음 단계에서 작성됩니다. (placeholder)
-      </p>
+    <div>
+      <header className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">찜한 헌터</h1>
+        <p className="mt-1 text-sm text-gray-500">
+          관심 있는 헌터를 찜해두고 의뢰 시 빠르게 확인하세요.
+        </p>
+      </header>
+
+      {isLoading ? (
+        <LoadingPlaceholder />
+      ) : isError ? (
+        <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-4 py-3">
+          찜한 헌터 목록을 불러오지 못했습니다.
+        </p>
+      ) : items.length === 0 ? (
+        <EmptyState
+          icon="🔖"
+          title="찜한 헌터가 없습니다"
+          description="헌터 목록에서 마음에 드는 헌터를 찜해보세요."
+          actionLabel="헌터 둘러보기"
+          actionHref="/hunter"
+        />
+      ) : (
+        <>
+          <div className="flex flex-col gap-3">
+            {items.map((hunter) => (
+              <HunterBookmarkCard
+                key={hunter.hunterId}
+                hunter={hunter}
+                onRemoveBookmark={(h) => setRemoveTarget(h)}
+              />
+            ))}
+          </div>
+
+          <Pagination page={page} totalPages={totalPages} onChange={setPage} />
+        </>
+      )}
+
+      {/* 찜 해제 확인 모달 */}
+      <BookmarkRemoveConfirmModal
+        open={!!removeTarget}
+        onClose={() => setRemoveTarget(null)}
+        hunter={removeTarget}
+      />
+    </div>
+  )
+}
+
+function LoadingPlaceholder() {
+  return (
+    <div className="flex flex-col gap-3">
+      {[1, 2, 3].map((i) => (
+        <div
+          key={i}
+          className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm animate-pulse flex items-center gap-4"
+        >
+          <div className="w-14 h-14 rounded-full bg-gray-100 shrink-0" />
+          <div className="flex-1">
+            <div className="h-5 bg-gray-100 rounded w-2/3 mb-2" />
+            <div className="h-3 bg-gray-100 rounded w-1/3" />
+          </div>
+        </div>
+      ))}
     </div>
   )
 }

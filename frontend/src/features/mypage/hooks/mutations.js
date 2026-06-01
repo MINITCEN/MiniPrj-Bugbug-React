@@ -105,3 +105,22 @@ export const useResignHunter = () => {
     },
   })
 }
+
+/* ───────────── 찜 토글 ───────────── */
+ 
+/**
+ * 헌터 찜 토글 (찜하기 / 찜 해제 둘 다).
+ * BookmarkListPage에서 찜 해제로 호출.
+ */
+export const useToggleSavedHunter = () => {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: toggleSavedHunter,
+    onSuccess: () => {
+      // 찜 목록 갱신
+      qc.invalidateQueries({ queryKey: ['mypage', 'bookmarks', 'hunters'] })
+      // 헌터 상세나 목록 페이지에서도 찜 상태 표시 가능성이 있어 함께 갱신
+      qc.invalidateQueries({ queryKey: ['hunters'] })
+    },
+  })
+}
