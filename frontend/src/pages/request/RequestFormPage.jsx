@@ -766,40 +766,46 @@ function RequestFormContent({ requestId, isEditMode, editForm }) {
                 </div>
               </label>
 
-              {/* 키워드 검색 결과 드롭다운 */}
-              {placeResults.length > 0 && (
-                <div style={{ borderRadius: 12, border: '1px solid var(--hair-2)', background: '#fff', overflow: 'hidden' }}>
-                  {placeResults.map((place) => (
-                    <button
-                      key={place.id}
-                      type="button"
-                      onClick={() => handleSelectPlace(place)}
-                      style={{ display: 'block', width: '100%', borderBottom: '1px solid var(--hair-2)', padding: '10px 16px', textAlign: 'left', background: 'none', cursor: 'pointer', transition: 'background .1s' }}
-                      onMouseEnter={e => { e.currentTarget.style.background = '#fafaf8' }}
-                      onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
-                    >
-                      <strong style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>{place.place_name}</strong>
-                      <span style={{ display: 'block', marginTop: 2, fontSize: 12, color: 'var(--ink-2)' }}>
-                        {place.road_address_name || place.address_name || '주소 정보 없음'}
-                      </span>
-                    </button>
-                  ))}
-                </div>
-              )}
-
-              {/* 지도 */}
-              <div className="flex flex-col gap-1.5">
+              {/* 지도 + 드롭다운 (드롭다운이 지도 위에 overlay) */}
+              <div style={{ position: 'relative' }}>
                 <div
                   ref={mapContainerRef}
                   style={{ height: 280, borderRadius: 12, border: '1px solid var(--hair-2)', background: '#f5f5f0', overflow: 'hidden' }}
                 />
-                <p style={{ fontSize: 12, color: 'var(--ink-2)', margin: 0 }}>
+
+                {/* 키워드 검색 결과 드롭다운 — 지도 위에 absolute */}
+                {placeResults.length > 0 && (
+                  <div style={{
+                    position: 'absolute', top: 10, left: 10, right: 10, zIndex: 10,
+                    borderRadius: 12, border: '1px solid var(--hair-2)', background: '#fff',
+                    overflow: 'hidden',
+                    boxShadow: '0 8px 24px -8px rgba(29,58,46,.18)',
+                  }}>
+                    {placeResults.map((place) => (
+                      <button
+                        key={place.id}
+                        type="button"
+                        onClick={() => handleSelectPlace(place)}
+                        style={{ display: 'block', width: '100%', borderBottom: '1px solid var(--hair-2)', padding: '11px 16px', textAlign: 'left', background: 'none', cursor: 'pointer', transition: 'background .1s' }}
+                        onMouseEnter={e => { e.currentTarget.style.background = '#fafaf8' }}
+                        onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
+                      >
+                        <strong style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>{place.place_name}</strong>
+                        <span style={{ display: 'block', marginTop: 2, fontSize: 12, color: 'var(--ink-2)' }}>
+                          {place.road_address_name || place.address_name || '주소 정보 없음'}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                <p style={{ fontSize: 12, color: 'var(--ink-2)', margin: '6px 0 0' }}>
                   {selectedLocation
                     ? `선택 위치: ${selectedLocation.address}`
                     : '위치를 검색하면 지도에 핀이 표시됩니다.'}
                 </p>
                 {mapError && (
-                  <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--accent)', margin: 0 }}>{mapError}</p>
+                  <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--accent)', margin: '4px 0 0' }}>{mapError}</p>
                 )}
               </div>
 
