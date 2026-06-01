@@ -46,15 +46,17 @@ export default function MosquitoMapPage() {
           </p>
         </header>
 
-        <div className="grid gap-5" style={{ gridTemplateColumns: '280px 1fr 340px' }}>
+        <div className="grid gap-5 items-stretch" style={{ gridTemplateColumns: '280px 1fr 340px' }}>
           {/* 사이드바 */}
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-5 h-full">
             <RegionListPanel
               regions={regions}
               selectedRegionId={selectedRegionId}
               onSelect={setSelectedRegionId}
             />
-            <LegendPanel />
+            <div className="flex-1 flex flex-col">
+              <LegendPanel />
+            </div>
           </div>
 
           {/* 지도 */}

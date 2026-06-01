@@ -22,7 +22,7 @@ export default function RegionDetailPanel({ summary, isLoading }) {
   if (isLoading) {
     return (
       <aside
-        className="p-6"
+        className="p-6 h-full"
         style={{ background: '#fff', borderRadius: 18, border: '1px solid var(--hair-2)' }}
       >
         <p className="text-sm" style={{ color: 'var(--muted)' }}>불러오는 중...</p>
@@ -33,7 +33,7 @@ export default function RegionDetailPanel({ summary, isLoading }) {
   if (!summary) {
     return (
       <aside
-        className="p-6"
+        className="p-6 h-full"
         style={{ background: '#fff', borderRadius: 18, border: '1px solid var(--hair-2)' }}
       >
         <p className="text-sm" style={{ color: 'var(--muted)' }}>지역을 선택해주세요.</p>
@@ -46,7 +46,7 @@ export default function RegionDetailPanel({ summary, isLoading }) {
 
   return (
     <aside
-      className="p-6 flex flex-col gap-6"
+      className="p-6 flex flex-col gap-6 h-full"
       style={{ background: '#fff', borderRadius: 18, border: '1px solid var(--hair-2)' }}
     >
       {/* 헤더 */}
@@ -105,12 +105,14 @@ export default function RegionDetailPanel({ summary, isLoading }) {
       </div>
 
       {/* 7일 추이 */}
-      <div className="flex flex-col gap-2 pt-2" style={{ borderTop: '1px solid var(--hair-2)' }}>
+      <div className="flex-1 flex flex-col gap-3 pt-2" style={{ borderTop: '1px solid var(--hair-2)' }}>
         <span className="text-xs font-bold" style={{ color: 'var(--ink-2)' }}>최근 7일 추이</span>
         {trend.length === 0 ? (
           <p className="text-xs" style={{ color: 'var(--muted)' }}>데이터 없음</p>
         ) : (
-          <TrendLineChart trend={trend} />
+          <div className="flex-1 flex items-center">
+            <TrendLineChart trend={trend} />
+          </div>
         )}
       </div>
     </aside>
