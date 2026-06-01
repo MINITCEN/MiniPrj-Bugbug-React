@@ -148,24 +148,41 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
   return (
     <div className="flex-1 flex flex-col h-full bg-[#F8F7F3]">
       {/* 대화방 헤더 */}
-      {/* ⚠️ 딥 그린 해더 매치 */}
-      <div className="bg-[#1D3A2E] px-4 py-3.5 flex items-center justify-between font-bold text-white relative select-none shadow-sm">
-        <span onClick={onBack} className="cursor-pointer text-lg font-bold text-white/80 hover:text-white transition-colors">⬅️</span>
-        <span className="text-center text-sm font-extrabold tracking-wide">{otherNickname}</span>
-        <span onClick={onClose} className="cursor-pointer text-lg text-white/80 hover:text-white transition-colors">✕</span>
+      {/* ⚠️ 럭셔리 딥 그린 그라데이션 및 벡터 SVG 아이콘 매치 */}
+      <div className="bg-gradient-to-r from-[#1D3A2E] to-[#254d3d] px-5 py-4 flex items-center justify-between text-white relative select-none shadow-md z-10">
+        <span onClick={onBack} className="cursor-pointer text-white/80 hover:text-white transition-colors">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+          </svg>
+        </span>
+        <div className="flex flex-col items-center justify-center gap-0.5">
+          <span className="text-[13.5px] font-black tracking-wide">{otherNickname}</span>
+          <span className="text-[9px] text-[#2E8C68] font-bold bg-[#E8F8F5] px-1.5 py-0.2 rounded-full flex items-center gap-0.8 scale-95 shadow-sm">
+            <span className="relative flex h-1.5 w-1.5 mr-0.5">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2E8C68] opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#2E8C68]"></span>
+            </span>
+            보통 수분 내 응답
+          </span>
+        </div>
+        <span onClick={onClose} className="cursor-pointer text-white/80 hover:text-white transition-colors">
+          <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </span>
       </div>
 
       {/* 예약 현황 상태 바 */}
       {/* ⚠️ 투박한 텍스트 걷어내고 카카오톡에 어울리는 산뜻한 프리미엄 라운드 배지 태그 디자인으로 전면 개편 */}
-      <div className="flex justify-between items-center bg-white px-4 py-2.5 border-b border-[#E8E7E3] text-xs select-none">
+      <div className="flex justify-between items-center bg-white px-5 py-2.5 border-b border-[#E8E7E3] text-xs select-none">
         <div className="flex items-center gap-1.5 font-medium text-gray-700">
           <span className="text-gray-400">매칭 상태</span>
           {reservedAt ? (
-            <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded-full text-[11px] font-bold">
+            <span className="inline-flex items-center gap-1 bg-[#E8F8F5] text-[#117A65] border border-[#A3E4D7] px-2 py-0.5 rounded-full text-[10.5px] font-bold shadow-sm">
               ✔️ 예약 완료
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 bg-gray-100 text-gray-600 border border-gray-200/60 px-2 py-0.5 rounded-full text-[11px] font-bold animate-pulse">
+            <span className="inline-flex items-center gap-1 bg-gray-100 text-gray-600 border border-gray-200/60 px-2 py-0.5 rounded-full text-[10.5px] font-bold animate-pulse shadow-sm">
               ⏳ 대기 중
             </span>
           )}
@@ -217,12 +234,12 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
                 )}
                 <div className={`flex items-end gap-1.5 ${isMine ? 'flex-row-reverse' : 'flex-row'}`}>
                   {/* 말풍선 본체 */}
-                  {/* ⚠️ 노란색/흰색 버블에서 프리미엄 에메랄드/코튼화이트 버블로 고도화 */}
+                  {/* ⚠️ 럭셔리 에메랄드 그라데이션 & 웜코튼 소프트 섀도우 버블 */}
                   <div
-                    className={`px-3.5 py-2 text-sm leading-relaxed rounded-xl break-words shadow-sm ${
+                    className={`px-3.8 py-2.2 text-[13px] leading-relaxed break-words shadow-[0_2px_8px_rgba(29,58,46,0.04)] font-medium ${
                       isMine
-                        ? 'bg-[#2E8C68] text-white rounded-tr-none'
-                        : 'bg-white text-gray-800 rounded-tl-none border border-[#E8E7E3]'
+                        ? 'bg-gradient-to-br from-[#2E8C68] to-[#1D3A2E] text-white rounded-2xl rounded-tr-sm'
+                        : 'bg-white text-gray-800 rounded-2xl rounded-tl-sm border border-[#E8E7E3]/85'
                     }`}
                   >
                     <div>{msg.content}</div>
@@ -252,13 +269,15 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
       </div>
 
       {/* 하단 전송창 영역 */}
-      {/* ⚠️ 노란 버튼에서 시크한 딥 그린 포인트 버튼으로 세련되게 수정 */}
-      <div className="bg-white p-3 flex items-center gap-3 border-t border-[#E8E7E3]">
+      {/* ⚠️ 럭셔리 라운드 섀도우 보더 및 Outline SVG 첨부/전송 버튼 개편 */}
+      <div className="bg-white p-3.5 flex items-center gap-3 border-t border-[#E8E7E3]/60 shadow-[0_-4px_12px_rgba(0,0,0,0.02)]">
         <span
           onClick={() => fileInputRef.current?.click()}
-          className="cursor-pointer text-xl text-gray-400 select-none hover:text-gray-600 transition-colors"
+          className="cursor-pointer select-none transition-colors"
         >
-          📎
+          <svg className="w-5.5 h-5.5 text-gray-400 hover:text-[#2E8C68] transition-colors" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 5.636l-3.536 3.536m0 0A3 3 0 1110.64 6.22l3.536-3.536m0 0a5 5 0 017.072 7.072l-7.656 7.656a7 7 0 11-9.9-9.9l1.414-1.414" />
+          </svg>
         </span>
         <input
           type="file"
@@ -273,14 +292,16 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="메시지 입력"
-          className="flex-1 border-none bg-gray-100 px-4 py-2 rounded-full outline-none text-sm text-gray-800 focus:bg-gray-200 transition-colors"
+          placeholder="메시지를 입력하세요..."
+          className="flex-1 border-none bg-[#F4F4F1] px-4.5 py-2.2 rounded-full outline-none text-[13px] text-gray-800 focus:bg-gray-200/70 transition-colors"
         />
         <button
           onClick={handleSend}
-          className="bg-[#1D3A2E] hover:bg-[#2E8C68] w-9 h-9 flex items-center justify-center rounded-full text-base cursor-pointer hover:brightness-105 transition-all select-none border-none text-white shadow-sm active:scale-95"
+          className="bg-gradient-to-tr from-[#1D3A2E] to-[#2E8C68] hover:to-[#38a57b] w-9.5 h-9.5 flex items-center justify-center rounded-full cursor-pointer transition-all select-none border-none text-white shadow-sm hover:shadow active:scale-95 shrink-0"
         >
-          ➤
+          <svg className="w-4.5 h-4.5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />
+          </svg>
         </button>
       </div>
     </div>

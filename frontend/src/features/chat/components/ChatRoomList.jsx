@@ -85,40 +85,41 @@ export default function ChatRoomList({ userId, role, onSelectRoom }) {
     <div className="flex-1 overflow-y-auto bg-white min-h-0 [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-black/20 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-black/35 [scrollbar-width:thin] [scrollbar-color:rgba(0,0,0,0.2)_transparent]">
       {sortedRooms.map((room) => {
         const unreadCount = unreadCounts[room.roomId] || 0
+        const initialLetter = room.otherNickname?.charAt(0) || '👤'
         return (
           <div
             key={room.roomId}
             onClick={() => onSelectRoom(room)}
-            className="flex items-center p-4 border-b border-gray-100 cursor-pointer hover:bg-gray-50 transition-colors bg-white select-none"
+            className="flex items-center p-4 border-b border-[#F0EFF8] cursor-pointer hover:bg-[#1D3A2E]/[0.02] border-l-4 border-l-transparent hover:border-l-[#2E8C68] transition-all bg-white select-none gap-2.5"
           >
-            {/* 아바타 */}
-            <div className="w-11 h-11 rounded-[40%] bg-gray-200 mr-3.5 flex items-center justify-center text-xl shrink-0">
-              👤
+            {/* ⚠️ 럭셔리 이니셜 그라데이션 프로필 뱃지 */}
+            <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#1D3A2E] to-[#2E8C68] text-white flex items-center justify-center text-[13px] font-black shrink-0 shadow-sm shadow-[#1D3A2E]/10">
+              {initialLetter}
             </div>
             {/* 대화 정보 (카카오톡 카드 레이아웃화) */}
-            <div className="flex-1 min-w-0 flex flex-col gap-0.5">
+            <div className="flex-1 min-w-0 flex flex-col gap-0.8">
               {/* 상단 행: 상대방 닉네임 */}
-              <strong className="font-bold text-[15px] text-gray-800 truncate">
+              <strong className="font-extrabold text-[14px] text-gray-800 truncate">
                 {room.otherNickname}
               </strong>
               {/* 중간 행: 마지막 메시지 미리보기 */}
-              <div className="text-[13px] text-gray-600 truncate font-normal">
+              <div className="text-[12.5px] text-gray-500 truncate font-semibold">
                 {room.lastMessage || '대화 내용이 없습니다.'}
               </div>
-              {/* 하단 행: 대상 의뢰글 명칭 */}
-              <div className="text-[11px] text-gray-400 truncate">
-                의뢰: {room.title}
+              {/* 하단 행: 대상 의뢰글 명칭 (고급 뱃지 태그화) */}
+              <div className="text-[10px] text-gray-400 font-bold bg-[#F4F4F1] border border-[#E8E7E3]/60 px-1.8 py-0.5 rounded-md w-fit">
+                {room.title}
               </div>
             </div>
             {/* 우측 사이드 정보 행 (시간 + 실시간 알림 빨간 배지) */}
-            <div className="flex flex-col items-end justify-start shrink-0 ml-3.5 gap-1.5 self-stretch">
+            <div className="flex flex-col items-end justify-start shrink-0 gap-1.5 self-stretch">
               {room.lastMessageSentAt && (
-                <span className="text-[11px] text-gray-400 shrink-0 font-medium">
+                <span className="text-[10.5px] text-gray-400 shrink-0 font-semibold">
                   {formatLastMessageTime(room.lastMessageSentAt)}
                 </span>
               )}
               {unreadCount > 0 && (
-                <span className="bg-red-500 text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] px-1 flex items-center justify-center border border-white">
+                <span className="bg-[#e5573a] text-white text-[9px] font-black rounded-full min-w-[17px] h-[17px] px-1 flex items-center justify-center shadow-sm">
                   {unreadCount > 99 ? '99+' : unreadCount}
                 </span>
               )}

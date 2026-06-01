@@ -26,7 +26,7 @@ export default function FloatingChatWidget() {
   const { setActiveRoomId, getTotalUnreadCount } = useChatNotificationStore()
   const totalUnread = getTotalUnreadCount()
 
-  // 1. 화면 처음 켰을 때: 원래 위치(bottom: 20px, right: 20px)보다 "좀 더 위로, 안쪽으로" 디폴트 세팅!
+  // 1. 화면 처음 켰을 때: 원래 위치보다 "좀 더 위로, 안쪽으로" 디폴트 세팅!
   useEffect(() => {
     if (!isLoggedIn || !user) return
 
@@ -93,7 +93,7 @@ export default function FloatingChatWidget() {
     let newX = buttonStartRef.current.x + deltaX
     let newY = buttonStartRef.current.y + deltaY
 
-    // Bounding Box 화면 탈출 봉쇄 (버튼 크기 60px, 모서리 패딩 10px)
+    // Bounding Box 화면 탈출 봉쇄
     const maxX = window.innerWidth - 60 - 10
     const maxY = window.innerHeight - 60 - 10
     newX = Math.min(Math.max(10, newX), maxX)
@@ -140,21 +140,19 @@ export default function FloatingChatWidget() {
     isDraggingRef.current = false
   }
 
-  // ⚠️ 누락되었던 팝업 토글 함수 원상 복구!
-  const handleToggle = () => {
-    setIsOpen((prev) => !prev)
-    // 창을 새로 열 때는 항상 대화 목록으로 초기화
-    if (!isOpen) {
-      setSelectedRoom(null)
-    }
-  }
-
   // 드래그 거리 판별하여 클릭 vs 무브 스위칭 토글
   const handleButtonClick = () => {
     if (dragDistanceRef.current > 5) {
       return // 5px 이상 끌었으면 이동으로 간주하여 채팅창 안 띄움
     }
     handleToggle()
+  }
+
+  const handleToggle = () => {
+    setIsOpen((prev) => !prev)
+    if (!isOpen) {
+      setSelectedRoom(null)
+    }
   }
 
   // ⚠️ 팝업창 지능형 화면 탈출 방지 정렬 연산
@@ -171,28 +169,30 @@ export default function FloatingChatWidget() {
       className="fixed z-[9999] font-sans antialiased select-none touch-none"
     >
       {/* 플로팅 둥근 버튼 */}
-      {/* ⚠️ 노란색에서 럭셔리 포레스트 딥 그린(bg-[#1D3A2E])으로 전면 탈바꿈 */}
+      {/* ⚠️ 3D 입체 그라데이션 및 신비로운 에메랄드 네온 글로우링 발산 (럭셔리 UX 극대화) */}
       <button
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         onClick={handleButtonClick}
-        className="w-[60px] h-[60px] bg-[#1D3A2E] hover:bg-[#152a21] text-white rounded-full shadow-lg shadow-[#1D3A2E]/10 hover:shadow-xl hover:shadow-[#1D3A2E]/20 cursor-pointer flex items-center justify-center text-2xl transition-transform hover:scale-110 border-none select-none relative active:scale-95 animate-fade-in"
+        className="w-[60px] h-[60px] bg-gradient-to-tr from-[#1D3A2E] to-[#2E8C68] hover:to-[#38a57b] text-white rounded-full shadow-[0_10px_30px_rgba(46,140,104,0.35)] hover:shadow-[0_15px_35px_rgba(46,140,104,0.5)] cursor-pointer flex items-center justify-center transition-all duration-300 hover:scale-110 border-none select-none relative active:scale-95 animate-fade-in"
       >
-        💬
+        <svg className="w-6.5 h-6.5 text-white filter drop-shadow-sm" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.12 2.9 2.68 3.13Fm.24 2.1c.3.08.6-.13.6-.44V16.5M21 12c0 4.14-4.03 7.5-9 7.5a9.66 9.66 0 01-1.9-.19l-4.5 2.25A.5.5 0 015 21v-3.75C2.5 15.68 1 13.03 1 12c0-4.14 4.03-7.5 9-7.5s9 3.36 9 7.5z" />
+        </svg>
         {totalUnread > 0 && (
-          <span className="absolute -top-1 -right-1 bg-[#e5573a] text-white text-[11px] font-extrabold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center border-2 border-white animate-pulse">
+          <span className="absolute -top-1.5 -right-1.5 bg-[#e5573a] text-white text-[10px] font-black rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center border-2 border-white shadow-md animate-pulse">
             {totalUnread > 99 ? '99+' : totalUnread}
           </span>
         )}
       </button>
 
       {/* 채팅 창 영역 */}
-      {/* ⚠️ 배경색을 버그버그 시그니처 웜화이트 크림(bg-[#F8F7F3])으로 업그레이드 */}
+      {/* ⚠️ 럭셔리 반투명 밀키 글래스모피즘(backdrop-blur-xl bg-white/90) 및 부드러운 하이 엔드 섀도우 탑재 */}
       <div
-        className={`absolute w-[350px] h-[500px] bg-[#F8F7F3] rounded-2xl shadow-2xl overflow-hidden border border-[#E8E7E3] flex flex-col transition-all duration-300 transform ${
-          isPopupBelow ? 'top-[70px]' : 'bottom-[80px]'
+        className={`absolute w-[360px] h-[520px] bg-white/92 backdrop-blur-xl rounded-[24px] shadow-[0_20px_50px_rgba(29,58,46,0.15)] overflow-hidden border border-white/20 flex flex-col transition-all duration-300 transform ${
+          isPopupBelow ? 'top-[72px]' : 'bottom-[82px]'
         } ${
           isPopupRight ? 'left-0' : 'right-0'
         } ${
@@ -208,16 +208,18 @@ export default function FloatingChatWidget() {
         }`}
       >
         {!selectedRoom ? (
-          <div className="flex-1 flex flex-col bg-white min-h-0">
+          <div className="flex-1 flex flex-col bg-[#F9F9F6]/95 min-h-0">
             {/* 목록 헤더 */}
-            {/* ⚠️ 딥 그린 해더 매치 */}
-            <div className="bg-[#1D3A2E] px-4 py-4.5 flex items-center justify-center font-bold text-white relative select-none shadow-sm">
-              <span className="tracking-wide text-sm font-extrabold">채팅 목록</span>
+            {/* ⚠️ 시크한 딥 포레스트 그라데이션 및 메탈릭 선형 ✕ 아이콘 */}
+            <div className="bg-gradient-to-r from-[#1D3A2E] to-[#254d3d] px-5 py-4.5 flex items-center justify-center text-white relative select-none shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
+              <span className="tracking-wider text-[14px] font-extrabold">실시간 1:1 상담</span>
               <span
                 onClick={handleToggle}
-                className="absolute right-4 top-4.5 cursor-pointer text-base text-white/80 hover:text-white transition-colors"
+                className="absolute right-5 top-4.5 cursor-pointer text-white/70 hover:text-white transition-colors"
               >
-                ✕
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
               </span>
             </div>
             {/* 목록 영역 */}
