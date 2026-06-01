@@ -5,3 +5,6 @@ export const fetchMosquitoSummary = (regionId = 1168000000) =>
 
 export const fetchTopMosquito = () =>
   axiosInstance.get('/v1/mosquito/top').then((res) => res.data)
+
+export const fetchMosquitoRegions = () =>
+  axiosInstance.get('/v1/mosquito/regions').then((res) => res.data)
