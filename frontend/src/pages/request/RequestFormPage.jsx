@@ -1,8 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Link, useNavigate } from 'react-router-dom'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { Link, useNavigate, useParams } from 'react-router-dom'
 import useAuthStore from '../../features/auth/store/useAuthStore'
-import { createRequest } from '../../shared/api/requestApi'
+import {
+  createRequest,
+  fetchRequestEditForm,
+  updateRequest,
+} from '../../shared/api/requestApi'
 
 const INITIAL_FORM = {
   title: '',
@@ -13,6 +17,8 @@ const INITIAL_FORM = {
 4. 벌레 개체 수 :`,
   description: '',
   occurrenceTime: '',
+  status: '대기 중',
+  detailLocation: '',
 }
 
 const KAKAO_MAP_SDK_ID = 'kakao-map-sdk'
@@ -67,7 +73,12 @@ function getErrorMessage(error) {
 
   if (typeof data === 'string') return data
   if (data?.message) return data.message
-  return '의뢰 등록에 실패했습니다. 입력 내용을 확인해 주세요.'
+  return '의뢰 저장에 실패했습니다. 입력 내용을 확인해 주세요.'
+}
+
+function formatDateTimeLocal(value) {
+  if (!value) return ''
+  return value.slice(0, 16)
 }
 
 function ImagePreview({ item, onRemove }) {
@@ -108,13 +119,111 @@ function VideoPreview({ item, onRemove }) {
   )
 }
 
-export default function RequestCreatePage() {
-  const [form, setForm] = useState(INITIAL_FORM)
+function ExistingImagePreview({ imageUrl, onRemove }) {
+  return (
+    <div className="group relative aspect-square overflow-hidden rounded-xl border border-gray-200 bg-white">
+      <img src={imageUrl} alt="기존 첨부 이미지" className="h-full w-full object-cover" />
+      <button
+        type="button"
+        onClick={onRemove}
+        className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-sm font-bold text-white opacity-90 transition-opacity hover:opacity-100"
+        aria-label="기존 이미지 삭제"
+      >
+        x
+      </button>
+    </div>
+  )
+}
+
+function ExistingVideoPreview({ videoUrl, onRemove }) {
+  return (
+    <div className="relative overflow-hidden rounded-xl border border-gray-200 bg-white">
+      <video src={videoUrl} controls className="aspect-video w-full bg-black object-contain" />
+      <button
+        type="button"
+        onClick={onRemove}
+        className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-sm font-bold text-white opacity-90 transition-opacity hover:opacity-100"
+        aria-label="기존 동영상 삭제"
+      >
+        x
+      </button>
+      <div className="px-3 py-2 text-xs text-gray-600">기존 첨부 동영상</div>
+    </div>
+  )
+}
+
+export default function RequestFormPage() {
+  const { requestId } = useParams()
+  const isEditMode = Boolean(requestId)
+
+  const { data: editForm, isLoading: isEditLoading, isError: isEditError, error: editError } = useQuery({
+    queryKey: ['requestEditForm', requestId],
+    queryFn: () => fetchRequestEditForm(requestId),
+    enabled: isEditMode,
+  })
+
+  if (isEditMode && isEditLoading) {
+    return (
+      <div className="min-h-[60vh] bg-gray-50 px-6 py-16 text-center text-sm text-gray-500">
+        의뢰 수정 정보를 불러오는 중입니다.
+      </div>
+    )
+  }
+
+  if (isEditMode && (isEditError || !editForm)) {
+    return (
+      <div className="min-h-[60vh] bg-gray-50 px-6 py-16 text-center">
+        <div className="mx-auto max-w-lg rounded-xl border border-red-100 bg-red-50 px-5 py-4 text-sm font-medium text-red-600">
+          {editError?.response?.data?.message || '의뢰 수정 정보를 불러오지 못했습니다.'}
+        </div>
+        <Link
+          to="/requestView/list"
+          className="mt-5 inline-flex h-10 items-center rounded-xl border border-gray-300 bg-white px-4 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+        >
+          목록으로
+        </Link>
+      </div>
+    )
+  }
+
+  return (
+    <RequestFormContent
+      key={requestId ?? 'new'}
+      requestId={requestId}
+      isEditMode={isEditMode}
+      editForm={editForm}
+    />
+  )
+}
+
+function getInitialForm(editForm) {
+  if (!editForm) return INITIAL_FORM
+
+  const nextForm = editForm.form ?? {}
+  return {
+    title: nextForm.title ?? '',
+    location: nextForm.location ?? '',
+    detailLocation: nextForm.detailLocation ?? '',
+    content: nextForm.content ?? '',
+    description: nextForm.description ?? '',
+    occurrenceTime: formatDateTimeLocal(nextForm.occurrenceTime),
+    status: nextForm.status ?? '대기 중',
+  }
+}
+
+function RequestFormContent({ requestId, isEditMode, editForm }) {
+  const [form, setForm] = useState(() => getInitialForm(editForm))
   const [imageFiles, setImageFiles] = useState([])
   const [videoFile, setVideoFile] = useState(null)
+  const [existingImageUrls, setExistingImageUrls] = useState(() => editForm?.mediaUrl?.imageUrls ?? [])
+  const [existingVideoUrl, setExistingVideoUrl] = useState(() => editForm?.mediaUrl?.videoUrl ?? '')
+  const [deletedImageUrls, setDeletedImageUrls] = useState([])
+  const [deletedVideoUrl, setDeletedVideoUrl] = useState('')
   const [error, setError] = useState('')
   const [mapError, setMapError] = useState('')
-  const [selectedLocation, setSelectedLocation] = useState(null)
+  const [selectedLocation, setSelectedLocation] = useState(() => (
+    editForm?.form?.location ? { address: editForm.form.location } : null
+  ))
   const { user, isLoggedIn, isLoading } = useAuthStore()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -180,11 +289,27 @@ export default function RequestCreatePage() {
     }
   }, [])
 
-  const mutation = useMutation({
+  const createMutation = useMutation({
     mutationFn: createRequest,
     onSuccess: async () => {
       await queryClient.invalidateQueries({ queryKey: ['requestList'] })
       navigate('/requestView/list')
+    },
+    onError: (mutationError) => {
+      setError(getErrorMessage(mutationError))
+    },
+  })
+
+  const updateMutation = useMutation({
+    mutationFn: (formData) => updateRequest(requestId, formData),
+    onSuccess: async () => {
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['requestDetail', requestId] }),
+        queryClient.invalidateQueries({ queryKey: ['requestEditForm', requestId] }),
+        queryClient.invalidateQueries({ queryKey: ['requestList'] }),
+        queryClient.invalidateQueries({ queryKey: ['mypage', 'requests'] }),
+      ])
+      navigate(`/requestView/detail/${requestId}`)
     },
     onError: (mutationError) => {
       setError(getErrorMessage(mutationError))
@@ -260,6 +385,12 @@ export default function RequestCreatePage() {
   }
 
   const handleVideoChange = (event) => {
+    if (existingVideoUrl) {
+      event.target.value = ''
+      setError('기존 동영상을 삭제한 후 새 동영상을 등록해 주세요.')
+      return
+    }
+
     if (videoFile) {
       event.target.value = ''
       setError('동영상은 1개만 첨부할 수 있습니다. 기존 동영상을 삭제한 후 다시 선택해 주세요.')
@@ -311,6 +442,20 @@ export default function RequestCreatePage() {
     })
   }
 
+  const removeExistingImage = (imageUrl) => {
+    setExistingImageUrls((current) => current.filter((url) => url !== imageUrl))
+    setDeletedImageUrls((current) => (
+      current.includes(imageUrl) ? current : [...current, imageUrl]
+    ))
+  }
+
+  const removeExistingVideo = () => {
+    if (!existingVideoUrl) return
+
+    setDeletedVideoUrl(existingVideoUrl)
+    setExistingVideoUrl('')
+  }
+
   const handleSubmit = (event) => {
     event.preventDefault()
     setError('')
@@ -318,12 +463,21 @@ export default function RequestCreatePage() {
     const formData = new FormData()
     formData.append('title', form.title.trim())
     formData.append('location', form.location.trim())
+    formData.append('detailLocation', form.detailLocation?.trim() ?? '')
     formData.append('content', form.content.trim())
     formData.append('description', form.description.trim())
-    formData.append('status', '대기 중')
+    formData.append('status', isEditMode ? form.status : '대기 중')
 
     if (form.occurrenceTime) {
       formData.append('occurrenceTime', form.occurrenceTime)
+    }
+
+    deletedImageUrls.forEach((imageUrl) => {
+      formData.append('imageUrls', imageUrl)
+    })
+
+    if (deletedVideoUrl) {
+      formData.append('videoUrl', deletedVideoUrl)
     }
 
     imageFiles.forEach((item) => {
@@ -334,7 +488,12 @@ export default function RequestCreatePage() {
       formData.append('videoFile', videoFile.file)
     }
 
-    mutation.mutate(formData)
+    if (isEditMode) {
+      updateMutation.mutate(formData)
+      return
+    }
+
+    createMutation.mutate(formData)
   }
 
   const handleReset = () => {
@@ -343,10 +502,29 @@ export default function RequestCreatePage() {
       URL.revokeObjectURL(videoFile.url)
     }
 
-    setForm(INITIAL_FORM)
+    if (isEditMode && editForm) {
+      const nextForm = editForm.form ?? {}
+      setForm({
+        title: nextForm.title ?? '',
+        location: nextForm.location ?? '',
+        detailLocation: nextForm.detailLocation ?? '',
+        content: nextForm.content ?? '',
+        description: nextForm.description ?? '',
+        occurrenceTime: formatDateTimeLocal(nextForm.occurrenceTime),
+        status: nextForm.status ?? '대기 중',
+      })
+      setExistingImageUrls(editForm.mediaUrl?.imageUrls ?? [])
+      setExistingVideoUrl(editForm.mediaUrl?.videoUrl ?? '')
+      setDeletedImageUrls([])
+      setDeletedVideoUrl('')
+      setSelectedLocation(nextForm.location ? { address: nextForm.location } : null)
+    } else {
+      setForm(INITIAL_FORM)
+      setSelectedLocation(null)
+    }
+
     setImageFiles([])
     setVideoFile(null)
-    setSelectedLocation(null)
     setMapError('')
     if (markerRef.current) {
       markerRef.current.setMap(null)
@@ -363,13 +541,21 @@ export default function RequestCreatePage() {
     )
   }
 
+  const isSaving = createMutation.isPending || updateMutation.isPending
+  const hasExistingMedia = existingImageUrls.length > 0 || Boolean(existingVideoUrl)
+  const hasNewMedia = imageFiles.length > 0 || Boolean(videoFile)
+
   return (
     <div className="min-h-screen bg-gray-50">
       <main className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-6 py-10">
         <section>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">의뢰 등록하기</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+            {isEditMode ? '의뢰 수정하기' : '의뢰 등록하기'}
+          </h1>
           <p className="mt-2 text-sm text-gray-500">
-            헌터에게 요청할 해충 퇴치 의뢰 내용을 자세히 작성해주세요.
+            {isEditMode
+              ? '기존 의뢰 내용을 수정해주세요.'
+              : '헌터에게 요청할 해충 퇴치 의뢰 내용을 자세히 작성해주세요.'}
           </p>
         </section>
 
@@ -382,7 +568,25 @@ export default function RequestCreatePage() {
             )}
 
             <section className="flex flex-col gap-5">
-              <h2 className="text-lg font-bold text-gray-900">의뢰 정보 입력</h2>
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <h2 className="text-lg font-bold text-gray-900">의뢰 정보 입력</h2>
+
+                {isEditMode && (
+                  <label className="flex flex-col gap-2 md:w-48">
+                    <span className="text-sm font-semibold text-gray-800">진행 상태</span>
+                    <select
+                      name="status"
+                      value={form.status}
+                      onChange={handleChange}
+                      className="h-11 rounded-xl border border-gray-300 bg-white px-3 text-sm outline-none focus:border-green-800"
+                    >
+                      <option value="대기 중">대기 중</option>
+                      <option value="예약 완료">예약 완료</option>
+                      <option value="완료">완료</option>
+                    </select>
+                  </label>
+                )}
+              </div>
 
               <label className="flex flex-col gap-2">
                 <span className="text-sm font-semibold text-gray-800">제목 <b className="text-red-500">*</b></span>
@@ -488,34 +692,61 @@ export default function RequestCreatePage() {
 
                 <label
                   className={
-                    videoFile
+                    videoFile || existingVideoUrl
                       ? 'flex cursor-not-allowed flex-col gap-3 rounded-xl border border-dashed border-gray-200 bg-gray-100 p-5 opacity-70'
                       : 'flex cursor-pointer flex-col gap-3 rounded-xl border border-dashed border-gray-300 bg-gray-50 p-5 hover:border-green-800'
                   }
                 >
                   <span className="text-sm font-semibold text-gray-800">동영상 첨부</span>
                   <span className="text-xs text-gray-500">
-                    {videoFile ? '이미 동영상 1개가 선택되었습니다.' : '동영상은 1개만 첨부합니다.'}
+                    {existingVideoUrl
+                      ? '기존 동영상을 삭제한 후 새로 첨부할 수 있습니다.'
+                      : videoFile
+                        ? '이미 동영상 1개가 선택되었습니다.'
+                        : '동영상은 1개만 첨부합니다.'}
                   </span>
                   <span className="inline-flex h-10 w-fit items-center rounded-lg bg-white px-4 text-sm font-semibold text-gray-800 shadow-sm ring-1 ring-gray-200">
-                    {videoFile ? '동영상 선택 완료' : '동영상 선택하기'}
+                    {videoFile || existingVideoUrl ? '동영상 선택 불가' : '동영상 선택하기'}
                   </span>
                   <input
                     type="file"
                     accept="video/*"
                     onChange={handleVideoChange}
-                    disabled={Boolean(videoFile)}
+                    disabled={Boolean(videoFile || existingVideoUrl)}
                     className="hidden"
                   />
                 </label>
               </div>
 
               <div className="rounded-xl bg-gray-50 p-4 text-sm text-gray-600">
-                {imageFiles.length === 0 && !videoFile && (
+                {!hasExistingMedia && !hasNewMedia && (
                   <p className="text-gray-500">첨부한 이미지와 동영상이 여기에 표시됩니다.</p>
                 )}
 
-                {(imageFiles.length > 0 || videoFile) && (
+                {hasExistingMedia && (
+                  <div className="mb-4">
+                    <strong className="text-gray-800">기존 첨부 파일</strong>
+                    {existingImageUrls.length > 0 && (
+                      <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                        {existingImageUrls.map((imageUrl) => (
+                          <ExistingImagePreview
+                            key={imageUrl}
+                            imageUrl={imageUrl}
+                            onRemove={() => removeExistingImage(imageUrl)}
+                          />
+                        ))}
+                      </div>
+                    )}
+
+                    {existingVideoUrl && (
+                      <div className={existingImageUrls.length > 0 ? 'mt-4 max-w-xl' : 'mt-3 max-w-xl'}>
+                        <ExistingVideoPreview videoUrl={existingVideoUrl} onRemove={removeExistingVideo} />
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {hasNewMedia && (
                   <div className="mb-4 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs text-gray-600">
                     <strong className="text-gray-800">첨부 예정 파일</strong>
                     <ul className="mt-2 flex flex-col gap-1">
@@ -533,7 +764,7 @@ export default function RequestCreatePage() {
                   </div>
                 )}
 
-                {(imageFiles.length > 0 || videoFile) && (
+                {hasNewMedia && (
                   <>
                   {imageFiles.length > 0 && (
                     <div>
@@ -566,7 +797,11 @@ export default function RequestCreatePage() {
             <div className="rounded-xl bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-900">
               <strong>작성 안내</strong><br />
               허위 의뢰나 악성 글은 관리자에 의해 삭제될 수 있습니다.<br />
-              등록 시 상태는 기본적으로 <strong>대기 중</strong> 상태로 저장됩니다.
+              {isEditMode ? (
+                <>완료 상태로 변경하려면 예약 완료된 헌터가 있어야 합니다.</>
+              ) : (
+                <>등록 시 상태는 기본적으로 <strong>대기 중</strong> 상태로 저장됩니다.</>
+              )}
             </div>
 
             <div className="flex flex-wrap justify-end gap-3">
@@ -585,10 +820,10 @@ export default function RequestCreatePage() {
               </button>
               <button
                 type="submit"
-                disabled={mutation.isPending}
+                disabled={isSaving}
                 className="h-11 rounded-xl bg-green-900 px-5 text-sm font-semibold text-white hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {mutation.isPending ? '등록 중...' : '의뢰 등록'}
+                {isSaving ? '저장 중...' : isEditMode ? '의뢰 수정' : '의뢰 등록'}
               </button>
             </div>
           </div>

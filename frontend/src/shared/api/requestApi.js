@@ -10,6 +10,12 @@ export const fetchRequestList = ({ page = 0, size = 10, status, sortType = 'late
 export const createRequest = (formData) =>
   axiosInstance.post('/request/new', formData).then((res) => res.data)
 
+export const fetchRequestEditForm = (requestId) =>
+  axiosInstance.get(`/request/edit/${requestId}`).then((res) => res.data)
+
+export const updateRequest = (requestId, formData) =>
+  axiosInstance.patch(`/request/edit/${requestId}`, formData).then((res) => res.data)
+
 export const fetchRequestDetail = (requestId) =>
   axiosInstance.get(`/request/detail/${requestId}`).then((res) => res.data)
 

@@ -4,7 +4,7 @@ import MainPage from '../../pages/main/MainPage'
 import LoginPage from '../../pages/auth/LoginPage'
 import SignupPage from '../../pages/auth/SignupPage'
 import RequestListPage from '../../pages/request/RequestListPage'
-import RequestCreatePage from '../../pages/request/RequestCreatePage'
+import RequestFormPage from '../../pages/request/RequestFormPage'
 import RequestDetailPage from '../../pages/request/RequestDetailPage'
 import ComingSoonPage from '../../pages/common/ComingSoonPage'
 import ServiceIntroPage from '../../pages/service-intro/ServiceIntroPage'
@@ -120,7 +120,22 @@ const router = createBrowserRouter([
       { path: '/mosquito-map', element: <MosquitoMapPage /> },
       { path: '/hunter', element: <ComingSoonPage /> },
       { path: '/requestView/list', element: <RequestListPage /> },
-      { path: '/requestView/new', element: <RequestCreatePage /> },
+      {
+        path: '/requestView/new',
+        element: (
+          <RequireRole role="USER">
+            <RequestFormPage />
+          </RequireRole>
+        ),
+      },
+      {
+        path: '/requestView/edit/:requestId',
+        element: (
+          <RequireRole role="USER">
+            <RequestFormPage />
+          </RequireRole>
+        ),
+      },
       {
         // 미로그인 사용자 접근 시 로그인 페이지로 리다이렉트
         path: '/requestView/detail/:requestId',

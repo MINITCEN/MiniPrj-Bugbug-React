@@ -1,6 +1,7 @@
 package com.bug.catcher.domain.request.controller;
 
 import com.bug.catcher.domain.request.dto.RequestDetailResponseDto;
+import com.bug.catcher.domain.request.dto.RequestEditFormDto;
 import com.bug.catcher.domain.request.dto.RequestFormDto;
 import com.bug.catcher.domain.request.dto.RequestMediaFileUrlDto;
 import com.bug.catcher.domain.request.service.RequestService;
@@ -60,6 +61,12 @@ public class RequestController {
     @GetMapping(value = "/detail/{id}")
     public RequestDetailResponseDto requestDetail(@PathVariable Long id) {
         return requestService.readRequestDetail(id);
+    }
+
+    @PreAuthorize("hasRole('USER') and @requestPermissionChecker.isOwner(#requestId, principal.userId)")
+    @GetMapping(value = "/edit/{requestId}")
+    public RequestEditFormDto editForm(@PathVariable Long requestId) {
+        return requestService.getEditForm(requestId);
     }
 
     @PreAuthorize("hasRole('USER') and @requestPermissionChecker.isOwner(#requestId, principal.userId)")
