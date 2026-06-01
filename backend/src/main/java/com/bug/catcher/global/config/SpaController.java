@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 @Controller
 public class SpaController {
 
-    @GetMapping({"/mypage", "/mypage/**", "/mosquito-map"})
+    @GetMapping({"/mypage", "/mypage/**", "/mosquito-map", "/requestView/**"})
     public String spaFallback() {
         return "forward:/index.html";
     }
