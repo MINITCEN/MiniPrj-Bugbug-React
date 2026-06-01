@@ -8,6 +8,12 @@ import {
   updateRequest,
 } from '../../shared/api/requestApi'
 
+const STATUS_STYLE = {
+  '대기 중':  { background: 'rgba(229,87,58,.1)',   color: '#c0392b',        border: '1px solid rgba(229,87,58,.3)' },
+  '예약 완료': { background: 'rgba(229,165,10,.12)', color: '#7a5700',        border: '1px solid rgba(229,165,10,.35)' },
+  '완료':     { background: 'rgba(46,140,104,.12)',  color: 'var(--brand)',   border: '1px solid rgba(46,140,104,.3)' },
+}
+
 const INITIAL_FORM = {
   title: '',
   location: '',
@@ -81,17 +87,20 @@ function formatDateTimeLocal(value) {
   return value.slice(0, 16)
 }
 
+/* ─── 미리보기 컴포넌트 ───────────────────────────────── */
+
 function ImagePreview({ item, onRemove }) {
   return (
-    <div className="group relative aspect-square overflow-hidden rounded-xl border border-gray-200 bg-white">
+    <div className="relative aspect-square overflow-hidden" style={{ borderRadius: 12, border: '1px solid var(--hair-2)', background: '#fff' }}>
       <img src={item.url} alt={item.file.name} className="h-full w-full object-cover" />
       <button
         type="button"
         onClick={onRemove}
-        className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-sm font-bold text-white opacity-90 transition-opacity hover:opacity-100"
+        className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-sm font-bold text-white transition-opacity hover:opacity-100"
+        style={{ opacity: 0.9 }}
         aria-label={`${item.file.name} 이미지 삭제`}
       >
-        x
+        ×
       </button>
       <div className="absolute inset-x-0 bottom-0 bg-black/60 px-2 py-1 text-xs text-white">
         <span className="block truncate">{item.file.name}</span>
@@ -102,17 +111,18 @@ function ImagePreview({ item, onRemove }) {
 
 function VideoPreview({ item, onRemove }) {
   return (
-    <div className="relative overflow-hidden rounded-xl border border-gray-200 bg-white">
+    <div className="relative overflow-hidden" style={{ borderRadius: 12, border: '1px solid var(--hair-2)', background: '#fff' }}>
       <video src={item.url} controls className="aspect-video w-full bg-black object-contain" />
       <button
         type="button"
         onClick={onRemove}
-        className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-sm font-bold text-white opacity-90 transition-opacity hover:opacity-100"
+        className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-sm font-bold text-white transition-opacity hover:opacity-100"
+        style={{ opacity: 0.9 }}
         aria-label={`${item.file.name} 동영상 삭제`}
       >
-        x
+        ×
       </button>
-      <div className="px-3 py-2 text-xs text-gray-600">
+      <div className="px-3 py-2 text-xs" style={{ color: 'var(--ink-2)' }}>
         <span className="block truncate">{item.file.name}</span>
       </div>
     </div>
@@ -121,15 +131,16 @@ function VideoPreview({ item, onRemove }) {
 
 function ExistingImagePreview({ imageUrl, onRemove }) {
   return (
-    <div className="group relative aspect-square overflow-hidden rounded-xl border border-gray-200 bg-white">
+    <div className="relative aspect-square overflow-hidden" style={{ borderRadius: 12, border: '1px solid var(--hair-2)', background: '#fff' }}>
       <img src={imageUrl} alt="기존 첨부 이미지" className="h-full w-full object-cover" />
       <button
         type="button"
         onClick={onRemove}
-        className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-sm font-bold text-white opacity-90 transition-opacity hover:opacity-100"
+        className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-sm font-bold text-white transition-opacity hover:opacity-100"
+        style={{ opacity: 0.9 }}
         aria-label="기존 이미지 삭제"
       >
-        x
+        ×
       </button>
     </div>
   )
@@ -137,20 +148,23 @@ function ExistingImagePreview({ imageUrl, onRemove }) {
 
 function ExistingVideoPreview({ videoUrl, onRemove }) {
   return (
-    <div className="relative overflow-hidden rounded-xl border border-gray-200 bg-white">
+    <div className="relative overflow-hidden" style={{ borderRadius: 12, border: '1px solid var(--hair-2)', background: '#fff' }}>
       <video src={videoUrl} controls className="aspect-video w-full bg-black object-contain" />
       <button
         type="button"
         onClick={onRemove}
-        className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-sm font-bold text-white opacity-90 transition-opacity hover:opacity-100"
+        className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-full bg-black/70 text-sm font-bold text-white transition-opacity hover:opacity-100"
+        style={{ opacity: 0.9 }}
         aria-label="기존 동영상 삭제"
       >
-        x
+        ×
       </button>
-      <div className="px-3 py-2 text-xs text-gray-600">기존 첨부 동영상</div>
+      <div className="px-3 py-2 text-xs" style={{ color: 'var(--ink-2)' }}>기존 첨부 동영상</div>
     </div>
   )
 }
+
+/* ─── 페이지 진입점 ──────────────────────────────────── */
 
 export default function RequestFormPage() {
   const { requestId } = useParams()
@@ -164,7 +178,7 @@ export default function RequestFormPage() {
 
   if (isEditMode && isEditLoading) {
     return (
-      <div className="min-h-[60vh] bg-gray-50 px-6 py-16 text-center text-sm text-gray-500">
+      <div className="min-h-screen flex items-center justify-center text-sm" style={{ background: 'var(--bg)', color: 'var(--ink-2)' }}>
         의뢰 수정 정보를 불러오는 중입니다.
       </div>
     )
@@ -172,13 +186,13 @@ export default function RequestFormPage() {
 
   if (isEditMode && (isEditError || !editForm)) {
     return (
-      <div className="min-h-[60vh] bg-gray-50 px-6 py-16 text-center">
-        <div className="mx-auto max-w-lg rounded-xl border border-red-100 bg-red-50 px-5 py-4 text-sm font-medium text-red-600">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-5 px-6" style={{ background: 'var(--bg)' }}>
+        <div style={{ borderRadius: 12, background: 'rgba(229,87,58,.08)', border: '1px solid rgba(229,87,58,.2)', padding: '14px 18px', fontSize: 14, fontWeight: 500, color: 'var(--accent)', maxWidth: 480, width: '100%' }}>
           {editError?.response?.data?.message || '의뢰 수정 정보를 불러오지 못했습니다.'}
         </div>
         <Link
           to="/requestView/list"
-          className="mt-5 inline-flex h-10 items-center rounded-xl border border-gray-300 bg-white px-4 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+          style={{ display: 'inline-flex', height: 40, alignItems: 'center', borderRadius: 999, border: '1px solid var(--hair)', background: '#fff', padding: '0 18px', fontSize: 13, fontWeight: 600, color: 'var(--ink)', textDecoration: 'none' }}
         >
           목록으로
         </Link>
@@ -210,6 +224,8 @@ function getInitialForm(editForm) {
     status: nextForm.status ?? '대기 중',
   }
 }
+
+/* ─── 폼 본체 ────────────────────────────────────────── */
 
 function RequestFormContent({ requestId, isEditMode, editForm }) {
   const [form, setForm] = useState(() => getInitialForm(editForm))
@@ -535,7 +551,7 @@ function RequestFormContent({ requestId, isEditMode, editForm }) {
 
   if (isLoading) {
     return (
-      <div className="min-h-[60vh] bg-gray-50 px-6 py-16 text-center text-sm text-gray-500">
+      <div className="min-h-screen flex items-center justify-center text-sm" style={{ background: 'var(--bg)', color: 'var(--ink-2)' }}>
         사용자 정보를 확인하는 중입니다.
       </div>
     )
@@ -544,41 +560,64 @@ function RequestFormContent({ requestId, isEditMode, editForm }) {
   const isSaving = createMutation.isPending || updateMutation.isPending
   const hasExistingMedia = existingImageUrls.length > 0 || Boolean(existingVideoUrl)
   const hasNewMedia = imageFiles.length > 0 || Boolean(videoFile)
+  const hasVideoSlot = Boolean(videoFile || existingVideoUrl)
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <main className="mx-auto flex w-full max-w-5xl flex-col gap-8 px-6 py-10">
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
+      <main className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-6 py-10">
+
+        {/* 페이지 제목 */}
         <section>
-          <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+          <h1
+            className="font-extrabold tracking-tight"
+            style={{ fontSize: 'clamp(26px, 4vw, 36px)', color: 'var(--ink)', letterSpacing: '-0.03em' }}
+          >
             {isEditMode ? '의뢰 수정하기' : '의뢰 등록하기'}
           </h1>
-          <p className="mt-2 text-sm text-gray-500">
+          <p className="mt-2 text-sm" style={{ color: 'var(--ink-2)' }}>
             {isEditMode
               ? '기존 의뢰 내용을 수정해주세요.'
               : '헌터에게 요청할 해충 퇴치 의뢰 내용을 자세히 작성해주세요.'}
           </p>
         </section>
 
-        <form onSubmit={handleSubmit} className="rounded-2xl border border-gray-200 bg-white p-8 shadow-sm">
-          <div className="flex flex-col gap-7">
+        {/* 폼 카드 */}
+        <form
+          onSubmit={handleSubmit}
+          style={{
+            background: '#fff',
+            borderRadius: 18,
+            border: '1px solid var(--hair-2)',
+            boxShadow: '0 1px 0 rgba(255,255,255,.6) inset, 0 2px 12px -4px rgba(29,58,46,.04)',
+            padding: '32px 36px',
+          }}
+        >
+          <div className="flex flex-col gap-8">
+
+            {/* 오류 메시지 */}
             {error && (
-              <div className="rounded-xl bg-red-50 px-4 py-3 text-sm font-medium text-red-600">
+              <div style={{ borderRadius: 12, background: 'rgba(229,87,58,.08)', border: '1px solid rgba(229,87,58,.18)', padding: '12px 16px', fontSize: 14, fontWeight: 500, color: 'var(--accent)' }}>
                 {error}
               </div>
             )}
 
+            {/* ── 섹션 1: 의뢰 정보 ── */}
             <section className="flex flex-col gap-5">
-              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                <h2 className="text-lg font-bold text-gray-900">의뢰 정보 입력</h2>
+              <div className="flex items-center justify-between" style={{ paddingBottom: 14, borderBottom: '1px solid var(--hair-2)' }}>
+                <h2 className="text-lg font-bold" style={{ color: 'var(--ink)' }}>의뢰 정보 입력</h2>
 
                 {isEditMode && (
-                  <label className="flex flex-col gap-2 md:w-48">
-                    <span className="text-sm font-semibold text-gray-800">진행 상태</span>
+                  <label className="flex items-center gap-2.5">
+                    <span className="text-sm font-semibold" style={{ color: 'var(--ink-2)' }}>진행 상태</span>
                     <select
                       name="status"
                       value={form.status}
                       onChange={handleChange}
-                      className="h-11 rounded-xl border border-gray-300 bg-white px-3 text-sm outline-none focus:border-green-800"
+                      style={{
+                        height: 36, borderRadius: 999, padding: '0 14px',
+                        fontSize: 13, fontWeight: 700, outline: 'none', cursor: 'pointer',
+                        ...(STATUS_STYLE[form.status] ?? { background: '#fff', color: 'var(--ink)', border: '1px solid var(--hair)' }),
+                      }}
                     >
                       <option value="대기 중">대기 중</option>
                       <option value="예약 완료">예약 완료</option>
@@ -588,244 +627,229 @@ function RequestFormContent({ requestId, isEditMode, editForm }) {
                 )}
               </div>
 
+              {/* 제목 */}
               <label className="flex flex-col gap-2">
-                <span className="text-sm font-semibold text-gray-800">제목 <b className="text-red-500">*</b></span>
+                <span className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>
+                  제목 <b style={{ color: 'var(--brand-2)' }}>*</b>
+                </span>
                 <input
                   name="title"
                   value={form.title}
                   onChange={handleChange}
                   required
-                  className="h-12 rounded-xl border border-gray-300 px-4 text-sm outline-none focus:border-green-800"
                   placeholder="예: 주방에 바퀴벌레가 나타났어요!"
+                  style={{ height: 48, borderRadius: 10, border: '1px solid var(--hair)', padding: '0 16px', fontSize: 14, outline: 'none', width: '100%' }}
                 />
               </label>
 
+              {/* 위치 */}
               <label className="flex flex-col gap-2">
-                <span className="text-sm font-semibold text-gray-800">대략적인 위치 <b className="text-red-500">*</b></span>
+                <span className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>
+                  대략적인 위치 <b style={{ color: 'var(--brand-2)' }}>*</b>
+                </span>
                 <div className="flex flex-col gap-2 sm:flex-row">
                   <input
                     name="location"
                     value={form.location}
                     onChange={handleChange}
                     required
-                    className="h-12 flex-1 rounded-xl border border-gray-300 px-4 text-sm outline-none focus:border-green-800"
                     placeholder="예: 서울 강남구 역삼동"
+                    style={{ height: 48, borderRadius: 10, border: '1px solid var(--hair)', padding: '0 16px', fontSize: 14, flex: 1, outline: 'none' }}
                   />
                   <button
                     type="button"
                     onClick={handleSearchLocation}
-                    className="h-12 shrink-0 rounded-xl border border-green-900 bg-white px-5 text-sm font-semibold text-green-900 hover:bg-green-50"
+                    style={{
+                      height: 48, borderRadius: 999, border: '1px solid var(--hair)',
+                      background: '#fff', padding: '0 22px',
+                      fontSize: 13, fontWeight: 600, color: 'var(--ink)', cursor: 'pointer', whiteSpace: 'nowrap',
+                    }}
                   >
                     위치 검색
                   </button>
                 </div>
               </label>
 
-              <div className="flex flex-col gap-2">
+              {/* 지도 */}
+              <div className="flex flex-col gap-1.5">
                 <div
                   ref={mapContainerRef}
-                  className="h-72 overflow-hidden rounded-xl border border-gray-200 bg-gray-100"
+                  style={{ height: 280, borderRadius: 12, border: '1px solid var(--hair-2)', background: '#f5f5f0', overflow: 'hidden' }}
                 />
-                <div className="min-h-5 text-xs text-gray-500">
-                  {selectedLocation ? (
-                    <span>
-                      선택 위치: {selectedLocation.address}
-                    </span>
-                  ) : (
-                    <span>위치를 검색하면 지도에 핀이 표시됩니다.</span>
-                  )}
-                </div>
+                <p style={{ fontSize: 12, color: 'var(--ink-2)', margin: 0 }}>
+                  {selectedLocation
+                    ? `선택 위치: ${selectedLocation.address}`
+                    : '위치를 검색하면 지도에 핀이 표시됩니다.'}
+                </p>
                 {mapError && (
-                  <p className="text-xs font-medium text-red-600">{mapError}</p>
+                  <p style={{ fontSize: 12, fontWeight: 500, color: 'var(--accent)', margin: 0 }}>{mapError}</p>
                 )}
               </div>
 
+              {/* 상세 내용 */}
               <label className="flex flex-col gap-2">
-                <span className="text-sm font-semibold text-gray-800">상세 내용 <b className="text-red-500">*</b></span>
+                <span className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>
+                  상세 내용 <b style={{ color: 'var(--brand-2)' }}>*</b>
+                </span>
                 <textarea
                   name="content"
                   value={form.content}
                   onChange={handleChange}
                   required
                   rows={8}
-                  className="resize-y rounded-xl border border-gray-300 px-4 py-3 text-sm leading-relaxed outline-none focus:border-green-800"
+                  style={{
+                    borderRadius: 10, border: '1px solid var(--hair)',
+                    padding: '12px 16px', fontSize: 14, lineHeight: 1.65,
+                    resize: 'vertical', outline: 'none', fontFamily: 'inherit', width: '100%',
+                  }}
                 />
               </label>
 
+              {/* 추가 요청 사항 / 발생 시간 */}
               <div className="grid gap-4 md:grid-cols-2">
                 <label className="flex flex-col gap-2">
-                  <span className="text-sm font-semibold text-gray-800">추가 요청 사항</span>
+                  <span className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>추가 요청 사항</span>
                   <input
                     name="description"
                     value={form.description}
                     onChange={handleChange}
-                    className="h-12 rounded-xl border border-gray-300 px-4 text-sm outline-none focus:border-green-800"
                     placeholder="필요하면 요청 사항을 입력하세요."
+                    style={{ height: 48, borderRadius: 10, border: '1px solid var(--hair)', padding: '0 16px', fontSize: 14, outline: 'none' }}
                   />
                 </label>
-
                 <label className="flex flex-col gap-2">
-                  <span className="text-sm font-semibold text-gray-800">발생 시간</span>
+                  <span className="text-sm font-semibold" style={{ color: 'var(--ink)' }}>발생 시간</span>
                   <input
                     type="datetime-local"
                     name="occurrenceTime"
                     value={form.occurrenceTime}
                     onChange={handleChange}
-                    className="h-12 rounded-xl border border-gray-300 px-4 text-sm outline-none focus:border-green-800"
+                    style={{ height: 48, borderRadius: 10, border: '1px solid var(--hair)', padding: '0 16px', fontSize: 14, outline: 'none' }}
                   />
                 </label>
               </div>
             </section>
 
-            <section className="flex flex-col gap-4">
-              <h2 className="text-lg font-bold text-gray-900">첨부 파일</h2>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <label className="flex cursor-pointer flex-col gap-3 rounded-xl border border-dashed border-gray-300 bg-gray-50 p-5 hover:border-green-800">
-                  <span className="text-sm font-semibold text-gray-800">이미지 첨부</span>
-                  <span className="text-xs text-gray-500">여러 장 선택할 수 있습니다.</span>
-                  <span className="inline-flex h-10 w-fit items-center rounded-lg bg-white px-4 text-sm font-semibold text-gray-800 shadow-sm ring-1 ring-gray-200">
-                    이미지 선택하기
-                  </span>
-                  <input type="file" accept="image/*" multiple onChange={handleImageChange} className="hidden" />
-                </label>
-
-                <label
-                  className={
-                    videoFile || existingVideoUrl
-                      ? 'flex cursor-not-allowed flex-col gap-3 rounded-xl border border-dashed border-gray-200 bg-gray-100 p-5 opacity-70'
-                      : 'flex cursor-pointer flex-col gap-3 rounded-xl border border-dashed border-gray-300 bg-gray-50 p-5 hover:border-green-800'
-                  }
-                >
-                  <span className="text-sm font-semibold text-gray-800">동영상 첨부</span>
-                  <span className="text-xs text-gray-500">
-                    {existingVideoUrl
-                      ? '기존 동영상을 삭제한 후 새로 첨부할 수 있습니다.'
-                      : videoFile
-                        ? '이미 동영상 1개가 선택되었습니다.'
-                        : '동영상은 1개만 첨부합니다.'}
-                  </span>
-                  <span className="inline-flex h-10 w-fit items-center rounded-lg bg-white px-4 text-sm font-semibold text-gray-800 shadow-sm ring-1 ring-gray-200">
-                    {videoFile || existingVideoUrl ? '동영상 선택 불가' : '동영상 선택하기'}
-                  </span>
-                  <input
-                    type="file"
-                    accept="video/*"
-                    onChange={handleVideoChange}
-                    disabled={Boolean(videoFile || existingVideoUrl)}
-                    className="hidden"
-                  />
-                </label>
+            {/* ── 섹션 2: 첨부 파일 ── */}
+            <section className="flex flex-col gap-3">
+              <div style={{ paddingBottom: 14, borderBottom: '1px solid var(--hair-2)' }}>
+                <h2 className="text-lg font-bold" style={{ color: 'var(--ink)' }}>첨부 파일</h2>
               </div>
 
-              <div className="rounded-xl bg-gray-50 p-4 text-sm text-gray-600">
-                {!hasExistingMedia && !hasNewMedia && (
-                  <p className="text-gray-500">첨부한 이미지와 동영상이 여기에 표시됩니다.</p>
-                )}
+              {/* 통합 업로드 영역 */}
+              <div style={{ borderRadius: 14, border: '1px dashed var(--hair)', background: '#fafaf8', padding: '16px' }}>
 
-                {hasExistingMedia && (
-                  <div className="mb-4">
-                    <strong className="text-gray-800">기존 첨부 파일</strong>
-                    {existingImageUrls.length > 0 && (
-                      <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-                        {existingImageUrls.map((imageUrl) => (
-                          <ExistingImagePreview
-                            key={imageUrl}
-                            imageUrl={imageUrl}
-                            onRemove={() => removeExistingImage(imageUrl)}
-                          />
-                        ))}
-                      </div>
-                    )}
+                {/* 버튼 툴바 */}
+                <div className="flex flex-wrap items-center gap-2" style={{ marginBottom: hasExistingMedia || hasNewMedia ? 14 : 0 }}>
+                  <label style={{
+                    display: 'inline-flex', height: 32, alignItems: 'center', gap: 5,
+                    borderRadius: 999, border: '1px solid var(--hair)', background: '#fff',
+                    padding: '0 14px', fontSize: 12, fontWeight: 600, color: 'var(--ink)', cursor: 'pointer',
+                  }}>
+                    <span>＋ 이미지</span>
+                    <input type="file" accept="image/*" multiple onChange={handleImageChange} className="hidden" />
+                  </label>
 
-                    {existingVideoUrl && (
-                      <div className={existingImageUrls.length > 0 ? 'mt-4 max-w-xl' : 'mt-3 max-w-xl'}>
-                        <ExistingVideoPreview videoUrl={existingVideoUrl} onRemove={removeExistingVideo} />
-                      </div>
-                    )}
-                  </div>
-                )}
+                  <label style={{
+                    display: 'inline-flex', height: 32, alignItems: 'center', gap: 5,
+                    borderRadius: 999, border: '1px solid var(--hair)', background: '#fff',
+                    padding: '0 14px', fontSize: 12, fontWeight: 600,
+                    color: hasVideoSlot ? 'var(--muted)' : 'var(--ink)',
+                    cursor: hasVideoSlot ? 'not-allowed' : 'pointer',
+                    opacity: hasVideoSlot ? 0.5 : 1,
+                  }}>
+                    <span>＋ 동영상</span>
+                    <input type="file" accept="video/*" onChange={handleVideoChange} disabled={hasVideoSlot} className="hidden" />
+                  </label>
 
-                {hasNewMedia && (
-                  <div className="mb-4 rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs text-gray-600">
-                    <strong className="text-gray-800">첨부 예정 파일</strong>
-                    <ul className="mt-2 flex flex-col gap-1">
-                      {imageFiles.map((item) => (
-                        <li key={`list-${item.id}`} className="truncate">
-                          이미지: {item.file.name}
-                        </li>
-                      ))}
-                      {videoFile && (
-                        <li className="truncate">
-                          동영상: {videoFile.file.name}
-                        </li>
-                      )}
-                    </ul>
-                  </div>
-                )}
+                  {hasVideoSlot && (
+                    <span style={{ fontSize: 12, color: 'var(--muted)' }}>동영상은 1개만 첨부됩니다</span>
+                  )}
+                </div>
 
-                {hasNewMedia && (
+                {/* 미디어 그리드 — 기존/신규 구분 없이 통합 표시 */}
+                {(hasExistingMedia || hasNewMedia) ? (
                   <>
-                  {imageFiles.length > 0 && (
-                    <div>
-                      <strong className="text-gray-800">이미지</strong>
-                      <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+                    {(existingImageUrls.length > 0 || imageFiles.length > 0) && (
+                      <div className="grid grid-cols-3 gap-2 sm:grid-cols-4 md:grid-cols-5">
+                        {existingImageUrls.map((url) => (
+                          <ExistingImagePreview key={url} imageUrl={url} onRemove={() => removeExistingImage(url)} />
+                        ))}
                         {imageFiles.map((item, index) => (
-                          <ImagePreview
-                            key={item.id}
-                            item={item}
-                            onRemove={() => removeImageFile(index)}
-                          />
+                          <ImagePreview key={item.id} item={item} onRemove={() => removeImageFile(index)} />
                         ))}
                       </div>
-                    </div>
-                  )}
+                    )}
 
-                  {videoFile && (
-                    <div className={imageFiles.length > 0 ? 'mt-4' : ''}>
-                      <strong className="text-gray-800">동영상</strong>
-                      <div className="mt-3 max-w-xl">
-                        <VideoPreview item={videoFile} onRemove={removeVideoFile} />
+                    {(existingVideoUrl || videoFile) && (
+                      <div className={`max-w-sm ${existingImageUrls.length > 0 || imageFiles.length > 0 ? 'mt-3' : ''}`}>
+                        {existingVideoUrl && <ExistingVideoPreview videoUrl={existingVideoUrl} onRemove={removeExistingVideo} />}
+                        {videoFile && <VideoPreview item={videoFile} onRemove={removeVideoFile} />}
                       </div>
-                    </div>
-                  )}
+                    )}
                   </>
+                ) : (
+                  <p style={{ fontSize: 13, color: 'var(--muted)', textAlign: 'center', padding: '20px 0', margin: 0 }}>
+                    이미지와 동영상을 첨부하세요
+                  </p>
                 )}
               </div>
             </section>
 
-            <div className="rounded-xl bg-amber-50 px-4 py-3 text-sm leading-relaxed text-amber-900">
-              <strong>작성 안내</strong><br />
+            {/* 작성 안내 */}
+            <div style={{
+              borderRadius: 12, background: 'rgba(232,231,227,.55)',
+              padding: '14px 18px', fontSize: 13, lineHeight: 1.75, color: 'var(--ink-2)',
+            }}>
+              <strong style={{ color: 'var(--ink)' }}>작성 안내</strong><br />
               허위 의뢰나 악성 글은 관리자에 의해 삭제될 수 있습니다.<br />
               {isEditMode ? (
                 <>완료 상태로 변경하려면 예약 완료된 헌터가 있어야 합니다.</>
               ) : (
-                <>등록 시 상태는 기본적으로 <strong>대기 중</strong> 상태로 저장됩니다.</>
+                <>등록 시 상태는 기본적으로 <strong style={{ color: 'var(--ink)' }}>대기 중</strong> 상태로 저장됩니다.</>
               )}
             </div>
 
+            {/* 버튼 영역 */}
             <div className="flex flex-wrap justify-end gap-3">
               <Link
                 to="/requestView/list"
-                className="inline-flex h-11 items-center rounded-xl border border-gray-300 bg-white px-5 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                style={{
+                  display: 'inline-flex', height: 44, alignItems: 'center',
+                  borderRadius: 999, border: '1px solid var(--hair)',
+                  background: '#fff', padding: '0 20px',
+                  fontSize: 13, fontWeight: 600, color: 'var(--ink)', textDecoration: 'none',
+                }}
               >
                 목록으로
               </Link>
               <button
                 type="button"
                 onClick={handleReset}
-                className="h-11 rounded-xl border border-gray-300 bg-white px-5 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+                style={{
+                  height: 44, borderRadius: 999, border: '1px solid var(--hair)',
+                  background: '#fff', padding: '0 20px',
+                  fontSize: 13, fontWeight: 600, color: 'var(--ink)', cursor: 'pointer',
+                }}
               >
                 다시 작성
               </button>
               <button
                 type="submit"
                 disabled={isSaving}
-                className="h-11 rounded-xl bg-green-900 px-5 text-sm font-semibold text-white hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-50"
+                style={{
+                  height: 44, borderRadius: 999, border: 'none',
+                  background: 'var(--ink)', padding: '0 26px',
+                  fontSize: 13, fontWeight: 600, color: '#fff',
+                  cursor: isSaving ? 'not-allowed' : 'pointer',
+                  opacity: isSaving ? 0.55 : 1,
+                  transition: 'opacity .15s',
+                }}
               >
                 {isSaving ? '저장 중...' : isEditMode ? '의뢰 수정' : '의뢰 등록'}
               </button>
             </div>
+
           </div>
         </form>
       </main>
