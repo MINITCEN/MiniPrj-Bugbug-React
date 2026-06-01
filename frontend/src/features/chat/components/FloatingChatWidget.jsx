@@ -52,40 +52,45 @@ export default function FloatingChatWidget() {
       </button>
 
       {/* 채팅 창 영역 */}
-      {isOpen && (
-        <div className="absolute bottom-[80px] right-0 w-[350px] h-[500px] bg-[#B2C7D9] rounded-2xl shadow-2xl overflow-hidden border border-black/10 flex flex-col transition-all">
-          {!selectedRoom ? (
-            <div className="flex-1 flex flex-col bg-white min-h-0">
-              {/* 목록 헤더 */}
-              <div className="bg-[#A9BDCE] px-4 py-4 flex items-center justify-center font-bold border-b border-black/10 text-gray-800 relative select-none">
-                <span>채팅 목록</span>
-                <span
-                  onClick={handleToggle}
-                  className="absolute right-4 top-4 cursor-pointer text-lg"
-                >
-                  ✕
-                </span>
-              </div>
-              {/* 목록 영역 */}
-              <ChatRoomList
-                userId={user.userId}
-                role={user.role}
-                onSelectRoom={(room) => setSelectedRoom(room)}
-              />
+      {/* ⚠️ 단순 isOpen && 으로 렌더하면 닫힐 때 트랜지션 안먹고 툭 끊김. 항상 렌더해두고 Tailwind 트랜지션으로 쫀득한 애니메이션 구현 */}
+      <div
+        className={`absolute bottom-[80px] right-0 w-[350px] h-[500px] bg-[#B2C7D9] rounded-2xl shadow-2xl overflow-hidden border border-black/10 flex flex-col transition-all duration-300 transform origin-bottom-right ${
+          isOpen
+            ? 'opacity-100 translate-y-0 scale-100 pointer-events-auto'
+            : 'opacity-0 translate-y-10 scale-95 pointer-events-none'
+        }`}
+      >
+        {!selectedRoom ? (
+          <div className="flex-1 flex flex-col bg-white min-h-0">
+            {/* 목록 헤더 */}
+            <div className="bg-[#A9BDCE] px-4 py-4 flex items-center justify-center font-bold border-b border-black/10 text-gray-800 relative select-none">
+              <span>채팅 목록</span>
+              <span
+                onClick={handleToggle}
+                className="absolute right-4 top-4 cursor-pointer text-lg"
+              >
+                ✕
+              </span>
             </div>
-          ) : (
-            <ChatRoomDetail
-              roomId={selectedRoom.roomId}
-              otherNickname={selectedRoom.otherNickname}
-              initialReservedAt={selectedRoom.reservedAt}
+            {/* 목록 영역 */}
+            <ChatRoomList
               userId={user.userId}
               role={user.role}
-              onBack={() => setSelectedRoom(null)}
-              onClose={handleToggle}
+              onSelectRoom={(room) => setSelectedRoom(room)}
             />
-          )}
-        </div>
-      )}
+          </div>
+        ) : (
+          <ChatRoomDetail
+            roomId={selectedRoom.roomId}
+            otherNickname={selectedRoom.otherNickname}
+            initialReservedAt={selectedRoom.reservedAt}
+            userId={user.userId}
+            role={user.role}
+            onBack={() => setSelectedRoom(null)}
+            onClose={handleToggle}
+          />
+        )}
+      </div>
     </div>
   )
 }
