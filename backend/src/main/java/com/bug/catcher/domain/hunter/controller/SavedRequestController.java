@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,19 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SavedRequestController {
     private final SavedRequestService savedRequestService;
+
+    @PreAuthorize("hasRole('HUNTER')")
+    @GetMapping("/{requestId}/bookmarks")
+    public ResponseEntity<Map<String, Object>> readSavedRequest(
+            @AuthenticationPrincipal CustomUserPrincipal loginUser,
+            @PathVariable Long requestId
+    ) {
+        boolean bookmarked = savedRequestService.isSavedRequest(
+                loginUser.getUserId(),
+                requestId
+        );
+        return ResponseEntity.ok(Map.of("bookmarked", bookmarked));
+    }
 
     @PreAuthorize("hasRole('HUNTER')")
     @PostMapping("/{requestId}/bookmarks")

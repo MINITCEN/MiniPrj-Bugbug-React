@@ -25,6 +25,11 @@ public class MosquitoIndexController {
     return ResponseEntity.ok(mosquitoMapQueryService.getTop7());
   }
 
+  @GetMapping("/regions")
+  public ResponseEntity<List<MosquitoResponse>> getRegions() {
+    return ResponseEntity.ok(mosquitoMapQueryService.getCurrentStatuses());
+  }
+
   @GetMapping("/summary/{regionId}")
   public ResponseEntity<MosquitoRegionSummaryResponse> getRegionSummary(@PathVariable Long regionId) {
     return ResponseEntity.ok(mosquitoMapQueryService.getRegionSummary(regionId));
