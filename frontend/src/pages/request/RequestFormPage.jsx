@@ -242,7 +242,6 @@ function RequestFormContent({ requestId, isEditMode, editForm }) {
   const [selectedLocation, setSelectedLocation] = useState(() => (
     editForm?.form?.location ? { address: editForm.form.location } : null
   ))
-  const [placeResults, setPlaceResults] = useState([])
   const { user, isLoggedIn, isLoading } = useAuthStore()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -252,7 +251,6 @@ function RequestFormContent({ requestId, isEditMode, editForm }) {
   const mapRef = useRef(null)
   const markerRef = useRef(null)
   const geocoderRef = useRef(null)
-  const placesRef = useRef(null)
   const placesRef = useRef(null)
 
   useEffect(() => {
