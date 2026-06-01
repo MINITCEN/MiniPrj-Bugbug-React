@@ -8,6 +8,7 @@ import RequestCreatePage from '../../pages/request/RequestCreatePage'
 import RequestDetailPage from '../../pages/request/RequestDetailPage'
 import ComingSoonPage from '../../pages/common/ComingSoonPage'
 import ServiceIntroPage from '../../pages/service-intro/ServiceIntroPage'
+import MosquitoMapPage from '../../pages/mosquito-map/MosquitoMapPage'
 
 // 가드
 import RequireAuth from '../../shared/components/auth/RequireAuth'
@@ -116,7 +117,7 @@ const router = createBrowserRouter([
         ],
       },
       { path: '/service-intro', element: <ServiceIntroPage /> },
-      { path: '/mosquito-map', element: <ComingSoonPage /> },
+      { path: '/mosquito-map', element: <MosquitoMapPage /> },
       { path: '/hunter', element: <ComingSoonPage /> },
       { path: '/requestView/list', element: <RequestListPage /> },
       { path: '/requestView/new', element: <RequestCreatePage /> },
