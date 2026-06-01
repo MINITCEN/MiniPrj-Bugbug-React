@@ -43,11 +43,10 @@ export default function MapPanel({ regions, selectedRegionId, onSelect, onGeoJso
     const region = regionByName.get(name)
     if (!region) return
 
-    const color = STATUS_COLORS[region.status] ?? '#1d3a2e'
     const labelHtml = `
       <div class="mosquito-region-label">
         <span class="region-name">${name}</span>
-        <span class="region-index" style="color:${color}">${Math.round(region.index)}</span>
+        <span class="region-index">${Math.round(region.index)}</span>
       </div>
     `
     layer.bindTooltip(labelHtml, {
@@ -59,7 +58,8 @@ export default function MapPanel({ regions, selectedRegionId, onSelect, onGeoJso
     layer.on('click', () => onSelect(region.regionId))
 
     if (region.regionId === selectedRegionId) {
-      layer.bringToFront()
+      // GeoJSON의 다른 feature들이 추가된 직후 z-order 최상단으로 끌어올린다.
+      setTimeout(() => layer.bringToFront(), 0)
     }
   }
 
