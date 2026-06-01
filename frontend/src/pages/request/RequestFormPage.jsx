@@ -238,9 +238,11 @@ function RequestFormContent({ requestId, isEditMode, editForm }) {
   const [error, setError] = useState('')
   const [mapError, setMapError] = useState('')
   const [dragCounter, setDragCounter] = useState(0)
+  const [placeResults, setPlaceResults] = useState([])
   const [selectedLocation, setSelectedLocation] = useState(() => (
     editForm?.form?.location ? { address: editForm.form.location } : null
   ))
+  const [placeResults, setPlaceResults] = useState([])
   const { user, isLoggedIn, isLoading } = useAuthStore()
   const navigate = useNavigate()
   const queryClient = useQueryClient()
@@ -250,6 +252,8 @@ function RequestFormContent({ requestId, isEditMode, editForm }) {
   const mapRef = useRef(null)
   const markerRef = useRef(null)
   const geocoderRef = useRef(null)
+  const placesRef = useRef(null)
+  const placesRef = useRef(null)
 
   useEffect(() => {
     imageFilesRef.current = imageFiles
@@ -293,6 +297,7 @@ function RequestFormContent({ requestId, isEditMode, editForm }) {
           level: 5,
         })
         geocoderRef.current = new kakao.maps.services.Geocoder()
+        placesRef.current = new kakao.maps.services.Places()
         setMapError('')
       })
       .catch((sdkError) => {
@@ -336,6 +341,42 @@ function RequestFormContent({ requestId, isEditMode, editForm }) {
   const handleChange = (event) => {
     const { name, value } = event.target
     setForm((current) => ({ ...current, [name]: value }))
+    if (name === 'location') {
+      setPlaceResults([])
+      setSelectedLocation(null)
+      if (markerRef.current) {
+        markerRef.current.setMap(null)
+        markerRef.current = null
+      }
+    }
+  }
+
+  const updateSelectedMapLocation = ({ latitude, longitude, address }) => {
+    const position = new window.kakao.maps.LatLng(latitude, longitude)
+
+    mapRef.current.setCenter(position)
+
+    if (markerRef.current) {
+      markerRef.current.setMap(null)
+    }
+
+    markerRef.current = new window.kakao.maps.Marker({
+      map: mapRef.current,
+      position,
+    })
+
+    setForm((current) => ({
+      ...current,
+      location: address,
+    }))
+
+    setSelectedLocation({
+      address,
+      latitude,
+      longitude,
+    })
+    setPlaceResults([])
+    setMapError('')
   }
 
   const handleSearchLocation = () => {
@@ -346,40 +387,41 @@ function RequestFormContent({ requestId, isEditMode, editForm }) {
       return
     }
 
-    if (!window.kakao?.maps || !mapRef.current || !geocoderRef.current) {
+    if (!window.kakao?.maps || !mapRef.current || !geocoderRef.current || !placesRef.current) {
       setMapError('지도가 아직 준비되지 않았습니다. 잠시 후 다시 시도해 주세요.')
       return
     }
 
-    geocoderRef.current.addressSearch(keyword, (result, status) => {
-      if (status !== window.kakao.maps.services.Status.OK || result.length === 0) {
-        setMapError('입력한 위치를 찾지 못했습니다. 예: 서울 강남구 역삼동')
-        setSelectedLocation(null)
+    placesRef.current.keywordSearch(keyword, (placeResult, placeStatus) => {
+      if (placeStatus === window.kakao.maps.services.Status.OK && placeResult.length > 0) {
+        setPlaceResults(placeResult.slice(0, 5))
+        setMapError('')
         return
       }
 
-      const firstResult = result[0]
-      const latitude = Number(firstResult.y)
-      const longitude = Number(firstResult.x)
-      const position = new window.kakao.maps.LatLng(latitude, longitude)
+      geocoderRef.current.addressSearch(keyword, (addressResult, addressStatus) => {
+        if (addressStatus !== window.kakao.maps.services.Status.OK || addressResult.length === 0) {
+          setSelectedLocation(null)
+          setPlaceResults([])
+          setMapError('입력한 위치를 찾지 못했습니다. 예: 강남역, 서울 강남구 역삼동')
+          return
+        }
 
-      mapRef.current.setCenter(position)
-
-      if (markerRef.current) {
-        markerRef.current.setMap(null)
-      }
-
-      markerRef.current = new window.kakao.maps.Marker({
-        map: mapRef.current,
-        position,
+        const firstResult = addressResult[0]
+        updateSelectedMapLocation({
+          latitude: Number(firstResult.y),
+          longitude: Number(firstResult.x),
+          address: firstResult.address_name,
+        })
       })
+    })
+  }
 
-      setSelectedLocation({
-        address: firstResult.address_name,
-        latitude,
-        longitude,
-      })
-      setMapError('')
+  const handleSelectPlace = (place) => {
+    updateSelectedMapLocation({
+      latitude: Number(place.y),
+      longitude: Number(place.x),
+      address: place.road_address_name || place.address_name || place.place_name,
     })
   }
 
@@ -523,6 +565,11 @@ function RequestFormContent({ requestId, isEditMode, editForm }) {
   const handleSubmit = (event) => {
     event.preventDefault()
     setError('')
+
+    if (!selectedLocation) {
+      setMapError('대략적인 위치를 검색하고 지도에 핀을 표시해 주세요.')
+      return
+    }
 
     const formData = new FormData()
     formData.append('title', form.title.trim())
@@ -702,7 +749,7 @@ function RequestFormContent({ requestId, isEditMode, editForm }) {
                     value={form.location}
                     onChange={handleChange}
                     required
-                    placeholder="예: 서울 강남구 역삼동"
+                    placeholder="예: 강남역, 서울 강남구 역삼동"
                     style={{ height: 48, borderRadius: 10, border: '1px solid var(--hair)', padding: '0 16px', fontSize: 14, flex: 1, outline: 'none' }}
                   />
                   <button
@@ -718,6 +765,27 @@ function RequestFormContent({ requestId, isEditMode, editForm }) {
                   </button>
                 </div>
               </label>
+
+              {/* 키워드 검색 결과 드롭다운 */}
+              {placeResults.length > 0 && (
+                <div style={{ borderRadius: 12, border: '1px solid var(--hair-2)', background: '#fff', overflow: 'hidden' }}>
+                  {placeResults.map((place) => (
+                    <button
+                      key={place.id}
+                      type="button"
+                      onClick={() => handleSelectPlace(place)}
+                      style={{ display: 'block', width: '100%', borderBottom: '1px solid var(--hair-2)', padding: '10px 16px', textAlign: 'left', background: 'none', cursor: 'pointer', transition: 'background .1s' }}
+                      onMouseEnter={e => { e.currentTarget.style.background = '#fafaf8' }}
+                      onMouseLeave={e => { e.currentTarget.style.background = 'none' }}
+                    >
+                      <strong style={{ display: 'block', fontSize: 13, fontWeight: 600, color: 'var(--ink)' }}>{place.place_name}</strong>
+                      <span style={{ display: 'block', marginTop: 2, fontSize: 12, color: 'var(--ink-2)' }}>
+                        {place.road_address_name || place.address_name || '주소 정보 없음'}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
 
               {/* 지도 */}
               <div className="flex flex-col gap-1.5">
