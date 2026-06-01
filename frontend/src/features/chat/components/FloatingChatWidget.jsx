@@ -33,7 +33,7 @@ export default function FloatingChatWidget() {
       {isOpen && (
         <div className="absolute bottom-[80px] right-0 w-[350px] h-[500px] bg-[#B2C7D9] rounded-2xl shadow-2xl overflow-hidden border border-black/10 flex flex-col transition-all">
           {!selectedRoom ? (
-            <div className="flex-1 flex flex-col bg-white">
+            <div className="flex-1 flex flex-col bg-white min-h-0">
               {/* 목록 헤더 */}
               <div className="bg-[#A9BDCE] px-4 py-4 flex items-center justify-center font-bold border-b border-black/10 text-gray-800 relative select-none">
                 <span>채팅 목록</span>
