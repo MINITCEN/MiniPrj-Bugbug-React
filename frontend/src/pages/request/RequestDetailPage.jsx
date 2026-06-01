@@ -250,26 +250,23 @@ export default function RequestDetailPage() {
                   {request.title}
                 </h1>
 
-                <div className="mt-4 flex flex-wrap items-center gap-5">
-                  <div className="flex items-center gap-3">
+                <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm" style={{ color: 'var(--ink-2)' }}>
+                  <div className="flex items-center gap-2">
                     <div
-                      className="flex h-10 w-10 items-center justify-center text-lg"
+                      className="flex h-7 w-7 shrink-0 items-center justify-center text-sm"
                       style={{ borderRadius: 999, background: 'rgba(46,140,104,.1)' }}
                     >
                       🐛
                     </div>
-                    <div>
-                      <strong className="block text-sm" style={{ color: 'var(--ink)' }}>{request.nickname || '의뢰인'}</strong>
-                      <p className="text-xs" style={{ color: 'var(--ink-2)' }}>
-                        발생 시간 {formatDateTime(request.occurrenceTime)}
-                      </p>
-                    </div>
+                    <strong style={{ color: 'var(--ink)', fontWeight: 600 }}>{request.nickname || '의뢰인'}</strong>
                   </div>
 
-                  <div className="flex flex-col gap-1 text-sm sm:ml-auto" style={{ color: 'var(--ink-2)' }}>
-                    <span>위치 {request.approxLocation || '미입력'}</span>
-                    <span>조회수 {request.viewCount ?? 0}</span>
-                  </div>
+                  <MetaDot />
+                  <MetaItem label="위치" value={request.approxLocation || '미입력'} />
+                  <MetaDot />
+                  <MetaItem label="조회수" value={`${request.viewCount ?? 0}회`} />
+                  <MetaDot />
+                  <MetaItem label="발생 시간" value={formatDateTime(request.occurrenceTime)} />
                 </div>
               </div>
             </div>
@@ -422,6 +419,19 @@ export default function RequestDetailPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+function MetaDot() {
+  return <span style={{ color: 'var(--hair)', userSelect: 'none' }}>·</span>
+}
+
+function MetaItem({ label, value }) {
+  return (
+    <span className="flex items-baseline gap-1">
+      <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--muted)', letterSpacing: '0.02em' }}>{label}</span>
+      <span>{value}</span>
+    </span>
   )
 }
 
