@@ -3,6 +3,19 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { fetchChatMessages, uploadChatFile, confirmReservation as apiConfirmReservation } from '../../../shared/api/chatApi'
 import useChatSocket from '../hooks/useChatSocket'
 
+// ISO 8601 시간을 "오후 7:42" 형태로 가공하는 헬퍼 함수
+function formatMessageTime(isoString) {
+  if (!isoString) return ''
+  const date = new Date(isoString)
+  if (Number.isNaN(date.getTime())) return ''
+
+  return new Intl.DateTimeFormat('ko-KR', {
+    hour: 'numeric',
+    minute: '2-digit',
+    hour12: true,
+  }).format(date)
+}
+
 export default function ChatRoomDetail({ roomId, otherNickname, initialReservedAt, userId, role, onBack, onClose }) {
   const queryClient = useQueryClient()
   const [messages, setMessages] = useState([])
@@ -130,29 +143,39 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
           return (
             <div
               key={msg.chatMessageId || index}
-              className={`flex flex-col max-w-[70%] ${isMine ? 'self-end items-end' : 'self-start items-start'}`}
+              className={`flex flex-col max-w-[85%] ${isMine ? 'self-end items-end' : 'self-start items-start'}`}
             >
               {!isMine && (
                 <div className="text-[11px] text-gray-700 mb-1 pl-1">
                   {msg.senderNickname}
                 </div>
               )}
-              <div
-                className={`px-3 py-2 text-sm leading-relaxed rounded-xl break-words ${
-                  isMine
-                    ? 'bg-[#FEE500] text-gray-900 rounded-tr-none'
-                    : 'bg-white text-gray-900 rounded-tl-none'
-                }`}
-              >
-                <div>{msg.content}</div>
-                {msg.messageType === 'IMAGE' && (
-                  <img src={msg.fileUrl} alt="첨부 이미지" className="max-w-full rounded-md mt-1 border border-gray-100" />
-                )}
-                {msg.messageType === 'VIDEO' && (
-                  <video src={msg.fileUrl} controls className="max-w-full rounded-md mt-1 border border-gray-100" />
-                )}
-                {msg.messageType === 'AUDIO' && (
-                  <audio src={msg.fileUrl} controls className="max-w-full mt-1" />
+              <div className={`flex items-end gap-1.5 ${isMine ? 'flex-row-reverse' : 'flex-row'}`}>
+                {/* 말풍선 본체 */}
+                <div
+                  className={`px-3 py-2 text-sm leading-relaxed rounded-xl break-words ${
+                    isMine
+                      ? 'bg-[#FEE500] text-gray-900 rounded-tr-none'
+                      : 'bg-white text-gray-900 rounded-tl-none'
+                  }`}
+                >
+                  <div>{msg.content}</div>
+                  {msg.messageType === 'IMAGE' && (
+                    <img src={msg.fileUrl} alt="첨부 이미지" className="max-w-full rounded-md mt-1 border border-gray-100" />
+                  )}
+                  {msg.messageType === 'VIDEO' && (
+                    <video src={msg.fileUrl} controls className="max-w-full rounded-md mt-1 border border-gray-100" />
+                  )}
+                  {msg.messageType === 'AUDIO' && (
+                    <audio src={msg.fileUrl} controls className="max-w-full mt-1" />
+                  )}
+                </div>
+
+                {/* 전송 시간 라벨 */}
+                {msg.createdAt && (
+                  <span className="text-[10px] text-gray-600 select-none whitespace-nowrap mb-0.5">
+                    {formatMessageTime(msg.createdAt)}
+                  </span>
                 )}
               </div>
             </div>

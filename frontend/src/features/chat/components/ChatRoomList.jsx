@@ -32,9 +32,12 @@ export default function ChatRoomList({ userId, role, onSelectRoom }) {
     )
   }
 
+  // 최근 개설된 대화방(roomId가 클수록 최신 방)이 목록 가장 상단에 오도록 내림차순 정렬
+  const sortedRooms = [...rooms].sort((a, b) => b.roomId - a.roomId)
+
   return (
     <div className="flex-1 overflow-y-auto bg-white">
-      {rooms.map((room) => (
+      {sortedRooms.map((room) => (
         <div
           key={room.roomId}
           onClick={() => onSelectRoom(room)}
