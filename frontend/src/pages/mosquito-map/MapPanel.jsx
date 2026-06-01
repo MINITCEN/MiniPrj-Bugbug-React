@@ -38,9 +38,25 @@ export default function MapPanel({ regions, selectedRegionId, onSelect }) {
   const onEachFeature = (feature, layer) => {
     const name = feature.properties?.SIG_KOR_NM ?? feature.properties?.name
     const region = regionByName.get(name)
-    if (region) {
-      layer.bindTooltip(`${name} (${Math.round(region.index)} · ${region.status})`, { sticky: true })
-      layer.on('click', () => onSelect(region.regionId))
+    if (!region) return
+
+    const color = STATUS_COLORS[region.status] ?? '#1d3a2e'
+    const labelHtml = `
+      <div class="mosquito-region-label">
+        <span class="region-name">${name}</span>
+        <span class="region-index" style="color:${color}">${Math.round(region.index)}</span>
+      </div>
+    `
+    layer.bindTooltip(labelHtml, {
+      permanent: true,
+      direction: 'center',
+      className: 'mosquito-region-label-wrap',
+    })
+
+    layer.on('click', () => onSelect(region.regionId))
+
+    if (region.regionId === selectedRegionId) {
+      layer.bringToFront()
     }
   }
 

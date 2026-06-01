@@ -22,3 +22,32 @@ html, body {
   word-break: keep-all;
   letter-spacing: -0.015em;
 }
+
+/* 모기지수 지도 - 자치구 폴리곤 위 라벨 */
+.leaflet-tooltip.mosquito-region-label-wrap {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  pointer-events: none;
+}
+.leaflet-tooltip.mosquito-region-label-wrap::before {
+  display: none;
+}
+.mosquito-region-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.05;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.85), 0 0 4px rgba(255, 255, 255, 0.65);
+}
+.mosquito-region-label .region-name {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.mosquito-region-label .region-index {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
