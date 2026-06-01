@@ -171,26 +171,27 @@ export default function FloatingChatWidget() {
       className="fixed z-[9999] font-sans antialiased select-none touch-none"
     >
       {/* 플로팅 둥근 버튼 */}
+      {/* ⚠️ 노란색에서 럭셔리 포레스트 딥 그린(bg-[#1D3A2E])으로 전면 탈바꿈 */}
       <button
         onMouseDown={handleMouseDown}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
         onClick={handleButtonClick}
-        className="w-[60px] h-[60px] bg-[#FEE500] rounded-full shadow-lg hover:shadow-xl cursor-pointer flex items-center justify-center text-2xl transition-transform hover:scale-110 border-none select-none relative active:scale-95 animate-fade-in"
+        className="w-[60px] h-[60px] bg-[#1D3A2E] hover:bg-[#152a21] text-white rounded-full shadow-lg shadow-[#1D3A2E]/10 hover:shadow-xl hover:shadow-[#1D3A2E]/20 cursor-pointer flex items-center justify-center text-2xl transition-transform hover:scale-110 border-none select-none relative active:scale-95 animate-fade-in"
       >
         💬
         {totalUnread > 0 && (
-          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[11px] font-extrabold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center border-2 border-white animate-pulse">
+          <span className="absolute -top-1 -right-1 bg-[#e5573a] text-white text-[11px] font-extrabold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center border-2 border-white animate-pulse">
             {totalUnread > 99 ? '99+' : totalUnread}
           </span>
         )}
       </button>
 
       {/* 채팅 창 영역 */}
-      {/* ⚠️ 스마트 가로/세로 자동 뒤집기 애니메이션 및 오차없는 Bounding Transition 구현 */}
+      {/* ⚠️ 배경색을 버그버그 시그니처 웜화이트 크림(bg-[#F8F7F3])으로 업그레이드 */}
       <div
-        className={`absolute w-[350px] h-[500px] bg-[#B2C7D9] rounded-2xl shadow-2xl overflow-hidden border border-black/10 flex flex-col transition-all duration-300 transform ${
+        className={`absolute w-[350px] h-[500px] bg-[#F8F7F3] rounded-2xl shadow-2xl overflow-hidden border border-[#E8E7E3] flex flex-col transition-all duration-300 transform ${
           isPopupBelow ? 'top-[70px]' : 'bottom-[80px]'
         } ${
           isPopupRight ? 'left-0' : 'right-0'
@@ -209,11 +210,12 @@ export default function FloatingChatWidget() {
         {!selectedRoom ? (
           <div className="flex-1 flex flex-col bg-white min-h-0">
             {/* 목록 헤더 */}
-            <div className="bg-[#A9BDCE] px-4 py-4 flex items-center justify-center font-bold border-b border-black/10 text-gray-800 relative select-none">
-              <span>채팅 목록</span>
+            {/* ⚠️ 딥 그린 해더 매치 */}
+            <div className="bg-[#1D3A2E] px-4 py-4.5 flex items-center justify-center font-bold text-white relative select-none shadow-sm">
+              <span className="tracking-wide text-sm font-extrabold">채팅 목록</span>
               <span
                 onClick={handleToggle}
-                className="absolute right-4 top-4 cursor-pointer text-lg"
+                className="absolute right-4 top-4.5 cursor-pointer text-base text-white/80 hover:text-white transition-colors"
               >
                 ✕
               </span>

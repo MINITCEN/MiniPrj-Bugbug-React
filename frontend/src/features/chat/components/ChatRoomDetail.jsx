@@ -146,17 +146,18 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
   }
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#B2C7D9]">
+    <div className="flex-1 flex flex-col h-full bg-[#F8F7F3]">
       {/* 대화방 헤더 */}
-      <div className="bg-[#A9BDCE] px-4 py-3 flex items-center justify-between font-bold border-b border-black/10 text-gray-800 relative select-none">
-        <span onClick={onBack} className="cursor-pointer text-lg font-bold">⬅️</span>
-        <span className="text-center">{otherNickname}</span>
-        <span onClick={onClose} className="cursor-pointer text-lg">✕</span>
+      {/* ⚠️ 딥 그린 해더 매치 */}
+      <div className="bg-[#1D3A2E] px-4 py-3.5 flex items-center justify-between font-bold text-white relative select-none shadow-sm">
+        <span onClick={onBack} className="cursor-pointer text-lg font-bold text-white/80 hover:text-white transition-colors">⬅️</span>
+        <span className="text-center text-sm font-extrabold tracking-wide">{otherNickname}</span>
+        <span onClick={onClose} className="cursor-pointer text-lg text-white/80 hover:text-white transition-colors">✕</span>
       </div>
 
       {/* 예약 현황 상태 바 */}
       {/* ⚠️ 투박한 텍스트 걷어내고 카카오톡에 어울리는 산뜻한 프리미엄 라운드 배지 태그 디자인으로 전면 개편 */}
-      <div className="flex justify-between items-center bg-white px-4 py-2.5 border-b border-gray-200 text-xs select-none">
+      <div className="flex justify-between items-center bg-white px-4 py-2.5 border-b border-[#E8E7E3] text-xs select-none">
         <div className="flex items-center gap-1.5 font-medium text-gray-700">
           <span className="text-gray-400">매칭 상태</span>
           {reservedAt ? (
@@ -173,7 +174,7 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
           <button
             onClick={handleReservationClick}
             disabled={reservationMutation.isPending}
-            className="bg-[#4e73df] hover:bg-[#3b59b6] text-white rounded-full px-3.5 py-1 text-[11px] font-extrabold cursor-pointer transition-all duration-200 shadow-sm hover:shadow active:scale-95 disabled:opacity-50 border-none"
+            className="bg-[#2E8C68] hover:bg-[#236b4e] text-white rounded-full px-3.5 py-1 text-[11px] font-extrabold cursor-pointer transition-all duration-200 shadow-sm hover:shadow active:scale-95 disabled:opacity-50 border-none"
           >
             예약 확정하기
           </button>
@@ -210,17 +211,18 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
                 className={`flex flex-col max-w-[85%] ${isMine ? 'self-end items-end' : 'self-start items-start'}`}
               >
                 {!isMine && (
-                  <div className="text-[11px] text-gray-700 mb-1 pl-1">
+                  <div className="text-[11px] text-gray-500 mb-1 pl-1 font-medium">
                     {msg.senderNickname}
                   </div>
                 )}
                 <div className={`flex items-end gap-1.5 ${isMine ? 'flex-row-reverse' : 'flex-row'}`}>
                   {/* 말풍선 본체 */}
+                  {/* ⚠️ 노란색/흰색 버블에서 프리미엄 에메랄드/코튼화이트 버블로 고도화 */}
                   <div
-                    className={`px-3 py-2 text-sm leading-relaxed rounded-xl break-words ${
+                    className={`px-3.5 py-2 text-sm leading-relaxed rounded-xl break-words shadow-sm ${
                       isMine
-                        ? 'bg-[#FEE500] text-gray-900 rounded-tr-none'
-                        : 'bg-white text-gray-900 rounded-tl-none'
+                        ? 'bg-[#2E8C68] text-white rounded-tr-none'
+                        : 'bg-white text-gray-800 rounded-tl-none border border-[#E8E7E3]'
                     }`}
                   >
                     <div>{msg.content}</div>
@@ -250,7 +252,8 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
       </div>
 
       {/* 하단 전송창 영역 */}
-      <div className="bg-white p-3 flex items-center gap-3 border-t border-gray-200">
+      {/* ⚠️ 노란 버튼에서 시크한 딥 그린 포인트 버튼으로 세련되게 수정 */}
+      <div className="bg-white p-3 flex items-center gap-3 border-t border-[#E8E7E3]">
         <span
           onClick={() => fileInputRef.current?.click()}
           className="cursor-pointer text-xl text-gray-400 select-none hover:text-gray-600 transition-colors"
@@ -275,7 +278,7 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
         />
         <button
           onClick={handleSend}
-          className="bg-[#FEE500] w-9 h-9 flex items-center justify-center rounded-full text-lg cursor-pointer hover:brightness-95 transition-all select-none border-none text-gray-800"
+          className="bg-[#1D3A2E] hover:bg-[#2E8C68] w-9 h-9 flex items-center justify-center rounded-full text-base cursor-pointer hover:brightness-105 transition-all select-none border-none text-white shadow-sm active:scale-95"
         >
           ➤
         </button>
