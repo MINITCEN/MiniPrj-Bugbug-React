@@ -10,15 +10,18 @@ const SEOUL_BOUNDS = [
   [37.70, 127.18],
 ]
 
-export default function MapPanel({ regions, selectedRegionId, onSelect }) {
+export default function MapPanel({ regions, selectedRegionId, onSelect, onGeoJsonLoaded }) {
   const [geoJson, setGeoJson] = useState(null)
 
   useEffect(() => {
     fetch('/map/seoul-districts.geojson')
       .then((res) => res.json())
-      .then(setGeoJson)
+      .then((data) => {
+        setGeoJson(data)
+        onGeoJsonLoaded?.(data)
+      })
       .catch(() => setGeoJson(null))
-  }, [])
+  }, [onGeoJsonLoaded])
 
   const regionByName = new Map(regions.map((r) => [r.location, r]))
 
