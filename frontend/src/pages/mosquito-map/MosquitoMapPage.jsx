@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import useRegions from '../../features/mosquito-map/hooks/useRegions'
 import useRegionSummary from '../../features/mosquito-map/hooks/useRegionSummary'
+import useUserCoords from '../../features/mosquito-map/hooks/useUserCoords'
+import findRegionByCoords from '../../features/mosquito-map/utils/findRegionByCoords'
 import { DEFAULT_REGION_ID } from '../../features/mosquito-map/constants'
 import MapPanel from './MapPanel'
 import RegionListPanel from './RegionListPanel'
@@ -14,11 +16,33 @@ function fmtUpdated(ts) {
 
 export default function MosquitoMapPage() {
   const [selectedRegionId, setSelectedRegionId] = useState(DEFAULT_REGION_ID)
+  const userSelectedRef = useRef(false)
+  const geoJsonRef = useRef(null)
 
   const regionsQuery = useRegions()
   const summaryQuery = useRegionSummary(selectedRegionId)
+  const userCoords = useUserCoords()
 
   const regions = regionsQuery.data ?? []
+
+  // 사용자가 직접 선택한 후엔 더 이상 자동 위치 매칭으로 덮어쓰지 않는다.
+  const handleSelect = (id) => {
+    userSelectedRef.current = true
+    setSelectedRegionId(id)
+  }
+
+  const handleGeoJsonLoaded = useCallback((data) => {
+    geoJsonRef.current = data
+  }, [])
+
+  // 좌표 + GeoJSON + regions 모두 갖춰지면 자동으로 자치구 선택
+  useEffect(() => {
+    if (userSelectedRef.current) return
+    if (!userCoords || !geoJsonRef.current || regions.length === 0) return
+    const regionByName = new Map(regions.map((r) => [r.location, r]))
+    const matched = findRegionByCoords(geoJsonRef.current, regionByName, userCoords.lat, userCoords.lon)
+    if (matched) setSelectedRegionId(matched)
+  }, [userCoords, regions])
 
   const handleRefresh = () => {
     regionsQuery.refetch()
@@ -39,7 +63,7 @@ export default function MosquitoMapPage() {
       <div className="relative max-w-screen-xl mx-auto px-12 pt-10 pb-16 flex flex-col gap-6">
         <header className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold tracking-tight" style={{ color: 'var(--ink)' }}>
-            모기지수 지도
+            서울시 모기지수 지도
           </h1>
           <p className="text-sm" style={{ color: 'var(--ink-2)' }}>
             서울 25개 자치구의 현재 모기 활동 지수와 단계, 상세 기상 정보를 한 화면에서 확인합니다.
@@ -52,7 +76,7 @@ export default function MosquitoMapPage() {
             <RegionListPanel
               regions={regions}
               selectedRegionId={selectedRegionId}
-              onSelect={setSelectedRegionId}
+              onSelect={handleSelect}
             />
             <div className="flex-1 flex flex-col">
               <LegendPanel />
@@ -82,7 +106,8 @@ export default function MosquitoMapPage() {
             <MapPanel
               regions={regions}
               selectedRegionId={selectedRegionId}
-              onSelect={setSelectedRegionId}
+              onSelect={handleSelect}
+              onGeoJsonLoaded={handleGeoJsonLoaded}
             />
           </div>
 

@@ -80,8 +80,9 @@ export default function RegionDetailPanel({ summary, isLoading }) {
             {d.mosquitoIndex != null ? Math.round(d.mosquitoIndex) : '—'}
           </div>
           <div className="text-sm font-medium" style={{ color: 'var(--ink-2)' }}>/ 100</div>
+          <DeltaBadge trend={trend} todayIndex={d.mosquitoIndex} />
           <div className="ml-auto text-xs" style={{ color: 'var(--muted)' }}>
-            모기지수 기준 {fmtDate(d.mosquitoIndexDate)}
+            모기지수 발표 {fmtDate(d.mosquitoIndexDate)}
           </div>
         </div>
       </div>
@@ -116,6 +117,29 @@ export default function RegionDetailPanel({ summary, isLoading }) {
         )}
       </div>
     </aside>
+  )
+}
+
+function DeltaBadge({ trend, todayIndex }) {
+  if (todayIndex == null || trend.length < 2) return null
+  const yesterday = trend[trend.length - 2]?.index
+  if (yesterday == null) return null
+
+  const diff = todayIndex - yesterday
+  if (Math.abs(diff) < 0.05) {
+    return (
+      <span className="text-xs font-semibold" style={{ color: 'var(--muted)' }}>
+        → 0
+      </span>
+    )
+  }
+  const up = diff > 0
+  const color = up ? '#e5573a' : '#2e8c68'
+  const symbol = up ? '▲' : '▼'
+  return (
+    <span className="text-xs font-bold" style={{ color }}>
+      {symbol} {Math.abs(diff).toFixed(1)}
+    </span>
   )
 }
 

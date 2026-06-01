@@ -1,4 +1,4 @@
-import axiosInstance from './axiosInstance'
+import axiosInstance from '../../../shared/api/axiosInstance'
 
 export const fetchMosquitoSummary = (regionId = 1168000000) =>
   axiosInstance.get(`/v1/mosquito/summary/${regionId}`).then((res) => res.data)
