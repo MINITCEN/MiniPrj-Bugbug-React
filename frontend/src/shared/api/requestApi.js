@@ -27,3 +27,6 @@ export const fetchSavedRequest = (requestId) =>
 
 export const toggleSavedRequest = (requestId) =>
   axiosInstance.post(`/hunters/requests/${requestId}/bookmarks`).then((res) => res.data)
+
+export const applyRequest = (requestId) =>
+  axiosInstance.post(`/requests/${requestId}/apply`).then((res) => res.data)

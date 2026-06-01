@@ -88,7 +88,8 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",
                                 "/swagger-resources/**",
                                 "/error",
-                                "/service-intro"
+                                "/service-intro",
+                                "/ws/chats/**"
                         ).permitAll()
                         .requestMatchers(HttpMethod.GET,
                                 "/requestView/**",
