@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, Fragment } from 'react'
+import { createPortal } from 'react-dom'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { fetchChatMessages, uploadChatFile, confirmReservation as apiConfirmReservation } from '../../../shared/api/chatApi'
 import useChatSocket from '../hooks/useChatSocket'
@@ -35,6 +36,7 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
   const [messages, setMessages] = useState([])
   const [inputValue, setInputValue] = useState('')
   const [reservedAt, setReservedAt] = useState(initialReservedAt)
+  const [activeImageUrl, setActiveImageUrl] = useState(null) // ⚠️ 클릭하여 확대된 이미지 S3 URL 상태
   
   const scrollContainerRef = useRef(null) // ⚠️ 과거 대화 정독 시 스크롤 튕김 방지용 스크롤 컨테이너 Ref
   const messagesEndRef = useRef(null)
@@ -117,6 +119,11 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
     setTimeout(() => {
       inputRef.current?.focus()
     }, 10)
+  }
+
+  // ⚠️ 이미지 클릭하여 라이트박스 팝업 활성화 핸들러
+  const handleImageClick = (url) => {
+    setActiveImageUrl(url)
   }
 
   const handleKeyDown = (e) => {
@@ -254,10 +261,15 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
                   >
                     <div>{msg.content}</div>
                     {msg.messageType === 'IMAGE' && (
-                      <img src={msg.fileUrl} alt="첨부 이미지" className="max-w-full rounded-md mt-1 border border-gray-100" />
+                      <img
+                        src={msg.fileUrl}
+                        alt="첨부 이미지"
+                        onClick={() => handleImageClick(msg.fileUrl)}
+                        className="max-w-full rounded-md mt-1.5 border border-gray-100 cursor-zoom-in hover:brightness-90 transition-all object-cover max-h-[160px] shadow-sm"
+                      />
                     )}
                     {msg.messageType === 'VIDEO' && (
-                      <video src={msg.fileUrl} controls className="max-w-full rounded-md mt-1 border border-gray-100" />
+                      <video src={msg.fileUrl} controls className="max-w-full rounded-md mt-1.5 border border-gray-100" />
                     )}
                     {msg.messageType === 'AUDIO' && (
                       <audio src={msg.fileUrl} controls className="max-w-full mt-1" />
@@ -314,6 +326,34 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
           </svg>
         </button>
       </div>
+
+      {/* ⚠️ React Portal을 활용한 360px 한계 극복 글로벌 뷰포트 이미지 뷰어 모달 (body 최상단 순간이동!) */}
+      {activeImageUrl && createPortal(
+        <div
+          onClick={() => setActiveImageUrl(null)}
+          className="fixed inset-0 bg-black/94 z-[999999] flex flex-col items-center justify-center p-6 select-none cursor-zoom-out animate-fade-in"
+        >
+          {/* 상단 우측 닫기 동그라미 버튼 */}
+          <div className="absolute top-6 right-6 flex items-center justify-end z-[1000000]">
+            <button
+              onClick={() => setActiveImageUrl(null)}
+              className="bg-white/10 hover:bg-white/20 hover:scale-105 active:scale-95 text-white w-11 h-11 flex items-center justify-center rounded-full transition-all border-none cursor-pointer"
+            >
+              <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          {/* 이미지 코어 (드롭 쉐도우 + scale 트랜지션 애니메이션) */}
+          <img
+            src={activeImageUrl}
+            alt="확대 이미지"
+            className="max-w-[90%] max-h-[85%] rounded-2xl shadow-[0_30px_70px_rgba(0,0,0,0.8)] border border-white/5 object-contain transition-all duration-300 transform scale-100 animate-scale-up"
+            onClick={(e) => e.stopPropagation()} // 이미지 영역 누르면 안 꺼지게 클릭 전파 방어
+          />
+        </div>,
+        document.body
+      )}
     </div>
   )
 }
