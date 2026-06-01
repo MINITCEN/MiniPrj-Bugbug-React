@@ -8,6 +8,7 @@ import {
   fetchSavedRequest,
   toggleSavedRequest,
 } from '../../shared/api/requestApi'
+import CommentSection from './CommentSection'
 
 const KAKAO_MAP_SDK_ID = 'kakao-map-sdk'
 
@@ -290,70 +291,72 @@ export default function RequestDetailPage() {
               <InfoItem label="발생 시간" value={formatDateTime(request.occurrenceTime)} />
               <InfoItem label="추가 정보" value={request.description} />
             </section>
-          </div>
 
-          <div className="flex flex-wrap justify-start gap-3 border-t border-gray-200 pt-5">
-            <Link
-              to="/requestView/list"
-              className="inline-flex h-10 w-36 items-center justify-center rounded-md border border-gray-300 bg-white px-4 text-sm font-semibold text-gray-700 hover:bg-gray-50"
-            >
-              ← 목록으로
-            </Link>
-            {isHunter && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => savedMutation.mutate()}
-                  disabled={savedMutation.isPending}
-                  className={`inline-flex h-10 w-36 items-center justify-center rounded-md border px-4 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60 ${
-                    isSaved
-                      ? 'border-red-400 bg-red-50 text-red-700 hover:bg-red-100'
-                      : 'border-red-300 bg-white text-red-700 hover:bg-red-100'
-                  }`}
-                >
-                  {savedMutation.isPending ? '처리 중' : isSaved ? '♥ 찜 취소' : '♡ 찜하기'}
-                </button>
+            <div className="flex flex-wrap justify-start gap-3 border-t border-gray-200 pt-5">
+              <Link
+                to="/requestView/list"
+                className="inline-flex h-10 w-36 items-center justify-center rounded-md border border-gray-300 bg-white px-4 text-sm font-semibold text-gray-700 hover:bg-gray-50"
+              >
+                ← 목록으로
+              </Link>
+              {isHunter && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => savedMutation.mutate()}
+                    disabled={savedMutation.isPending}
+                    className={`inline-flex h-10 w-36 items-center justify-center rounded-md border px-4 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60 ${
+                      isSaved
+                        ? 'border-red-400 bg-red-50 text-red-700 hover:bg-red-100'
+                        : 'border-red-300 bg-white text-red-700 hover:bg-red-100'
+                    }`}
+                  >
+                    {savedMutation.isPending ? '처리 중' : isSaved ? '♥ 찜 취소' : '♡ 찜하기'}
+                  </button>
 
-                <button
-                  type="button"
-                  onClick={() => alert('지원 기능은 준비 중입니다.')}
-                  className="inline-flex h-10 w-36 items-center justify-center rounded-md bg-green-900 px-4 text-sm font-semibold text-white hover:bg-green-800"
-                >
-                  ⚡ 헌터 지원하기
-                </button>
-              </>
+                  <button
+                    type="button"
+                    onClick={() => alert('지원 기능은 준비 중입니다.')}
+                    className="inline-flex h-10 w-36 items-center justify-center rounded-md bg-green-900 px-4 text-sm font-semibold text-white hover:bg-green-800"
+                  >
+                    ⚡ 헌터 지원하기
+                  </button>
+                </>
+              )}
+              {isOwner && (
+                <>
+                  <Link
+                    to={`/requestView/edit/${request.requestId}`}
+                    className="inline-flex h-10 w-36 items-center justify-center rounded-md border border-green-300 bg-white px-4 text-sm font-semibold text-green-800 hover:bg-green-100"
+                  >
+                    수정하기
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={handleDelete}
+                    disabled={deleteMutation.isPending}
+                    className="inline-flex h-10 w-36 items-center justify-center rounded-md border border-red-200 bg-white px-4 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {deleteMutation.isPending ? '삭제 중' : '삭제하기'}
+                  </button>
+                </>
+              )}
+            </div>
+
+            {deleteMutation.isError && (
+              <p className="text-right text-sm text-red-600">
+                {deleteMutation.error?.response?.data?.message || '의뢰 삭제에 실패했습니다.'}
+              </p>
             )}
-            {isOwner && (
-              <>
-                <Link
-                  to={`/requestView/edit/${request.requestId}`}
-                  className="inline-flex h-10 w-36 items-center justify-center rounded-md border border-green-300 bg-white px-4 text-sm font-semibold text-green-800 hover:bg-green-100"
-                >
-                  수정하기
-                </Link>
-                <button
-                  type="button"
-                  onClick={handleDelete}
-                  disabled={deleteMutation.isPending}
-                  className="inline-flex h-10 w-36 items-center justify-center rounded-md border border-red-200 bg-white px-4 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {deleteMutation.isPending ? '삭제 중' : '삭제하기'}
-                </button>
-              </>
+
+            {savedMutation.isError && (
+              <p className="text-right text-sm text-red-600">
+                {savedMutation.error?.response?.data?.message || '찜 처리에 실패했습니다.'}
+              </p>
             )}
+
+            <CommentSection requestId={requestId} />
           </div>
-
-          {deleteMutation.isError && (
-            <p className="mt-4 text-right text-sm text-red-600">
-              {deleteMutation.error?.response?.data?.message || '의뢰 삭제에 실패했습니다.'}
-            </p>
-          )}
-
-          {savedMutation.isError && (
-            <p className="mt-4 text-right text-sm text-red-600">
-              {savedMutation.error?.response?.data?.message || '찜 처리에 실패했습니다.'}
-            </p>
-          )}
         </section>
 
         <aside className="space-y-4">
