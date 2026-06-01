@@ -11,6 +11,8 @@ import ServiceIntroPage from '../../pages/service-intro/ServiceIntroPage'
 import AdminUsersPage from '../../pages/admin/AdminUsersPage'
 import AdminApplicationsPage from '../../pages/admin/AdminApplicationsPage'
 import MosquitoMapPage from '../../pages/mosquito-map/MosquitoMapPage'
+import HunterListPage from '../../pages/hunter/HunterListPage'
+import HunterDetailPage from '../../pages/hunter/HunterDetailPage'
 
 // 가드
 import RequireAuth from '../../shared/components/auth/RequireAuth'
@@ -120,7 +122,8 @@ const router = createBrowserRouter([
       },
       { path: '/service-intro', element: <ServiceIntroPage /> },
       { path: '/mosquito-map', element: <MosquitoMapPage /> },
-      { path: '/hunter', element: <ComingSoonPage /> },
+      { path: '/hunter', element: <HunterListPage /> },
+      { path: '/hunter/:hunterId', element: <HunterDetailPage /> },
       { path: '/requestView/list', element: <RequestListPage /> },
       {
         path: '/requestView/new',
