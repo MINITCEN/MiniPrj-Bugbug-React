@@ -1,14 +1,31 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import useAuthStore from '../../auth/store/useAuthStore'
 import ChatRoomList from './ChatRoomList'
 import ChatRoomDetail from './ChatRoomDetail'
+import useChatNotificationStore from '../store/useChatNotificationStore'
+import useChatNotificationListener from '../hooks/useChatNotificationListener'
 
 export default function FloatingChatWidget() {
   const { user, isLoggedIn } = useAuthStore()
   const [isOpen, setIsOpen] = useState(false)
   const [selectedRoom, setSelectedRoom] = useState(null)
 
-  // 로그인되지 않은 사용자는 위젯 렌더링 안 함
+  // ⚠️ 백그라운드 소켓 상시 리스닝 훅 발동! (유저 로그인 시에만 작동)
+  useChatNotificationListener()
+
+  const { setActiveRoomId, getTotalUnreadCount } = useChatNotificationStore()
+  const totalUnread = getTotalUnreadCount()
+
+  // 선택한 대화방이 바뀌거나 창 열고 닫을 때 activeRoomId 동기화
+  useEffect(() => {
+    if (isOpen && selectedRoom) {
+      setActiveRoomId(selectedRoom.roomId)
+    } else {
+      setActiveRoomId(null)
+    }
+  }, [isOpen, selectedRoom, setActiveRoomId])
+
+  // 로그인되지 않은 사용자는 위젯 렌더링 안 함 (에러 방지를 위해 모든 훅 정의 아래에 배치!)
   if (!isLoggedIn || !user) return null
 
   const handleToggle = () => {
@@ -24,9 +41,14 @@ export default function FloatingChatWidget() {
       {/* 플로팅 둥근 버튼 */}
       <button
         onClick={handleToggle}
-        className="w-[60px] h-[60px] bg-[#FEE500] rounded-full shadow-lg hover:shadow-xl cursor-pointer flex items-center justify-center text-2xl transition-transform hover:scale-110 border-none select-none"
+        className="w-[60px] h-[60px] bg-[#FEE500] rounded-full shadow-lg hover:shadow-xl cursor-pointer flex items-center justify-center text-2xl transition-transform hover:scale-110 border-none select-none relative"
       >
         💬
+        {totalUnread > 0 && (
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[11px] font-extrabold rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center border-2 border-white animate-pulse">
+            {totalUnread > 99 ? '99+' : totalUnread}
+          </span>
+        )}
       </button>
 
       {/* 채팅 창 영역 */}
