@@ -15,6 +15,7 @@ import {
   deleteReview,
   applyForHunter,
   resignHunter,
+  toggleSavedHunter,
 } from '../api/mypageApi'
 import { mypageKeys } from '../api/queryKeys'
 import useAuthStore from '../../auth/store/useAuthStore'
