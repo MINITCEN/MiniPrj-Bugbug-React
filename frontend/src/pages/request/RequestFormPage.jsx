@@ -237,6 +237,7 @@ function RequestFormContent({ requestId, isEditMode, editForm }) {
   const [deletedVideoUrl, setDeletedVideoUrl] = useState('')
   const [error, setError] = useState('')
   const [mapError, setMapError] = useState('')
+  const [dragCounter, setDragCounter] = useState(0)
   const [selectedLocation, setSelectedLocation] = useState(() => (
     editForm?.form?.location ? { address: editForm.form.location } : null
   ))
@@ -437,6 +438,53 @@ function RequestFormContent({ requestId, isEditMode, editForm }) {
     event.target.value = ''
   }
 
+  const handleDragEnter = (e) => {
+    e.preventDefault()
+    setDragCounter((c) => c + 1)
+  }
+
+  const handleDragLeave = (e) => {
+    e.preventDefault()
+    setDragCounter((c) => Math.max(0, c - 1))
+  }
+
+  const handleDragOver = (e) => {
+    e.preventDefault()
+  }
+
+  const handleDrop = (e) => {
+    e.preventDefault()
+    setDragCounter(0)
+    setError('')
+
+    const files = Array.from(e.dataTransfer.files)
+    const droppedImages = files.filter((f) => f.type.startsWith('image/'))
+    const droppedVideos = files.filter((f) => f.type.startsWith('video/'))
+
+    if (droppedImages.length > 0) {
+      const nextItems = droppedImages.map((file) => ({
+        id: `${file.name}-${file.lastModified}-${crypto.randomUUID()}`,
+        file,
+        url: URL.createObjectURL(file),
+      }))
+      setImageFiles((current) => [...current, ...nextItems])
+    }
+
+    if (droppedVideos.length > 0) {
+      if (hasVideoSlot) {
+        setError('동영상은 1개만 첨부할 수 있습니다. 기존 동영상을 삭제한 후 다시 시도해 주세요.')
+      } else {
+        const file = droppedVideos[0]
+        setVideoFile({ file, url: URL.createObjectURL(file) })
+      }
+    }
+
+    const unknownFiles = files.filter((f) => !f.type.startsWith('image/') && !f.type.startsWith('video/'))
+    if (unknownFiles.length > 0 && droppedImages.length === 0 && droppedVideos.length === 0) {
+      setError('이미지 또는 동영상 파일만 첨부할 수 있습니다.')
+    }
+  }
+
   const removeImageFile = (removeIndex) => {
     setImageFiles((current) => {
       const target = current[removeIndex]
@@ -561,6 +609,7 @@ function RequestFormContent({ requestId, isEditMode, editForm }) {
   const hasExistingMedia = existingImageUrls.length > 0 || Boolean(existingVideoUrl)
   const hasNewMedia = imageFiles.length > 0 || Boolean(videoFile)
   const hasVideoSlot = Boolean(videoFile || existingVideoUrl)
+  const isDragging = dragCounter > 0
 
   return (
     <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
@@ -737,7 +786,19 @@ function RequestFormContent({ requestId, isEditMode, editForm }) {
               </div>
 
               {/* 통합 업로드 영역 */}
-              <div style={{ borderRadius: 14, border: '1px dashed var(--hair)', background: '#fafaf8', padding: '16px' }}>
+              <div
+                onDragEnter={handleDragEnter}
+                onDragLeave={handleDragLeave}
+                onDragOver={handleDragOver}
+                onDrop={handleDrop}
+                style={{
+                  borderRadius: 14,
+                  border: isDragging ? '1.5px dashed var(--brand-2)' : '1px dashed var(--hair)',
+                  background: isDragging ? 'rgba(46,140,104,.06)' : '#fafaf8',
+                  padding: '16px',
+                  transition: 'border-color .15s, background .15s',
+                }}
+              >
 
                 {/* 버튼 툴바 */}
                 <div className="flex flex-wrap items-center gap-2" style={{ marginBottom: hasExistingMedia || hasNewMedia ? 14 : 0 }}>
@@ -789,8 +850,8 @@ function RequestFormContent({ requestId, isEditMode, editForm }) {
                     )}
                   </>
                 ) : (
-                  <p style={{ fontSize: 13, color: 'var(--muted)', textAlign: 'center', padding: '20px 0', margin: 0 }}>
-                    이미지와 동영상을 첨부하세요
+                  <p style={{ fontSize: 13, color: isDragging ? 'var(--brand-2)' : 'var(--muted)', textAlign: 'center', padding: '20px 0', margin: 0, transition: 'color .15s' }}>
+                    {isDragging ? '여기에 놓으세요' : '이미지와 동영상을 끌어다 놓거나 버튼으로 추가하세요'}
                   </p>
                 )}
               </div>
