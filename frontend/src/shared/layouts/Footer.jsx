@@ -17,7 +17,7 @@ export default function Footer() {
         </nav>
 
         {/* 카피라이트 */}
-        <p className="text-xs text-gray-500">© 2024 버그버그. All rights reserved.</p>
+        <p className="text-xs text-gray-500">© 2026 버그버그. All rights reserved.</p>
       </div>
     </footer>
   )
