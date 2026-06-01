@@ -23,6 +23,14 @@ html, body {
   letter-spacing: -0.015em;
 }
 
+/* 폼 인풋 포커스 — outline 제거한 모든 입력 필드에 일괄 적용 */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  border-color: var(--brand-2) !important;
+  box-shadow: 0 0 0 3px rgba(46, 140, 104, 0.14);
+}
+
 /* 모기지수 지도 - 자치구 폴리곤 위 라벨 */
 .leaflet-tooltip.mosquito-region-label-wrap {
   background: transparent;
