@@ -258,18 +258,13 @@ public class MyPageService {
         // 유저의 권한을 다시 USER로 강등
         user.updateRole("USER");
     }
-    @Transactional
+    @Transactional(readOnly = true)
     public HunterProfileResponseDto getMyHunterProfile(Long userId) {
-        // 1. 유저 ID로 최신 헌터 엔티티 찾기
         Hunter hunter = hunterRepository.findTopByUserIdOrderByIdDesc(userId)
                 .orElseThrow(() -> new IllegalArgumentException("헌터 등록 정보가 없습니다."));
 
         long applicationCount = applicationRepository.countByHunterUserId(userId);
         float averageRating = reviewRepository.getAverageRatingByHunterUserId(userId);
-        String grade = hunterService.calculateGrade(applicationCount, averageRating);
-
-        hunter.updateGrade(grade);
-        hunter.syncCompletionCount(applicationCount);
 
         return new HunterProfileResponseDto(hunter, applicationCount, averageRating);
     }
