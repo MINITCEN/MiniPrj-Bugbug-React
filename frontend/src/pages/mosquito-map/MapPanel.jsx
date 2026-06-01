@@ -5,6 +5,10 @@ import { STATUS_COLORS } from '../../features/mosquito-map/constants'
 
 const SEOUL_CENTER = [37.5665, 126.9780]
 const DEFAULT_ZOOM = 11
+const SEOUL_BOUNDS = [
+  [37.42, 126.76],
+  [37.70, 127.18],
+]
 
 export default function MapPanel({ regions, selectedRegionId, onSelect }) {
   const [geoJson, setGeoJson] = useState(null)
@@ -50,7 +54,15 @@ export default function MapPanel({ regions, selectedRegionId, onSelect }) {
         height: 540,
       }}
     >
-      <MapContainer center={SEOUL_CENTER} zoom={DEFAULT_ZOOM} style={{ height: '100%', width: '100%' }} scrollWheelZoom>
+      <MapContainer
+        center={SEOUL_CENTER}
+        zoom={DEFAULT_ZOOM}
+        minZoom={DEFAULT_ZOOM}
+        maxBounds={SEOUL_BOUNDS}
+        maxBoundsViscosity={1.0}
+        style={{ height: '100%', width: '100%' }}
+        scrollWheelZoom
+      >
         <TileLayer
           attribution='&copy; OpenStreetMap'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"

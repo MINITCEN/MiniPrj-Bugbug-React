@@ -39,7 +39,7 @@ export default function MosquitoMapPage() {
       <div className="relative max-w-screen-xl mx-auto px-12 pt-10 pb-16 flex flex-col gap-6">
         <header className="flex flex-col gap-2">
           <h1 className="text-3xl font-bold tracking-tight" style={{ color: 'var(--ink)' }}>
-            모기지수 지도
+            서울시 모기지수 지도
           </h1>
           <p className="text-sm" style={{ color: 'var(--ink-2)' }}>
             서울 25개 자치구의 현재 모기 활동 지수와 단계, 상세 기상 정보를 한 화면에서 확인합니다.

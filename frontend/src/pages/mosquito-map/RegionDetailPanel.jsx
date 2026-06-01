@@ -81,7 +81,7 @@ export default function RegionDetailPanel({ summary, isLoading }) {
           </div>
           <div className="text-sm font-medium" style={{ color: 'var(--ink-2)' }}>/ 100</div>
           <div className="ml-auto text-xs" style={{ color: 'var(--muted)' }}>
-            모기지수 기준 {fmtDate(d.mosquitoIndexDate)}
+            모기지수 발표 {fmtDate(d.mosquitoIndexDate)}
           </div>
         </div>
       </div>
