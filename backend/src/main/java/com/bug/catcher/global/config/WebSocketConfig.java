@@ -2,6 +2,9 @@ package com.bug.catcher.global.config;
 
 import com.bug.catcher.domain.chat.security.ChatRoomPermissionChecker;
 import com.bug.catcher.global.auth.CustomUserPrincipal;
+import com.bug.catcher.global.auth.JwtProvider;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
@@ -12,6 +15,7 @@ import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -23,8 +27,11 @@ import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerCo
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private static final String CHAT_ROOM_TOPIC_PREFIX = "/topic/chat/room/";
+    private static final String AUTH_HEADER = "Authorization";
+    private static final String BEARER_PREFIX = "Bearer ";
 
     private final ChatRoomPermissionChecker chatRoomPermissionChecker;
+    private final JwtProvider jwtProvider;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -50,6 +57,10 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
                 StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
+                if (StompCommand.CONNECT == accessor.getCommand()) {
+                    authenticateConnect(accessor);
+                }
+
                 if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
                     validateSubscription(accessor);
                 }
@@ -57,6 +68,38 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 return message;
             }
         });
+    }
+
+    /**
+     * STOMP CONNECT frame의 Authorization 헤더에서 JWT를 꺼내 인증을 수립한다.
+     *
+     * 인증 결과는 accessor.setUser로 세션 단위 보관 → 이후 SUBSCRIBE/SEND에서
+     * accessor.getUser() 호출로 그대로 동일 사용자 식별.
+     *
+     * 토큰이 없거나 무효하면 AccessDeniedException으로 CONNECT 자체 차단.
+     * 기존 SUBSCRIBE 단계의 권한 체크는 변경 없음.
+     */
+    private void authenticateConnect(StompHeaderAccessor accessor) {
+        String header = accessor.getFirstNativeHeader(AUTH_HEADER);
+        if (header == null || !header.startsWith(BEARER_PREFIX)) {
+            throw new AccessDeniedException("STOMP 연결에 인증이 필요합니다.");
+        }
+
+        String token = header.substring(BEARER_PREFIX.length()).trim();
+        Claims claims;
+        try {
+            claims = jwtProvider.parseAccessToken(token);
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new AccessDeniedException("유효하지 않은 인증 토큰입니다.");
+        }
+
+        Long userId = Long.parseLong(claims.getSubject());
+        String role = claims.get("role", String.class);
+        CustomUserPrincipal principal = CustomUserPrincipal.stateless(userId, role);
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                principal, null, principal.getAuthorities());
+        accessor.setUser(authentication);
     }
 
     private void validateSubscription(StompHeaderAccessor accessor) {
