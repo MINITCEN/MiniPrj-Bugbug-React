@@ -56,6 +56,26 @@ public class Request {
     private List<Comment> comments = new ArrayList<>();
     private String content;
 
+    // --- 헌터찜 연관관계 추가 ---
+    @OneToMany(mappedBy = "request", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<SavedRequest> savedRequests = new ArrayList<>();
+
+    // --- 지원내역 연관관계 추가 ---
+    @OneToMany(mappedBy = "request", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Application> applications = new ArrayList<>();
+
+    // --- 리뷰 연관관계 추가 ---
+    @OneToMany(mappedBy = "request", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Review> reviews = new ArrayList<>();
+
+    // --- 채팅방 연관관계 추가 ---
+    @OneToMany(mappedBy = "request", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ChatRoom> chatRooms = new ArrayList<>();
+
     // 의뢰 수정 화면에서 입력된 기본 정보와 상태를 엔티티에 반영한다.
     public void updateDetails(
             String title,
