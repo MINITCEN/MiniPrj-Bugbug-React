@@ -9,10 +9,12 @@
  *  - [찜 해제] 버튼 → 부모로 위임 (확인 모달 → toggle mutation)
  */
 import { getGradeImage } from '../dashboard/constants'
+import ItemCard from '../ItemCard'
+import Button from '../Button'
 
 export default function HunterBookmarkCard({ hunter, onRemoveBookmark }) {
   return (
-    <article className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm flex items-center gap-4 hover:border-green-200 transition-colors">
+    <ItemCard className="flex items-center gap-4">
       {/* 등급 훈장 이미지 */}
       <div className="shrink-0 w-14 h-14">
         <img
@@ -24,11 +26,11 @@ export default function HunterBookmarkCard({ hunter, onRemoveBookmark }) {
 
       {/* 이름 + 메타 */}
       <div className="flex-1 min-w-0">
-        <h3 className="text-base font-semibold text-gray-900 truncate">
+        <h3 className="text-base font-semibold text-ink truncate">
           {hunter.hunterName} 헌터
         </h3>
-        <div className="flex items-center gap-2 mt-0.5 text-xs text-gray-500">
-          <span className="px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 font-bold">
+        <div className="flex items-center gap-2 mt-0.5 text-xs text-ink-2">
+          <span className="px-2 py-0.5 rounded-full bg-brand/8 text-brand font-bold">
             {hunter.grade ?? '루키'}
           </span>
           <span aria-hidden="true">·</span>
@@ -37,13 +39,14 @@ export default function HunterBookmarkCard({ hunter, onRemoveBookmark }) {
       </div>
 
       {/* 찜 해제 버튼 */}
-      <button
-        type="button"
+      <Button
+        variant="danger"
+        size="sm"
         onClick={() => onRemoveBookmark(hunter)}
-        className="shrink-0 px-3 py-2 text-xs font-semibold text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
+        className="shrink-0"
       >
         찜 해제
-      </button>
-    </article>
+      </Button>
+    </ItemCard>
   )
 }

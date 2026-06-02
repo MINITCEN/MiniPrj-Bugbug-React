@@ -12,19 +12,21 @@
  * canEdit prop으로 액션 노출 여부 제어 (페이지에서 role 보고 전달).
  */
 import { formatDate } from '../../utils/format'
+import ItemCard from '../ItemCard'
+import Button from '../Button'
 
 export default function ReviewCard({ review, canEdit, onEdit, onDelete }) {
   return (
-    <article className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm hover:border-green-200 transition-colors">
+    <ItemCard>
       {/* 헤더: 의뢰 제목 + 작성일 */}
       <div className="flex items-start justify-between gap-3 mb-2">
         <a
           href={`/requestView/detail/${review.requestId}`}
-          className="text-base font-semibold text-gray-900 hover:text-green-700 line-clamp-1 flex-1"
+          className="text-base font-semibold text-ink hover:text-brand line-clamp-1 flex-1"
         >
           {review.requestTitle}
         </a>
-        <span className="shrink-0 text-xs text-gray-400">
+        <span className="shrink-0 text-xs text-muted">
           {formatDate(review.createdAt)}
         </span>
       </div>
@@ -32,36 +34,28 @@ export default function ReviewCard({ review, canEdit, onEdit, onDelete }) {
       {/* 별점 + 헌터명 */}
       <div className="flex items-center gap-3 mb-3">
         <RatingStars rating={review.rating ?? 0} />
-        <span className="text-xs text-gray-500">
+        <span className="text-xs text-ink-2">
           {review.hunterName} 헌터
         </span>
       </div>
 
       {/* 본문 */}
-      <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+      <p className="text-sm text-ink leading-relaxed whitespace-pre-wrap">
         {review.content}
       </p>
 
       {/* 액션 버튼 (USER만) */}
       {canEdit && (
         <div className="mt-4 flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={() => onEdit(review)}
-            className="px-3 py-1.5 text-xs font-semibold text-green-700 border border-green-200 rounded-lg hover:bg-green-50 transition-colors"
-          >
+          <Button variant="secondary" size="sm" onClick={() => onEdit(review)}>
             수정
-          </button>
-          <button
-            type="button"
-            onClick={() => onDelete(review)}
-            className="px-3 py-1.5 text-xs font-semibold text-red-600 border border-red-200 rounded-lg hover:bg-red-50 transition-colors"
-          >
+          </Button>
+          <Button variant="danger" size="sm" onClick={() => onDelete(review)}>
             삭제
-          </button>
+          </Button>
         </div>
       )}
-    </article>
+    </ItemCard>
   )
 }
 
@@ -70,7 +64,7 @@ function RatingStars({ rating }) {
   return (
     <span className="text-amber-500 text-sm" aria-label={`평점 ${rating}점`}>
       {'★'.repeat(filled)}
-      <span className="text-gray-200">{'★'.repeat(5 - filled)}</span>
+      <span className="text-hair-strong">{'★'.repeat(5 - filled)}</span>
     </span>
   )
 }
