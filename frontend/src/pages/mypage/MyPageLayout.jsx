@@ -55,7 +55,7 @@ export default function MyPageLayout() {
             {/* HUNTER 전용 메뉴 */}
             {isHunter && (
               <>
-                <SideLink to="/mypage/reviews" mark="V" label="나의 리뷰 관리" />
+                <SideLink to="/mypage/reviews" mark="V" label="내게 온 리뷰" />
                 <SideLink to="/mypage/hunter/tasks" mark="T" label="수행 의뢰" />
                 <SideLink to="/mypage/hunter/bookmarks/requests" mark="S" label="찜한 의뢰" />
               </>

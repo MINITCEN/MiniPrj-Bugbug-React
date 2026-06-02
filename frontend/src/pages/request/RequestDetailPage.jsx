@@ -29,11 +29,11 @@ function formatDateTime(value) {
   }).format(date)
 }
 
-function getStatusClass(status) {
-  if (status === '대기 중') return 'bg-red-50 text-red-600 ring-red-100'
-  if (status === '예약 완료') return 'bg-yellow-50 text-yellow-700 ring-yellow-100'
-  if (status === '완료') return 'bg-green-50 text-green-700 ring-green-100'
-  return 'bg-gray-100 text-gray-600 ring-gray-200'
+function getStatusStyle(status) {
+  if (status === '대기 중') return { background: 'rgba(229,87,58,.1)', color: '#c0392b' }
+  if (status === '예약 완료') return { background: 'rgba(229,165,10,.12)', color: '#7a5700' }
+  if (status === '완료') return { background: 'rgba(46,140,104,.12)', color: 'var(--brand)' }
+  return { background: 'rgba(232,231,227,.6)', color: 'var(--ink-2)' }
 }
 
 function loadKakaoMapSdk() {
@@ -94,6 +94,10 @@ function DetailMap({ location }) {
           center: fallbackCenter,
           level: 4,
         })
+
+        map.setDraggable(false)
+        map.setZoomable(false)
+
         const geocoder = new kakao.maps.services.Geocoder()
 
         geocoder.addressSearch(location, (result, status) => {
@@ -120,10 +124,10 @@ function DetailMap({ location }) {
   }, [location])
 
   return (
-    <div className="overflow-hidden rounded-md border border-gray-200 bg-gray-50">
+    <div style={{ borderRadius: 12, border: '1px solid var(--hair-2)', overflow: 'hidden', background: '#f5f5f0' }}>
       <div ref={mapContainerRef} className="h-64 w-full" />
       {mapError && (
-        <div className="border-t border-gray-200 px-4 py-3 text-sm text-gray-500">
+        <div style={{ borderTop: '1px solid var(--hair-2)', padding: '10px 14px', fontSize: 13, color: 'var(--ink-2)' }}>
           {mapError}
         </div>
       )}
@@ -176,9 +180,8 @@ export default function RequestDetailPage() {
   // 헌터 지원 및 1:1 대화방 개설을 위한 Mutation
   const applyMutation = useMutation({
     mutationFn: () => applyRequest(requestId),
-    onSuccess: (roomId) => {
+    onSuccess: () => {
       alert('성공적으로 지원했습니다! 의뢰인과의 1:1 채팅방이 개설되었습니다. 우측 하단의 채팅 플로팅 버튼(💬)을 눌러 확인해 주세요.')
-      // 채팅방 목록 쿼리를 갱신하여 플로팅 리스트에 신규 개설된 대화방이 즉각 나타나도록 함
       queryClient.invalidateQueries({ queryKey: ['chatRooms'] })
     },
     onError: (error) => {
@@ -202,26 +205,27 @@ export default function RequestDetailPage() {
 
   if (isLoading) {
     return (
-      <main className="mx-auto w-full max-w-6xl px-6 py-10">
-        <div className="rounded-md border border-gray-200 bg-white p-8 text-center text-gray-500">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'var(--bg)' }}>
+        <div style={{ borderRadius: 14, border: '1px solid var(--hair-2)', background: '#fff', padding: '32px 48px', fontSize: 14, color: 'var(--ink-2)' }}>
           의뢰 상세 정보를 불러오는 중입니다.
         </div>
-      </main>
+      </div>
     )
   }
 
   if (isError || !request) {
     return (
-      <main className="mx-auto w-full max-w-6xl px-6 py-10">
-        <div className="rounded-md border border-red-100 bg-red-50 p-8 text-center text-red-600">
+      <div className="min-h-screen flex flex-col items-center justify-center gap-5 px-6" style={{ background: 'var(--bg)' }}>
+        <div style={{ borderRadius: 12, background: 'rgba(229,87,58,.08)', border: '1px solid rgba(229,87,58,.18)', padding: '14px 18px', fontSize: 14, fontWeight: 500, color: 'var(--accent)', maxWidth: 480, width: '100%' }}>
           {error?.response?.data?.message || '의뢰 상세 정보를 불러오지 못했습니다.'}
         </div>
-        <div className="mt-6 text-center">
-          <Link to="/requestView/list" className="text-sm font-semibold text-green-800 hover:underline">
-            목록으로 돌아가기
-          </Link>
-        </div>
-      </main>
+        <Link
+          to="/requestView/list"
+          style={{ display: 'inline-flex', height: 40, alignItems: 'center', borderRadius: 999, border: '1px solid var(--hair)', background: '#fff', padding: '0 18px', fontSize: 13, fontWeight: 600, color: 'var(--ink)', textDecoration: 'none' }}
+        >
+          목록으로 돌아가기
+        </Link>
+      </div>
     )
   }
 
@@ -230,59 +234,79 @@ export default function RequestDetailPage() {
   const isSaved = Boolean(savedRequest?.bookmarked)
 
   return (
-    <main className="min-h-screen bg-gray-50">
+    <div className="min-h-screen" style={{ background: 'var(--bg)' }}>
       <div className="mx-auto w-full max-w-6xl px-6 py-10">
-        <nav className="mb-5 flex items-center gap-2 text-sm text-gray-500">
-          <Link to="/requestView/list" className="font-medium text-green-800 hover:underline">
+
+        {/* 브레드크럼 */}
+        <nav className="mb-5 flex items-center gap-2 text-sm" style={{ color: 'var(--ink-2)' }}>
+          <Link
+            to="/requestView/list"
+            className="font-semibold transition-opacity hover:opacity-70"
+            style={{ color: 'var(--brand-2)', textDecoration: 'none' }}
+          >
             헌터 구인
           </Link>
-          <span>&gt;</span>
+          <span>›</span>
           <span>상세 보기</span>
         </nav>
 
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_340px]">
-        <section className="rounded-md border border-gray-200 bg-white p-6 shadow-sm">
-          <div className="flex flex-wrap items-start justify-between gap-4 border-b border-gray-200 pb-5">
-            <div>
-              <div className="mb-3 flex flex-wrap items-center gap-2">
-                <span className={`inline-flex rounded px-2.5 py-1 text-xs font-bold ring-1 ${getStatusClass(request.status)}`}>
-                  {request.status || '상태 없음'}
-                </span>
-              </div>
-              <h1 className="text-2xl font-bold leading-tight text-gray-950">{request.title}</h1>
 
-              <div className="mt-4 flex flex-wrap items-center gap-5">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-green-50 text-lg">
-                    🐛
-                  </div>
-                  <div>
-                    <strong className="block text-sm text-gray-900">{request.nickname || '의뢰인'}</strong>
-                    <p className="text-xs text-gray-500">
-                      발생 시간 {formatDateTime(request.occurrenceTime)}
-                    </p>
-                  </div>
-                </div>
+          {/* 본문 카드 */}
+          <section style={{ borderRadius: 18, border: '1px solid var(--hair-2)', background: '#fff', padding: '28px', boxShadow: '0 1px 0 rgba(255,255,255,.6) inset, 0 2px 12px -4px rgba(29,58,46,.04)' }}>
 
-                <div className="flex flex-col gap-1 text-sm text-gray-600 sm:ml-auto">
-                  <span>위치 {request.approxLocation || '미입력'}</span>
-                  <span>조회수 {request.viewCount ?? 0}</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-8 py-6">
-            <div>
-              <h2 className="mb-3 text-base font-bold text-gray-900">상세 내용</h2>
-              <div className="min-h-36 whitespace-pre-wrap rounded-md border border-gray-100 bg-gray-50 p-4 text-sm leading-7 text-gray-800">
-                {request.content || request.description || '등록된 내용이 없습니다.'}
-              </div>
-            </div>
-
-            {(imageUrls.length > 0 || request.videoUrl) && (
+            {/* 헤더 */}
+            <div className="flex flex-wrap items-start justify-between gap-4" style={{ borderBottom: '1px solid var(--hair-2)', paddingBottom: 20, marginBottom: 4 }}>
               <div>
-                <h2 className="mb-3 text-base font-bold text-gray-900">첨부 파일</h2>
+                <div className="mb-3">
+                  <span
+                    className="inline-flex text-xs font-bold"
+                    style={{ borderRadius: 999, padding: '4px 11px', ...getStatusStyle(request.status) }}
+                  >
+                    {request.status || '상태 없음'}
+                  </span>
+                </div>
+                <h1 className="text-2xl font-bold leading-tight" style={{ color: 'var(--ink)', letterSpacing: '-0.025em' }}>
+                  {request.title}
+                </h1>
+
+                <div className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-2 text-sm" style={{ color: 'var(--ink-2)' }}>
+                  <div className="flex items-center gap-2">
+                    <div
+                      className="flex h-7 w-7 shrink-0 items-center justify-center text-sm"
+                      style={{ borderRadius: 999, background: 'rgba(46,140,104,.1)' }}
+                    >
+                      🐛
+                    </div>
+                    <strong style={{ color: 'var(--ink)', fontWeight: 600 }}>{request.nickname || '의뢰인'}</strong>
+                  </div>
+
+                  <MetaDot />
+                  <MetaItem label="위치" value={request.approxLocation || '미입력'} />
+                  <MetaDot />
+                  <MetaItem label="조회수" value={`${request.viewCount ?? 0}회`} />
+                  <MetaDot />
+                  <MetaItem label="발생 시간" value={formatDateTime(request.occurrenceTime)} />
+                </div>
+              </div>
+            </div>
+
+            {/* 본문 */}
+            <div className="flex flex-col gap-7 py-6">
+
+              {/* 상세 내용 */}
+              <div>
+                <h2 className="mb-3 text-base font-bold" style={{ color: 'var(--ink)' }}>상세 내용</h2>
+                <div
+                  className="min-h-36 whitespace-pre-wrap text-sm leading-7"
+                  style={{ borderRadius: 12, border: '1px solid var(--hair-2)', background: '#fafaf8', padding: '16px', color: 'var(--ink)' }}
+                >
+                  {request.content || request.description || '등록된 내용이 없습니다.'}
+                </div>
+              </div>
+
+              {/* 첨부 미디어 */}
+              {(imageUrls.length > 0 || request.videoUrl) && (
                 <div className="flex flex-col gap-4">
                   {imageUrls.length > 0 && (
                     <div className="flex flex-wrap gap-3">
@@ -292,7 +316,8 @@ export default function RequestDetailPage() {
                           href={imageUrl}
                           target="_blank"
                           rel="noreferrer"
-                          className="block w-fit max-w-[240px] overflow-hidden rounded-md border border-gray-200 bg-gray-100"
+                          className="block w-fit max-w-[240px] overflow-hidden"
+                          style={{ borderRadius: 12, border: '1px solid var(--hair-2)', background: '#fafaf8' }}
                         >
                           <img src={imageUrl} alt="의뢰 첨부 이미지" className="max-h-48 max-w-full object-contain" />
                         </a>
@@ -300,119 +325,148 @@ export default function RequestDetailPage() {
                     </div>
                   )}
                   {request.videoUrl && (
-                    <video src={request.videoUrl} controls className="max-h-72 w-full rounded-md border border-gray-200 bg-black object-contain" />
+                    <video
+                      src={request.videoUrl}
+                      controls
+                      className="max-h-72 w-full object-contain bg-black"
+                      style={{ borderRadius: 12, border: '1px solid var(--hair-2)' }}
+                    />
                   )}
                 </div>
+              )}
+
+              {/* 정보 테이블 */}
+              <section style={{ borderRadius: 12, border: '1px solid var(--hair-2)', overflow: 'hidden' }}>
+                <InfoItem label="대략적인 위치" value={request.approxLocation} />
+                <InfoItem label="발생 시간" value={formatDateTime(request.occurrenceTime)} />
+                <InfoItem label="추가 정보" value={request.description} />
+              </section>
+
+              {/* 액션 버튼 구역 */}
+              <div className="flex flex-wrap justify-start gap-3" style={{ borderTop: '1px solid var(--hair-2)', paddingTop: 20 }}>
+                <Link
+                  to="/requestView/list"
+                  style={{ display: 'inline-flex', height: 40, alignItems: 'center', borderRadius: 999, border: '1px solid var(--hair)', background: '#fff', padding: '0 18px', fontSize: 13, fontWeight: 600, color: 'var(--ink)', textDecoration: 'none' }}
+                >
+                  ← 목록으로
+                </Link>
+
+                {isHunter && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => savedMutation.mutate()}
+                      disabled={savedMutation.isPending}
+                      style={{
+                        display: 'inline-flex', height: 40, alignItems: 'center',
+                        borderRadius: 999, padding: '0 18px', fontSize: 13, fontWeight: 600,
+                        cursor: savedMutation.isPending ? 'not-allowed' : 'pointer',
+                        opacity: savedMutation.isPending ? 0.6 : 1,
+                        border: isSaved ? '1px solid rgba(229,87,58,.4)' : '1px solid rgba(229,87,58,.3)',
+                        background: isSaved ? 'rgba(229,87,58,.08)' : '#fff',
+                        color: 'var(--accent)',
+                      }}
+                    >
+                      {savedMutation.isPending ? '처리 중' : isSaved ? '♥ 찜 취소' : '♡ 찜하기'}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={handleApply}
+                      disabled={applyMutation.isPending}
+                      className="inline-flex h-10 w-36 items-center justify-center rounded-full bg-green-900 px-4 text-sm font-semibold text-white hover:bg-green-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                    >
+                      {applyMutation.isPending ? '지원 중...' : '⚡ 헌터 지원하기'}
+                    </button>
+                  </>
+                )}
+
+                {isOwner && (
+                  <>
+                    <Link
+                      to={`/requestView/edit/${request.requestId}`}
+                      style={{ display: 'inline-flex', height: 40, alignItems: 'center', borderRadius: 999, border: '1px solid var(--brand-2)', background: '#fff', padding: '0 18px', fontSize: 13, fontWeight: 600, color: 'var(--brand-2)', textDecoration: 'none' }}
+                    >
+                      수정하기
+                    </Link>
+                    <button
+                      type="button"
+                      onClick={handleDelete}
+                      disabled={deleteMutation.isPending}
+                      style={{
+                        display: 'inline-flex', height: 40, alignItems: 'center',
+                        borderRadius: 999, border: '1px solid rgba(229,87,58,.35)',
+                        background: '#fff', padding: '0 18px', fontSize: 13, fontWeight: 600,
+                        color: 'var(--accent)', cursor: deleteMutation.isPending ? 'not-allowed' : 'pointer',
+                        opacity: deleteMutation.isPending ? 0.6 : 1,
+                      }}
+                    >
+                      {deleteMutation.isPending ? '삭제 중' : '삭제하기'}
+                    </button>
+                  </>
+                )}
               </div>
-            )}
 
-            <section className="overflow-hidden rounded-md border border-gray-200">
-              <InfoItem label="대략적인 위치" value={request.approxLocation} />
-              <InfoItem label="상세 위치" value={request.exactLocation || '헌터와 논의 필요'} />
-              <InfoItem label="발생 시간" value={formatDateTime(request.occurrenceTime)} />
-              <InfoItem label="추가 정보" value={request.description} />
+              {deleteMutation.isError && (
+                <p className="text-right text-sm" style={{ color: 'var(--accent)' }}>
+                  {deleteMutation.error?.response?.data?.message || '의뢰 삭제에 실패했습니다.'}
+                </p>
+              )}
+
+              {savedMutation.isError && (
+                <p className="text-right text-sm" style={{ color: 'var(--accent)' }}>
+                  {savedMutation.error?.response?.data?.message || '찜 처리에 실패했습니다.'}
+                </p>
+              )}
+
+              <CommentSection requestId={requestId} />
+            </div>
+          </section>
+
+          {/* 사이드바 */}
+          <aside className="space-y-4 lg:sticky lg:top-24 self-start">
+            <section style={{ borderRadius: 18, border: '1px solid var(--hair-2)', background: '#fff', padding: '22px', boxShadow: '0 1px 0 rgba(255,255,255,.6) inset, 0 2px 12px -4px rgba(29,58,46,.04)' }}>
+              <h2 className="mb-3 text-base font-bold" style={{ color: 'var(--ink)' }}>대략적인 위치</h2>
+              <DetailMap location={mapLocation} />
+              <p className="mt-3 text-sm leading-6" style={{ color: 'var(--ink-2)' }}>
+                {mapLocation || '위치 정보가 없습니다.'}
+              </p>
+              <p className="mt-2 text-xs leading-5" style={{ color: 'var(--muted)' }}>
+                정확한 주소는 매칭된 헌터에게만 공개됩니다.
+              </p>
             </section>
+          </aside>
 
-            <div className="flex flex-wrap justify-start gap-3 border-t border-gray-200 pt-5">
-              <Link
-                to="/requestView/list"
-                className="inline-flex h-10 w-36 items-center justify-center rounded-md border border-gray-300 bg-white px-4 text-sm font-semibold text-gray-700 hover:bg-gray-50"
-              >
-                ← 목록으로
-              </Link>
-              {isHunter && (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => savedMutation.mutate()}
-                    disabled={savedMutation.isPending}
-                    className={`inline-flex h-10 w-36 items-center justify-center rounded-md border px-4 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-60 ${
-                      isSaved
-                        ? 'border-red-400 bg-red-50 text-red-700 hover:bg-red-100'
-                        : 'border-red-300 bg-white text-red-700 hover:bg-red-100'
-                    }`}
-                  >
-                    {savedMutation.isPending ? '처리 중' : isSaved ? '♥ 찜 취소' : '♡ 찜하기'}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={handleApply}
-                    disabled={applyMutation.isPending}
-                    className="inline-flex h-10 w-36 items-center justify-center rounded-md bg-green-900 px-4 text-sm font-semibold text-white hover:bg-green-800 disabled:opacity-60 disabled:cursor-not-allowed"
-                  >
-                    {applyMutation.isPending ? '지원 중...' : '⚡ 헌터 지원하기'}
-                  </button>
-                </>
-              )}
-              {isOwner && (
-                <>
-                  <Link
-                    to={`/requestView/edit/${request.requestId}`}
-                    className="inline-flex h-10 w-36 items-center justify-center rounded-md border border-green-300 bg-white px-4 text-sm font-semibold text-green-800 hover:bg-green-100"
-                  >
-                    수정하기
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={handleDelete}
-                    disabled={deleteMutation.isPending}
-                    className="inline-flex h-10 w-36 items-center justify-center rounded-md border border-red-200 bg-white px-4 text-sm font-semibold text-red-600 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
-                  >
-                    {deleteMutation.isPending ? '삭제 중' : '삭제하기'}
-                  </button>
-                </>
-              )}
-            </div>
-
-            {deleteMutation.isError && (
-              <p className="text-right text-sm text-red-600">
-                {deleteMutation.error?.response?.data?.message || '의뢰 삭제에 실패했습니다.'}
-              </p>
-            )}
-
-            {savedMutation.isError && (
-              <p className="text-right text-sm text-red-600">
-                {savedMutation.error?.response?.data?.message || '찜 처리에 실패했습니다.'}
-              </p>
-            )}
-
-            <CommentSection requestId={requestId} />
-          </div>
-        </section>
-
-        <aside className="space-y-4">
-          <section className="rounded-md border border-gray-200 bg-white p-5 shadow-sm">
-            <h2 className="mb-3 text-base font-bold text-gray-900">대략적인 위치</h2>
-            <DetailMap location={mapLocation} />
-            <p className="mt-3 text-sm leading-6 text-gray-600">{mapLocation || '위치 정보가 없습니다.'}</p>
-            <p className="mt-2 text-xs leading-5 text-gray-500">
-              정확한 주소는 매칭된 헌터에게만 공개됩니다.
-            </p>
-          </section>
-
-          <section className="rounded-md border border-gray-200 bg-white p-5 shadow-sm">
-            <h2 className="mb-3 text-base font-bold text-gray-900">의뢰 정보</h2>
-            <div className="rounded-md bg-green-50 px-4 py-3 text-sm leading-6 text-green-900">
-              의뢰 상세 정보를 확인한 뒤 헌터 지원 여부를 결정할 수 있습니다.
-            </div>
-          </section>
-        </aside>
         </div>
       </div>
-    </main>
+    </div>
+  )
+}
+
+function MetaDot() {
+  return <span style={{ color: 'var(--hair)', userSelect: 'none' }}>·</span>
+}
+
+function MetaItem({ label, value }) {
+  return (
+    <span className="flex items-baseline gap-1">
+      <span style={{ fontSize: 11, fontWeight: 600, color: 'var(--muted)', letterSpacing: '0.02em' }}>{label}</span>
+      <span>{value}</span>
+    </span>
   )
 }
 
 function InfoItem({ label, value }) {
-    return (
-      <div className="grid border-b border-gray-200 last:border-b-0 md:grid-cols-[150px_minmax(0,1fr)]">
-        <div className="bg-gray-50 px-4 py-3 text-sm font-semibold text-gray-700">
-          {label}
-        </div>
-        <div className="px-4 py-3 text-sm leading-6 text-gray-900">
-          {value || '미입력'}
-        </div>
+  return (
+    <div className="grid md:grid-cols-[150px_minmax(0,1fr)]" style={{ borderBottom: '1px solid var(--hair-2)' }}>
+      <div style={{ background: '#fafaf8', padding: '12px 16px', fontSize: 13, fontWeight: 600, color: 'var(--ink-2)' }}
+        className="last:border-b-0"
+      >
+        {label}
       </div>
-    )
-  }
+      <div style={{ padding: '12px 16px', fontSize: 13, lineHeight: 1.65, color: 'var(--ink)' }}>
+        {value || '미입력'}
+      </div>
+    </div>
+  )
+}
