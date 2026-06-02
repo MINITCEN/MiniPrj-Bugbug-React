@@ -45,7 +45,7 @@ function formatLastMessageTime(isoString) {
   }).format(date)
 }
 
-export default function ChatRoomList({ userId, role, onSelectRoom }) {
+export default function ChatRoomList({ userId, role, onSelectRoom, selectedRoomId }) {
   const { unreadCounts } = useChatNotificationStore()
   const { data: rooms = [], isLoading, isError } = useQuery({
     queryKey: ['chatRooms', userId, role],
@@ -86,11 +86,17 @@ export default function ChatRoomList({ userId, role, onSelectRoom }) {
       {sortedRooms.map((room) => {
         const unreadCount = unreadCounts[room.roomId] || 0
         const initialLetter = room.otherNickname?.charAt(0) || '👤'
+        const isSelected = room.roomId === selectedRoomId
+
         return (
           <div
             key={room.roomId}
             onClick={() => onSelectRoom(room)}
-            className="flex items-center p-4 border-b border-[#F0EFF8] cursor-pointer hover:bg-[#1D3A2E]/[0.02] border-l-4 border-l-transparent hover:border-l-[#2E8C68] transition-all bg-white select-none gap-2.5"
+            className={`flex items-center p-4 border-b border-[#F0EFF8] cursor-pointer transition-all select-none gap-2.5 border-l-4 ${
+              isSelected
+                ? 'bg-[#1D3A2E]/[0.05] border-l-[#2E8C68]'
+                : 'bg-white hover:bg-[#1D3A2E]/[0.02] border-l-transparent hover:border-l-[#2E8C68]'
+            }`}
           >
             {/* ⚠️ 럭셔리 이니셜 그라데이션 프로필 뱃지 */}
             <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#1D3A2E] to-[#2E8C68] text-white flex items-center justify-center text-[13px] font-black shrink-0 shadow-sm shadow-[#1D3A2E]/10">

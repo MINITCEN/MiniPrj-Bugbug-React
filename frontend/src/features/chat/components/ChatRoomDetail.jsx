@@ -242,18 +242,18 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
                 </div>
               )}
               <div
-                className={`flex flex-col max-w-[85%] ${isMine ? 'self-end items-end' : 'self-start items-start'}`}
+                className={`flex flex-col max-w-[72%] ${isMine ? 'self-end items-end' : 'self-start items-start'}`}
               >
                 {!isMine && (
                   <div className="text-[11.5px] text-gray-600 mb-1.5 pl-1.5 font-bold select-none">
                     {msg.senderNickname}
                   </div>
                 )}
-                <div className={`flex items-end gap-2 ${isMine ? 'flex-row-reverse' : 'flex-row'}`}>
+                <div className={`flex items-end gap-2 max-w-full ${isMine ? 'flex-row-reverse' : 'flex-row'}`}>
                   {/* 말풍선 본체 */}
                   {/* ⚠️ 가시성 100% 최적화: 텍스트를 시원한 14px로 키우고 패딩도 넉넉하게 px-4.5 py-2.5로 튠업! */}
                   <div
-                    className={`px-4.5 py-2.5 text-[14px] leading-relaxed break-words shadow-[0_2px_10px_rgba(29,58,46,0.04)] font-medium ${
+                    className={`px-4.5 py-2.5 text-[14px] leading-relaxed whitespace-pre-wrap break-all shadow-[0_2px_10px_rgba(29,58,46,0.04)] font-medium min-w-0 ${
                       isMine
                         ? 'bg-gradient-to-br from-[#2E8C68] to-[#1D3A2E] text-white rounded-2xl rounded-tr-sm'
                         : 'bg-white text-gray-800 rounded-2xl rounded-tl-sm border border-[#E8E7E3]/85'

@@ -157,7 +157,11 @@ export default function FloatingChatWidget() {
 
   // ⚠️ 팝업창 지능형 화면 탈출 방지 정렬 연산
   const isPopupBelow = position.y < 500
-  const isPopupRight = position.x < 350
+  
+  // 가로 720px 팝업이 화면 좌우 경계를 절대 침범하지 않도록 계산하는 지능형 안전 바운더리 공식
+  const isPopupRight = position.x < 660
+    ? true
+    : (position.x > window.innerWidth - 720 ? false : position.x < window.innerWidth / 2)
 
   const widgetStyle = isInitialized
     ? { left: `${position.x}px`, top: `${position.y}px` }
@@ -195,8 +199,9 @@ export default function FloatingChatWidget() {
 
       {/* 채팅 창 영역 */}
       {/* ⚠️ 럭셔리 반투명 밀키 글래스모피즘(backdrop-blur-xl bg-white/90) 및 부드러운 하이 엔드 섀도우 탑재 */}
+      {/* 💡 당근마켓 웹 스타일의 w-[720px] x h-[560px] 와이드 2분할(Split-Pane) 프레임 대대적 개편 */}
       <div
-        className={`absolute w-[360px] h-[520px] bg-white/92 backdrop-blur-xl rounded-[24px] shadow-[0_20px_50px_rgba(29,58,46,0.15)] overflow-hidden border border-white/20 flex flex-col transition-all duration-300 transform ${
+        className={`absolute w-[720px] max-w-[calc(100vw-40px)] h-[560px] bg-white/95 backdrop-blur-xl rounded-[28px] shadow-[0_30px_70px_rgba(15,40,30,0.18)] overflow-hidden border border-white/30 flex flex-row transition-all duration-300 transform ${
           isPopupBelow ? 'top-[72px]' : 'bottom-[82px]'
         } ${
           isPopupRight ? 'left-0' : 'right-0'
@@ -212,39 +217,71 @@ export default function FloatingChatWidget() {
               : 'opacity-0 translate-y-10 scale-95 pointer-events-none'
         }`}
       >
-        {!selectedRoom ? (
-          <div className="flex-1 flex flex-col bg-[#F9F9F6]/95 min-h-0">
-            {/* 목록 헤더 */}
-            {/* ⚠️ 시크한 딥 포레스트 그라데이션 및 메탈릭 선형 ✕ 아이콘 */}
-            <div className="bg-gradient-to-r from-[#1D3A2E] to-[#254d3d] px-5 py-4.5 flex items-center justify-center text-white relative select-none shadow-[0_2px_10px_rgba(0,0,0,0.05)]">
-              <span className="tracking-wider text-[14px] font-extrabold">실시간 1:1 상담</span>
-              <span
-                onClick={handleToggle}
-                className="absolute right-5 top-4.5 cursor-pointer text-white/70 hover:text-white transition-colors"
-              >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </span>
-            </div>
-            {/* 목록 영역 */}
-            <ChatRoomList
-              userId={user.userId}
-              role={user.role}
-              onSelectRoom={(room) => setSelectedRoom(room)}
-            />
+        {/* ────────── 좌측: 채팅 목록 (300px 고정 및 찌그러짐 방지) ────────── */}
+        <div className="w-[300px] shrink-0 border-r border-[#E8E7E3] flex flex-col min-h-0 bg-white">
+          {/* 목록 헤더 */}
+          <div className="bg-gradient-to-r from-[#1D3A2E] to-[#254d3d] px-5 py-4.5 flex items-center justify-between text-white relative select-none shadow-[0_2px_10px_rgba(0,0,0,0.05)] select-none z-10">
+            <span className="tracking-wider text-[14px] font-extrabold">실시간 1:1 상담</span>
+            <span
+              onClick={handleToggle}
+              className="cursor-pointer text-white/70 hover:text-white transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </span>
           </div>
-        ) : (
-          <ChatRoomDetail
-            roomId={selectedRoom.roomId}
-            otherNickname={selectedRoom.otherNickname}
-            initialReservedAt={selectedRoom.reservedAt}
+          {/* 목록 리스트 */}
+          <ChatRoomList
             userId={user.userId}
             role={user.role}
-            onBack={() => setSelectedRoom(null)}
-            onClose={handleToggle}
+            selectedRoomId={selectedRoom?.roomId} // ⚠️ active room 하이라이팅 연동!
+            onSelectRoom={(room) => setSelectedRoom(room)}
           />
-        )}
+        </div>
+
+        {/* ────────── 우측: 상세 대화방 또는 대기 화면 (420px 유연) ────────── */}
+        <div className="flex-1 flex flex-col min-h-0 bg-[#F8F7F3]">
+          {selectedRoom ? (
+            <ChatRoomDetail
+              roomId={selectedRoom.roomId}
+              otherNickname={selectedRoom.otherNickname}
+              initialReservedAt={selectedRoom.reservedAt}
+              userId={user.userId}
+              role={user.role}
+              onBack={() => setSelectedRoom(null)} // ⚠️ 2분할 뷰에서는 리스트로 튕기는 게 아니라 상세 방 선택만 클리어!
+              onClose={handleToggle}
+            />
+          ) : (
+            /* ⚠️ 대기 상태 프리미엄 Empty State (마스코트 얼굴 + 안내 텍스트 구성) */
+            <div 
+              className="flex-1 flex flex-col items-center justify-center gap-4.5 text-center select-none p-8"
+              style={{
+                background: `
+                  radial-gradient(circle 350px at 50% 50%, rgba(46,140,104,.06), transparent 70%),
+                  #F8F7F3
+                `
+              }}
+            >
+              <div className="w-[85px] h-[85px] bg-gradient-to-tr from-[#1D3A2E] to-[#2E8C68] rounded-full flex items-center justify-center shadow-lg animate-bounce duration-1000">
+                <svg className="w-[60px] h-[50px] filter drop-shadow-sm" viewBox="0 0 54 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <g transform="translate(11, -7)">
+                    <path d="M30 29.5C30 21.768 23.732 15.5 16 15.5C8.268 15.5 2 21.768 2 29.5C2 33.174 3.417 36.516 5.738 39L0 44.5L7.341 41.915C9.942 42.938 12.877 43.5 16 43.5C23.732 43.5 30 37.232 30 29.5Z" fill="white"/>
+                    <path d="M10 30C11.3807 30 12.5 28.8807 12.5 27.5C12.5 26.1193 11.3807 25 10 25C8.61929 25 7.5 26.1193 7.5 27.5C7.5 28.8807 8.61929 30 10 30Z" fill="#0B4627"/>
+                    <path d="M22 30C23.3807 30 24.5 28.8807 24.5 27.5C24.5 26.1193 23.3807 25 22 25C20.6193 25 19.5 26.1193 19.5 27.5C19.5 28.8807 20.6193 30 22 30Z" fill="#0B4627"/>
+                    <path d="M11 33.5C14.3333 36.1667 17.6667 36.1667 21 33.5" stroke="#0B4627" strokeWidth="2.5" strokeLinecap="round"/>
+                  </g>
+                </svg>
+              </div>
+              <div className="flex flex-col gap-1.2">
+                <h4 className="text-[14.5px] font-black text-gray-800 tracking-tight">대화방을 선택해 주세요</h4>
+                <p className="text-[11.5px] text-gray-500 font-semibold leading-relaxed max-w-[280px]">
+                  상담하실 대화방을 좌측에서 선택하시면 실시간 1:1 상담 채팅이 우측에 나타납니다.
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   )
