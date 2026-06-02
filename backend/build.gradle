@@ -44,6 +44,10 @@ dependencies {
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	// env 의존성
 	implementation 'io.github.cdimascio:dotenv-java:3.0.0'
+	// JWT (jjwt 0.12.x — Spring Boot 진영 표준, HS256/HS512 등 대칭 서명 지원)
+	implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
+	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.12.6'
+	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.12.6'
 }
 
 tasks.named('test') {

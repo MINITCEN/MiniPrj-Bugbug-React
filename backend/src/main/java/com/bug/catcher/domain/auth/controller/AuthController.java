@@ -1,6 +1,7 @@
 package com.bug.catcher.domain.auth.controller;
 
 import com.bug.catcher.domain.auth.dto.LoginRequestDto;
+import com.bug.catcher.domain.auth.dto.TokenResponseDto;
 import com.bug.catcher.domain.auth.service.AuthService;
 import com.bug.catcher.global.auth.CustomUserPrincipal;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,28 +23,30 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @GetMapping("/me")
-    public ResponseEntity<Map<String, Object>> me(@AuthenticationPrincipal CustomUserPrincipal principal) {
-        return ResponseEntity.ok(Map.of(
-                "userId", principal.getUserId(),
-                "nickname", principal.getNickname(),
-                "role", principal.getRole()
-        ));
+    @PostMapping("/login")
+    public ResponseEntity<TokenResponseDto> login(
+            @RequestBody LoginRequestDto requestDto,
+            HttpServletResponse response) {
+        return ResponseEntity.ok(authService.login(requestDto, response));
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<String> login(
-            @RequestBody LoginRequestDto requestDto,
+    @PostMapping("/refresh")
+    public ResponseEntity<TokenResponseDto> refresh(
             HttpServletRequest request,
             HttpServletResponse response) {
-
-        authService.login(requestDto, request, response);
-        return ResponseEntity.ok("로그인에 성공했습니다.");
+        return ResponseEntity.ok(authService.refresh(request, response));
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+    public ResponseEntity<Void> logout(
+            HttpServletRequest request,
+            HttpServletResponse response) {
         authService.logout(request, response);
-        return ResponseEntity.ok("로그아웃 되었습니다.");
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<Map<String, Object>> me(@AuthenticationPrincipal CustomUserPrincipal principal) {
+        return ResponseEntity.ok(authService.getMyInfo(principal));
     }
 }
