@@ -1,54 +1,38 @@
 /**
- * 모달용 공통 버튼들.
+ * 모달용 공통 버튼들 (호환 wrapper).
  *
- * 모달마다 [취소] [확인] [위험 액션] 버튼이 반복되어 스타일 일관성을 위해 추출.
- * 사용처가 모달로 한정되어 있어 modals/ 와 같은 폴더에 둠.
+ * @deprecated 후속 슬라이스(#70~#72)에서 호출부를 새 Button으로 치환.
+ * 신규 코드는 ./Button.jsx의 단일 컴포넌트를 사용:
+ *   <Button variant="primary|secondary|ghost|danger" size="sm|md" />
+ *
+ * 기존 호출부 호환을 위해 PrimaryButton/DangerButton/GhostButton export 유지.
+ * 내부 구현은 새 Button으로 위임하여 즉시 토큰 톤(brand/accent/hair) 적용.
  */
+import Button from './Button'
 
-/** 기본(primary) 액션 버튼 — [저장], [신청] 등 */
-export function PrimaryButton({ children, disabled, ...props }) {
+/** @deprecated `<Button variant="primary" size="md">` 사용 */
+export function PrimaryButton({ children, ...props }) {
   return (
-    <button
-      type="button"
-      disabled={disabled}
-      className="px-4 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg
-                 hover:bg-green-700 active:bg-green-800 transition-colors
-                 disabled:bg-gray-300 disabled:cursor-not-allowed"
-      {...props}
-    >
+    <Button variant="primary" size="md" {...props}>
       {children}
-    </button>
+    </Button>
   )
 }
 
-/** 위험 액션 버튼 — [헌터 자격 해제] 등 */
-export function DangerButton({ children, disabled, ...props }) {
+/** @deprecated `<Button variant="danger" size="md">` 사용 */
+export function DangerButton({ children, ...props }) {
   return (
-    <button
-      type="button"
-      disabled={disabled}
-      className="px-4 py-2 text-sm font-semibold text-white bg-red-600 rounded-lg
-                 hover:bg-red-700 active:bg-red-800 transition-colors
-                 disabled:bg-gray-300 disabled:cursor-not-allowed"
-      {...props}
-    >
+    <Button variant="danger" size="md" {...props}>
       {children}
-    </button>
+    </Button>
   )
 }
 
-/** 보조(secondary) 버튼 — [취소] 등 */
-export function GhostButton({ children, disabled, ...props }) {
+/** @deprecated `<Button variant="ghost" size="md">` 사용 */
+export function GhostButton({ children, ...props }) {
   return (
-    <button
-      type="button"
-      disabled={disabled}
-      className="px-4 py-2 text-sm font-semibold text-gray-700 border border-gray-200 rounded-lg
-                 hover:bg-gray-50 active:bg-gray-100 transition-colors
-                 disabled:opacity-50 disabled:cursor-not-allowed"
-      {...props}
-    >
+    <Button variant="ghost" size="md" {...props}>
       {children}
-    </button>
+    </Button>
   )
 }
