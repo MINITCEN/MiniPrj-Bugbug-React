@@ -8,6 +8,7 @@ import { useMySavedHunters } from '../../features/mypage/hooks/queries'
 import HunterBookmarkCard from '../../features/mypage/components/cards/HunterBookmarkCard'
 import Pagination from '../../features/mypage/components/Pagination'
 import EmptyState from '../../features/mypage/components/EmptyState'
+import { Heart } from 'lucide-react'
 import BookmarkRemoveConfirmModal from '../../features/mypage/components/modals/BookmarkRemoveConfirmModal'
 
 export default function BookmarkListPage() {
@@ -37,7 +38,7 @@ export default function BookmarkListPage() {
         </p>
       ) : items.length === 0 ? (
         <EmptyState
-          icon="🔖"
+          icon={Heart}
           title="찜한 헌터가 없습니다"
           description="헌터 목록에서 마음에 드는 헌터를 찜해보세요."
           actionLabel="헌터 둘러보기"

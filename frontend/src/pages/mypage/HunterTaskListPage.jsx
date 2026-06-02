@@ -10,6 +10,7 @@ import { useHunterTasks } from '../../features/mypage/hooks/queries'
 import HunterTaskCard from '../../features/mypage/components/cards/HunterTaskCard'
 import Pagination from '../../features/mypage/components/Pagination'
 import EmptyState from '../../features/mypage/components/EmptyState'
+import { Briefcase } from 'lucide-react'
 
 export default function HunterTaskListPage() {
   const [page, setPage] = useState(0)
@@ -35,7 +36,7 @@ export default function HunterTaskListPage() {
         </p>
       ) : items.length === 0 ? (
         <EmptyState
-          icon="🛠️"
+          icon={Briefcase}
           title="수행 중인 의뢰가 없습니다"
           description="공개된 의뢰 목록에서 마음에 드는 의뢰에 지원해보세요."
           actionLabel="의뢰 둘러보기"

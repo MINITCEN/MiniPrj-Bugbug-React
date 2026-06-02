@@ -17,6 +17,7 @@ import { useMyReviews } from '../../features/mypage/hooks/queries'
 import ReviewCard from '../../features/mypage/components/cards/ReviewCard'
 import Pagination from '../../features/mypage/components/Pagination'
 import EmptyState from '../../features/mypage/components/EmptyState'
+import { MessageSquareText } from 'lucide-react'
 import ReviewFormModal from '../../features/mypage/components/modals/ReviewFormModal'
 import ReviewDeleteConfirmModal from '../../features/mypage/components/modals/ReviewDeleteConfirmModal'
 
@@ -53,7 +54,7 @@ export default function ReviewListPage() {
         </p>
       ) : items.length === 0 ? (
         <EmptyState
-          icon="📝"
+          icon={MessageSquareText}
           title="작성한 리뷰가 없습니다"
           description={
             canEdit

@@ -8,6 +8,7 @@ import { useHunterSavedRequests } from '../../features/mypage/hooks/queries'
 import RequestBookmarkCard from '../../features/mypage/components/cards/RequestBookmarkCard'
 import Pagination from '../../features/mypage/components/Pagination'
 import EmptyState from '../../features/mypage/components/EmptyState'
+import { Bookmark } from 'lucide-react'
 import RequestBookmarkRemoveConfirmModal from '../../features/mypage/components/modals/RequestBookmarkRemoveConfirmModal'
 
 export default function HunterBookmarkListPage() {
@@ -37,7 +38,7 @@ export default function HunterBookmarkListPage() {
         </p>
       ) : items.length === 0 ? (
         <EmptyState
-          icon="🔖"
+          icon={Bookmark}
           title="찜한 의뢰가 없습니다"
           description="공개된 의뢰 목록에서 마음에 드는 의뢰를 찜해보세요."
           actionLabel="의뢰 둘러보기"

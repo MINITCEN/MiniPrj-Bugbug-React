@@ -13,6 +13,7 @@
  *  - 첫/마지막 페이지에선 ◀/▶ 비활성화
  *  - totalPages가 0 또는 1이면 아예 렌더링 안 함 (조건부 호출 불필요)
  */
+import { ChevronLeft, ChevronRight } from 'lucide-react'
 
 /**
  * 현재 페이지 주변 windowSize개의 페이지 번호를 계산.
@@ -50,7 +51,7 @@ export default function Pagination({ page, totalPages, onChange }) {
         disabled={isFirst}
         aria-label="이전 페이지"
       >
-        ◀
+        <ChevronLeft className="w-4 h-4" aria-hidden="true" />
       </PageButton>
 
       {pageWindow.map((p) => (
@@ -70,7 +71,7 @@ export default function Pagination({ page, totalPages, onChange }) {
         disabled={isLast}
         aria-label="다음 페이지"
       >
-        ▶
+        <ChevronRight className="w-4 h-4" aria-hidden="true" />
       </PageButton>
     </nav>
   )
@@ -80,13 +81,13 @@ export default function Pagination({ page, totalPages, onChange }) {
 
 function PageButton({ children, active = false, disabled = false, ...props }) {
   const baseClass =
-    'min-w-[36px] h-9 px-2 text-sm rounded-lg font-medium transition-colors'
+    'min-w-[36px] h-9 px-2 inline-flex items-center justify-center text-sm rounded-lg font-medium transition-colors'
 
   const stateClass = active
-    ? 'bg-green-600 text-white'
+    ? 'bg-brand text-white'
     : disabled
-    ? 'text-gray-300 cursor-not-allowed'
-    : 'text-gray-700 hover:bg-gray-100'
+    ? 'text-muted cursor-not-allowed'
+    : 'text-ink-2 hover:bg-hair/40'
 
   return (
     <button

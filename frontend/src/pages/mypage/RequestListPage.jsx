@@ -13,6 +13,7 @@ import { useMyRequests } from '../../features/mypage/hooks/queries'
 import RequestCard from '../../features/mypage/components/cards/RequestCard'
 import Pagination from '../../features/mypage/components/Pagination'
 import EmptyState from '../../features/mypage/components/EmptyState'
+import { ClipboardList } from 'lucide-react'
 import ReviewFormModal from '../../features/mypage/components/modals/ReviewFormModal'
 
 export default function RequestListPage() {
@@ -42,7 +43,7 @@ export default function RequestListPage() {
         </p>
       ) : items.length === 0 ? (
         <EmptyState
-          icon="📋"
+          icon={ClipboardList}
           title="등록한 의뢰가 없습니다"
           description="첫 의뢰를 등록하고 헌터에게 도움을 받아보세요."
           actionLabel="의뢰 등록하러 가기"
