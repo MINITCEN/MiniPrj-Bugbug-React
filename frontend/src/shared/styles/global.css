@@ -12,6 +12,22 @@
   --accent: #e5573a;
 }
 
+/* Tailwind v4 토큰 매핑.
+   CSS 변수를 utility 클래스(bg-brand, text-ink, border-hair 등)로 노출.
+   마이페이지 등 Tailwind 기반 화면에서 className만으로 토큰 사용 가능. */
+@theme {
+  --color-bg: var(--bg);
+  --color-surface: #ffffff;
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-hair: var(--hair-2);
+  --color-hair-strong: var(--hair);
+  --color-brand: var(--brand-2);
+  --color-brand-dark: var(--brand);
+  --color-accent: var(--accent);
+}
+
 *, *::before, *::after { box-sizing: border-box; }
 
 html, body {
