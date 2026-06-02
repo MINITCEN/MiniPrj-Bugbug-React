@@ -41,15 +41,19 @@ export const useUpdateMyInfo = () => {
 
 /* ───────────── USER 전용 ───────────── */
 
-/** 리뷰 작성 → 리뷰 목록 + 의뢰 목록(reviewId 채워짐) 무효화 */
+// 리뷰 CRUD는 백엔드에서 헌터 등급/완료 수를 재산정하므로 헌터 목록 캐시도 함께 무효화한다.
+const invalidateReviewRelated = (qc) => {
+  qc.invalidateQueries({ queryKey: ['mypage', 'reviews'] })
+  qc.invalidateQueries({ queryKey: ['mypage', 'requests'] })
+  qc.invalidateQueries({ queryKey: ['hunters'] })
+}
+
+/** 리뷰 작성 → 리뷰 목록 + 의뢰 목록(reviewId 채워짐) + 헌터 목록 무효화 */
 export const useCreateReview = () => {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: createReview,
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['mypage', 'reviews'] })
-      qc.invalidateQueries({ queryKey: ['mypage', 'requests'] })
-    },
+    onSuccess: () => invalidateReviewRelated(qc),
   })
 }
 
@@ -58,10 +62,7 @@ export const useUpdateReview = () => {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: ({ reviewId, body }) => updateReview(reviewId, body),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['mypage', 'reviews'] })
-      qc.invalidateQueries({ queryKey: ['mypage', 'requests'] })
-    },
+    onSuccess: () => invalidateReviewRelated(qc),
   })
 }
 
@@ -70,10 +71,7 @@ export const useDeleteReview = () => {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: deleteReview,
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['mypage', 'reviews'] })
-      qc.invalidateQueries({ queryKey: ['mypage', 'requests'] })
-    },
+    onSuccess: () => invalidateReviewRelated(qc),
   })
 }
 
