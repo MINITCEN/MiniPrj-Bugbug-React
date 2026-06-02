@@ -3,6 +3,8 @@ package com.bug.catcher.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -39,6 +41,11 @@ public class ChatRoom {
     // 5. 방문 예약 날짜/시간
     @Column(name = "reserved_at")
     private LocalDateTime reservedAt;
+
+    // 6. 채팅 메시지 연관관계 추가(의뢰글 삭제 시 메시지도 같이 삭제)
+    @OneToMany(mappedBy = "chatRoom", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ChatMessage> messages = new ArrayList<>();
 
     // DB에 저장되기 전에 자동으로 현재 시간을 세팅합니다.
     @PrePersist
