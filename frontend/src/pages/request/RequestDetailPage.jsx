@@ -7,6 +7,7 @@ import {
   fetchRequestDetail,
   fetchSavedRequest,
   toggleSavedRequest,
+  applyRequest,
 } from '../../shared/api/requestApi'
 import CommentSection from './CommentSection'
 
@@ -176,6 +177,25 @@ export default function RequestDetailPage() {
     },
   })
 
+  // 헌터 지원 및 1:1 대화방 개설을 위한 Mutation
+  const applyMutation = useMutation({
+    mutationFn: () => applyRequest(requestId),
+    onSuccess: () => {
+      alert('성공적으로 지원했습니다! 의뢰인과의 1:1 채팅방이 개설되었습니다. 우측 하단의 채팅 플로팅 버튼(💬)을 눌러 확인해 주세요.')
+      queryClient.invalidateQueries({ queryKey: ['chatRooms'] })
+    },
+    onError: (error) => {
+      const errorMsg = error?.response?.data || error.message
+      alert('지원 처리에 실패했습니다: ' + errorMsg)
+    }
+  })
+
+  const handleApply = () => {
+    if (applyMutation.isPending) return
+    if (!window.confirm('이 의뢰에 지원하시겠습니까? 지원 시 의뢰인과의 1:1 대화방이 자동으로 개설됩니다.')) return
+    applyMutation.mutate()
+  }
+
   const handleDelete = () => {
     const confirmed = window.confirm('삭제된 게시물은 복구할 수 없습니다. 그래도 삭제하시겠습니까?')
     if (!confirmed || deleteMutation.isPending) return
@@ -322,7 +342,7 @@ export default function RequestDetailPage() {
                 <InfoItem label="추가 정보" value={request.description} />
               </section>
 
-              {/* 액션 버튼 */}
+              {/* 액션 버튼 구역 */}
               <div className="flex flex-wrap justify-start gap-3" style={{ borderTop: '1px solid var(--hair-2)', paddingTop: 20 }}>
                 <Link
                   to="/requestView/list"
@@ -352,10 +372,11 @@ export default function RequestDetailPage() {
 
                     <button
                       type="button"
-                      onClick={() => alert('지원 기능은 준비 중입니다.')}
-                      style={{ display: 'inline-flex', height: 40, alignItems: 'center', borderRadius: 999, border: 'none', background: 'var(--ink)', padding: '0 18px', fontSize: 13, fontWeight: 600, color: '#fff', cursor: 'pointer' }}
+                      onClick={handleApply}
+                      disabled={applyMutation.isPending}
+                      className="inline-flex h-10 w-36 items-center justify-center rounded-full bg-green-900 px-4 text-sm font-semibold text-white hover:bg-green-800 disabled:opacity-60 disabled:cursor-not-allowed"
                     >
-                      ⚡ 헌터 지원하기
+                      {applyMutation.isPending ? '지원 중...' : '⚡ 헌터 지원하기'}
                     </button>
                   </>
                 )}

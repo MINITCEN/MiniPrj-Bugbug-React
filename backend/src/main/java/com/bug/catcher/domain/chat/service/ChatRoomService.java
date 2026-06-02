@@ -5,6 +5,7 @@ import com.bug.catcher.domain.chat.dto.ChatRoomDto;
 import com.bug.catcher.domain.chat.repository.ChatMessageRepository;
 import com.bug.catcher.domain.chat.repository.ChatRoomRepository;
 import com.bug.catcher.domain.entity.ChatRoom;
+import com.bug.catcher.domain.entity.ChatMessage;
 import com.bug.catcher.domain.entity.Hunter;
 import com.bug.catcher.domain.entity.Request;
 import com.bug.catcher.domain.entity.User;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -81,19 +83,30 @@ public class ChatRoomService {
         }
 
         // 가져온 방 목록을 DTO 형태로 변환
-        return rooms.stream().map(room -> {
+        List<ChatRoomDto.ListResponse> list = rooms.stream().map(room -> {
             // 진짜 의뢰 제목과 상대방 닉네임을 꺼내옵니다 (땜빵 코드 삭제)
             String title = room.getRequest().getTitle();
             String otherNickname = "HUNTER".equals(role) ? room.getUser().getNickname() : room.getHunter().getName();
             
+            // 마지막 메시지 내용 및 전송 일시 조회
+            List<ChatMessage> messages = chatMessageRepository.findByChatRoomIdOrderByCreatedAtDesc(room.getId());
+            String lastMessage = messages.isEmpty() ? "대화 내용이 없습니다." : messages.get(0).getContent();
+            LocalDateTime lastMessageSentAt = messages.isEmpty() ? room.getCreatedAt() : messages.get(0).getCreatedAt();
+
             return ChatRoomDto.ListResponse.builder()
                     .roomId(room.getId())
                     .title(title)
                     .otherNickname(otherNickname)
+                    .lastMessage(lastMessage)
+                    .lastMessageSentAt(lastMessageSentAt)
                     .createdAt(room.getCreatedAt())
                     .reservedAt(room.getReservedAt())
                     .build();
         }).collect(Collectors.toList());
+
+        // 마지막 대화 전송 시간 기준으로 내림차순 정렬 (최신 활성 대화방이 맨 위로)
+        list.sort((a, b) -> b.getLastMessageSentAt().compareTo(a.getLastMessageSentAt()));
+        return list;
     }
 
     /**
