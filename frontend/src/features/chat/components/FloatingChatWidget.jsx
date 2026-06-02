@@ -178,8 +178,13 @@ export default function FloatingChatWidget() {
         onClick={handleButtonClick}
         className="w-[60px] h-[60px] bg-gradient-to-tr from-[#1D3A2E] to-[#2E8C68] hover:to-[#38a57b] text-white rounded-full shadow-[0_10px_30px_rgba(46,140,104,0.35)] hover:shadow-[0_15px_35px_rgba(46,140,104,0.5)] cursor-pointer flex items-center justify-center transition-all duration-300 hover:scale-110 border-none select-none relative active:scale-95 animate-fade-in"
       >
-        <svg className="w-6.5 h-6.5 text-white filter drop-shadow-sm" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.12 2.9 2.68 3.13Fm.24 2.1c.3.08.6-.13.6-.44V16.5M21 12c0 4.14-4.03 7.5-9 7.5a9.66 9.66 0 01-1.9-.19l-4.5 2.25A.5.5 0 015 21v-3.75C2.5 15.68 1 13.03 1 12c0-4.14 4.03-7.5 9-7.5s9 3.36 9 7.5z" />
+        <svg className="w-[48px] h-[40px] filter drop-shadow-sm select-none" viewBox="0 0 54 45" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <g transform="translate(11, -7)">
+            <path d="M30 29.5C30 21.768 23.732 15.5 16 15.5C8.268 15.5 2 21.768 2 29.5C2 33.174 3.417 36.516 5.738 39L0 44.5L7.341 41.915C9.942 42.938 12.877 43.5 16 43.5C23.732 43.5 30 37.232 30 29.5Z" fill="white"/>
+            <path d="M10 30C11.3807 30 12.5 28.8807 12.5 27.5C12.5 26.1193 11.3807 25 10 25C8.61929 25 7.5 26.1193 7.5 27.5C7.5 28.8807 8.61929 30 10 30Z" fill="#0B4627"/>
+            <path d="M22 30C23.3807 30 24.5 28.8807 24.5 27.5C24.5 26.1193 23.3807 25 22 25C20.6193 25 19.5 26.1193 19.5 27.5C19.5 28.8807 20.6193 30 22 30Z" fill="#0B4627"/>
+            <path d="M11 33.5C14.3333 36.1667 17.6667 36.1667 21 33.5" stroke="#0B4627" strokeWidth="2.5" strokeLinecap="round"/>
+          </g>
         </svg>
         {totalUnread > 0 && (
           <span className="absolute -top-1.5 -right-1.5 bg-[#e5573a] text-white text-[10px] font-black rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center border-2 border-white shadow-md animate-pulse">
