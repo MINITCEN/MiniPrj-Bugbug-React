@@ -259,20 +259,20 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
                         : 'bg-white text-gray-800 rounded-2xl rounded-tl-sm border border-[#E8E7E3]/85'
                     }`}
                   >
-                    <div>{msg.content}</div>
+                    {msg.messageType === 'TEXT' && <div>{msg.content}</div>}
                     {msg.messageType === 'IMAGE' && (
                       <img
                         src={msg.fileUrl}
                         alt="첨부 이미지"
                         onClick={() => handleImageClick(msg.fileUrl)}
-                        className="max-w-full rounded-md mt-1.5 border border-gray-100 cursor-zoom-in hover:brightness-90 transition-all object-cover max-h-[160px] shadow-sm"
+                        className="max-w-full rounded-md border border-gray-100 cursor-zoom-in hover:brightness-90 transition-all object-cover max-h-[160px] shadow-sm"
                       />
                     )}
                     {msg.messageType === 'VIDEO' && (
-                      <video src={msg.fileUrl} controls className="max-w-full rounded-md mt-1.5 border border-gray-100" />
+                      <video src={msg.fileUrl} controls className="max-w-full rounded-md border border-gray-100" />
                     )}
                     {msg.messageType === 'AUDIO' && (
-                      <audio src={msg.fileUrl} controls className="max-w-full mt-1" />
+                      <audio src={msg.fileUrl} controls className="max-w-full" />
                     )}
                   </div>
 
