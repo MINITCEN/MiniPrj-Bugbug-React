@@ -8,7 +8,7 @@
  */
 import { useState, useEffect } from 'react'
 import Modal from '../Modal'
-import { DangerButton, GhostButton } from '../Buttons'
+import Button from '../Button'
 import { useToggleSavedHunter } from '../../hooks/mutations'
 
 export default function BookmarkRemoveConfirmModal({ open, onClose, hunter }) {
@@ -37,22 +37,22 @@ export default function BookmarkRemoveConfirmModal({ open, onClose, hunter }) {
   return (
     <Modal open={open} onClose={onClose} title="찜 해제" size="sm">
       <Modal.Body>
-        <p className="text-sm text-gray-700">
-          <strong className="text-gray-900">{hunter?.hunterName ?? ''} 헌터</strong>를(을){' '}
+        <p className="text-sm text-ink">
+          <strong className="text-ink">{hunter?.hunterName ?? ''} 헌터</strong>를(을){' '}
           찜 목록에서 제거하시겠습니까?
         </p>
         {errorMsg && (
-          <p className="mt-3 text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+          <p className="mt-3 text-sm text-accent bg-accent/8 border border-accent/15 rounded-lg px-3 py-2">
             {errorMsg}
           </p>
         )}
       </Modal.Body>
 
       <Modal.Footer>
-        <GhostButton onClick={onClose} disabled={isPending}>취소</GhostButton>
-        <DangerButton onClick={handleRemove} disabled={isPending}>
+        <Button variant="ghost" size="md" onClick={onClose} disabled={isPending}>취소</Button>
+        <Button variant="danger" size="md" onClick={handleRemove} disabled={isPending}>
           {isPending ? '처리 중...' : '찜 해제'}
-        </DangerButton>
+        </Button>
       </Modal.Footer>
     </Modal>
   )

@@ -19,8 +19,9 @@
  *
  * Modal.Body, Modal.Footer를 같이 export해서 일관된 레이아웃 강제.
  */
-import { useEffect, useRef } from 'react'
+import { useEffect, useId } from 'react'
 import { createPortal } from 'react-dom'
+import { X } from 'lucide-react'
 
 export default function Modal({
   open,
@@ -30,7 +31,8 @@ export default function Modal({
   closeOnBackdrop = true,
   children,
 }) {
-  const titleId = useRef(`modal-title-${Math.random().toString(36).slice(2, 9)}`)
+  // useId는 SSR/CSR 모두에서 안정적인 고유 ID. Math.random 호출(impure) 제거.
+  const titleId = useId()
 
   // ESC 키로 닫기 + body 스크롤 잠금
   useEffect(() => {
@@ -65,25 +67,25 @@ export default function Modal({
       onClick={closeOnBackdrop ? onClose : undefined}
       role="dialog"
       aria-modal="true"
-      aria-labelledby={titleId.current}
+      aria-labelledby={titleId}
     >
       {/* 모달 본체 — 백드롭 클릭이 본체로 전파되지 않도록 stopPropagation */}
       <div
-        className={`relative w-full ${sizeClass} bg-white rounded-2xl shadow-xl max-h-[90vh] flex flex-col`}
+        className={`relative w-full ${sizeClass} bg-surface rounded-[18px] shadow-xl max-h-[90vh] flex flex-col`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* 헤더: 제목 + 닫기 버튼 */}
         <div className="flex items-start justify-between gap-4 p-6 pb-4">
-          <h2 id={titleId.current} className="text-lg font-bold text-gray-900 flex-1">
+          <h2 id={titleId} className="text-lg font-bold text-ink flex-1">
             {title}
           </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="닫기"
-            className="shrink-0 w-8 h-8 inline-flex items-center justify-center rounded-full text-gray-400 hover:text-gray-700 hover:bg-gray-100 transition-colors"
+            className="shrink-0 w-8 h-8 inline-flex items-center justify-center rounded-full text-ink-2 hover:text-ink hover:bg-hair/40 transition-colors"
           >
-            <span aria-hidden="true" className="text-xl leading-none">×</span>
+            <X className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
 

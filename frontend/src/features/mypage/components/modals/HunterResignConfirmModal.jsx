@@ -11,8 +11,9 @@
  * 백엔드: POST /api/mypage/hunter/resign (body 없음)
  */
 import { useState } from 'react'
+import { AlertTriangle } from 'lucide-react'
 import Modal from '../Modal'
-import { DangerButton, GhostButton } from '../Buttons'
+import Button from '../Button'
 import { useResignHunter } from '../../hooks/mutations'
 
 export default function HunterResignConfirmModal({ open, onClose }) {
@@ -22,11 +23,8 @@ export default function HunterResignConfirmModal({ open, onClose }) {
   const handleResign = () => {
     setErrorMsg('')
     mutate(undefined, {
-      onSuccess: () => {
-        onClose()
-        alert('헌터 자격이 해제되었습니다.')
-        // useResignHunter 내부에서 useAuthStore.fetchMe() 호출 → 사이드바/라우터가 자동 갱신
-      },
+      // useResignHunter가 logout + clearUser + redirect까지 처리하므로 여기선 안내만.
+      // alert는 redirect 직전 useResignHunter가 발생시키므로 별도 호출 없음.
       onError: (err) => {
         const serverMsg =
           err?.response?.data?.message ||
@@ -40,32 +38,35 @@ export default function HunterResignConfirmModal({ open, onClose }) {
   return (
     <Modal open={open} onClose={onClose} title="헌터 자격 해제" size="sm">
       <Modal.Body className="space-y-3">
-        <p className="text-sm text-gray-700 leading-relaxed">
+        <p className="text-sm text-ink leading-relaxed">
           헌터 자격을 해제하고 일반 회원으로 전환하시겠습니까?
         </p>
 
-        <div className="p-3 rounded-lg bg-red-50 border border-red-100">
-          <p className="text-xs text-red-700 leading-relaxed">
-            <strong className="block mb-1">⚠ 주의사항</strong>
-            진행 중인 수행 의뢰가 있다면 자동으로 정리됩니다. 헌터 등급과 활동 기록은
-            보존되지만, 다시 헌터로 등록해도 등급은 초기화됩니다.
+        <div className="p-3 rounded-lg bg-accent/8 border border-accent/15">
+          <p className="text-xs text-accent leading-relaxed flex items-start gap-2">
+            <AlertTriangle className="w-4 h-4 mt-0.5 shrink-0" aria-hidden="true" />
+            <span>
+              <strong className="block mb-1">주의사항</strong>
+              진행 중인 수행 의뢰가 있다면 자동으로 정리됩니다. 헌터 등급과 활동 기록은
+              보존되지만, 다시 헌터로 등록해도 등급은 초기화됩니다.
+            </span>
           </p>
         </div>
 
         {errorMsg && (
-          <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+          <p className="text-sm text-accent bg-accent/8 border border-accent/15 rounded-lg px-3 py-2">
             {errorMsg}
           </p>
         )}
       </Modal.Body>
 
       <Modal.Footer>
-        <GhostButton onClick={onClose} disabled={isPending}>
+        <Button variant="ghost" size="md" onClick={onClose} disabled={isPending}>
           취소
-        </GhostButton>
-        <DangerButton onClick={handleResign} disabled={isPending}>
+        </Button>
+        <Button variant="danger" size="md" onClick={handleResign} disabled={isPending}>
           {isPending ? '처리 중...' : '자격 해제'}
-        </DangerButton>
+        </Button>
       </Modal.Footer>
     </Modal>
   )

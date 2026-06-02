@@ -4,11 +4,10 @@
  * 두 미니 패널:
  *  - 리뷰 요약: 별점별 막대 그래프 (useMyHunterReviewSummary)
  *  - 최근 활동: 최근 수행 의뢰 (useHunterTasks, 최대 3건)
- *
- * dashboard.js의 renderReviewBars + loadHunterDashboard 일부를 옮긴 부분.
  */
 import { Link } from 'react-router-dom'
 import { useMyHunterReviewSummary, useHunterTasks } from '../../hooks/queries'
+import SectionShell from '../SectionShell'
 
 export default function HunterActivitySection() {
   return (
@@ -31,20 +30,20 @@ function ReviewSummaryPanel() {
   const total = scores.reduce((sum, s) => sum + Number(counts[s] ?? counts[String(s)] ?? 0), 0)
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+    <SectionShell className="p-5">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="font-bold text-gray-900">리뷰 요약</h3>
-        <Link to="/mypage/reviews" className="text-xs text-green-700 hover:underline">
+        <h3 className="font-bold text-ink">리뷰 요약</h3>
+        <Link to="/mypage/reviews" className="text-xs text-brand hover:underline">
           리뷰 더보기 →
         </Link>
       </div>
 
       {isLoading ? (
-        <p className="text-sm text-gray-400 py-4 text-center">불러오는 중...</p>
+        <p className="text-sm text-muted py-4 text-center">불러오는 중...</p>
       ) : isError ? (
-        <p className="text-sm text-gray-400 py-4 text-center">리뷰 요약을 불러오지 못했습니다.</p>
+        <p className="text-sm text-muted py-4 text-center">리뷰 요약을 불러오지 못했습니다.</p>
       ) : total === 0 ? (
-        <p className="text-sm text-gray-400 py-4 text-center">아직 받은 리뷰가 없습니다.</p>
+        <p className="text-sm text-muted py-4 text-center">아직 받은 리뷰가 없습니다.</p>
       ) : (
         <div className="space-y-2">
           {scores.map((score) => {
@@ -52,9 +51,9 @@ function ReviewSummaryPanel() {
             const percent = total ? Math.round((count / total) * 100) : 0
             return (
               <div key={score} className="flex items-center gap-3 text-xs">
-                <span className="w-7 shrink-0 text-gray-600">{score}점</span>
+                <span className="w-7 shrink-0 text-ink-2">{score}점</span>
                 <div
-                  className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden"
+                  className="flex-1 h-2 bg-hair/40 rounded-full overflow-hidden"
                   aria-label={`${score}점 리뷰 ${count}개`}
                 >
                   <div
@@ -62,13 +61,13 @@ function ReviewSummaryPanel() {
                     style={{ width: `${percent}%` }}
                   />
                 </div>
-                <span className="w-6 shrink-0 text-right text-gray-600">{count}</span>
+                <span className="w-6 shrink-0 text-right text-ink-2">{count}</span>
               </div>
             )
           })}
         </div>
       )}
-    </div>
+    </SectionShell>
   )
 }
 
@@ -79,33 +78,33 @@ function RecentTasksPanel() {
   const items = data?.content?.slice(0, 3) ?? []
 
   return (
-    <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+    <SectionShell className="p-5">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="font-bold text-gray-900">최근 활동</h3>
-        <Link to="/mypage/hunter/tasks" className="text-xs text-green-700 hover:underline">
+        <h3 className="font-bold text-ink">최근 활동</h3>
+        <Link to="/mypage/hunter/tasks" className="text-xs text-brand hover:underline">
           더보기 →
         </Link>
       </div>
 
       {isLoading ? (
-        <p className="text-sm text-gray-400 py-4 text-center">불러오는 중...</p>
+        <p className="text-sm text-muted py-4 text-center">불러오는 중...</p>
       ) : items.length === 0 ? (
-        <p className="text-sm text-gray-400 py-4 text-center">수행 중인 의뢰가 없습니다.</p>
+        <p className="text-sm text-muted py-4 text-center">수행 중인 의뢰가 없습니다.</p>
       ) : (
-        <ul className="divide-y divide-gray-100">
+        <ul className="divide-y divide-hair">
           {items.map((task) => (
             <li key={task.requestId} className="py-2.5 flex items-center justify-between gap-3">
               <a
                 href={`/requestView/detail/${task.requestId}`}
-                className="text-sm text-gray-700 hover:text-green-700 truncate flex-1 min-w-0"
+                className="text-sm text-ink hover:text-brand truncate flex-1 min-w-0"
               >
                 {task.title}
               </a>
-              <span className="shrink-0 text-xs text-gray-500">{task.approxLocation}</span>
+              <span className="shrink-0 text-xs text-ink-2">{task.approxLocation}</span>
             </li>
           ))}
         </ul>
       )}
-    </div>
+    </SectionShell>
   )
 }

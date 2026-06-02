@@ -19,6 +19,7 @@ import {
 } from '../api/mypageApi'
 import { mypageKeys } from '../api/queryKeys'
 import useAuthStore from '../../auth/store/useAuthStore'
+import { logout } from '../../../shared/api/authApi'
 import { toggleSavedRequest } from '../../../shared/api/requestApi'
 
 /* ───────────── 공용 ───────────── */
@@ -92,16 +93,30 @@ export const useApplyForHunter = () => {
 
 /* ───────────── HUNTER 전용 ───────────── */
 
-/** 헌터 자격 해제 → role 변경되므로 auth store도 갱신 */
+/**
+ * 헌터 자격 해제 → 자격 해제 직후 강제 로그아웃.
+ *
+ * 자격 해제는 HUNTER 권한이 사라지는 굵직한 변화라서, 자동으로 USER 마이페이지로
+ * 떨어뜨리는 대신 로그인 화면에서 다시 시작하도록 강제한다.
+ * 백엔드 세션도 정리해야 다른 권한이 남지 않으므로 logout API 호출 후 redirect.
+ */
 export const useResignHunter = () => {
   const qc = useQueryClient()
-  const fetchMe = useAuthStore((s) => s.fetchMe)
+  const clearUser = useAuthStore((s) => s.clearUser)
 
   return useMutation({
     mutationFn: resignHunter,
-    onSuccess: () => {
+    onSuccess: async () => {
       qc.invalidateQueries({ queryKey: mypageKeys.all })
-      fetchMe()
+      // alert는 동기 블로킹이라 logout/redirect 직전에 호출 — 사용자가 확인 후 진행
+      alert('헌터 자격이 해제되었습니다. 로그아웃됩니다.')
+      try {
+        await logout()
+      } catch {
+        // 로그아웃 API 실패해도 클라이언트 정리는 강행 — 세션 정리는 다음 진입 시 401로 정리됨
+      }
+      clearUser()
+      window.location.href = '/'
     },
   })
 }

@@ -37,18 +37,21 @@ export function formatDateTime(isoString) {
  * 의뢰 상태별 배지 색상 클래스 매핑.
  * Tailwind 클래스를 미리 빌드에 포함시키려면 동적 문자열로 만들면 안 되므로
  * 모든 분기를 명시적으로 작성.
+ *
+ * 완료는 brand 톤으로 토큰화. 진행중/대기/취소는 상태 의미를 시각적으로
+ * 구분하기 위해 의도적으로 다른 hue(blue/amber/neutral)를 유지.
  */
 export function getStatusBadgeClass(status) {
   switch (status) {
     case '완료':
-      return 'bg-green-50 text-green-700 border-green-100'
+      return 'bg-brand/8 text-brand border-brand/15'
     case '진행중':
       return 'bg-blue-50 text-blue-700 border-blue-100'
     case '대기':
       return 'bg-amber-50 text-amber-700 border-amber-100'
     case '취소':
-      return 'bg-gray-100 text-gray-500 border-gray-200'
+      return 'bg-hair/40 text-ink-2 border-hair'
     default:
-      return 'bg-gray-50 text-gray-600 border-gray-200'
+      return 'bg-hair/30 text-ink-2 border-hair'
   }
 }

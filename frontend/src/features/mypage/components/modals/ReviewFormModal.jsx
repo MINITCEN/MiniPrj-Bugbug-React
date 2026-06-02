@@ -17,7 +17,7 @@
  */
 import { useEffect, useState } from 'react'
 import Modal from '../Modal'
-import { PrimaryButton, GhostButton } from '../Buttons'
+import Button from '../Button'
 import { useCreateReview, useUpdateReview } from '../../hooks/mutations'
 
 export default function ReviewFormModal({ open, onClose, mode = 'create', request, review }) {
@@ -101,52 +101,50 @@ export default function ReviewFormModal({ open, onClose, mode = 'create', reques
         <Modal.Body className="space-y-4">
           {/* 어떤 의뢰/헌터에 대한 리뷰인지 안내 */}
           {(headerInfo.title || headerInfo.subtitle) && (
-            <div className="p-3 rounded-lg bg-gray-50 border border-gray-100">
+            <div className="p-3 rounded-lg bg-hair/30 border border-hair">
               {headerInfo.title && (
-                <p className="text-sm font-semibold text-gray-900 line-clamp-1">
+                <p className="text-sm font-semibold text-ink line-clamp-1">
                   {headerInfo.title}
                 </p>
               )}
               {headerInfo.subtitle && (
-                <p className="text-xs text-gray-500 mt-0.5">{headerInfo.subtitle}</p>
+                <p className="text-xs text-ink-2 mt-0.5">{headerInfo.subtitle}</p>
               )}
             </div>
           )}
 
           {/* 별점 선택 */}
           <div>
-            <label className="block text-xs text-gray-500 mb-2">평점</label>
+            <label className="block text-xs text-ink-2 mb-2">평점</label>
             <RatingPicker value={rating} onChange={setRating} />
           </div>
 
           {/* 본문 */}
           <div>
-            <label className="block text-xs text-gray-500 mb-1">
-              리뷰 내용 <span className="text-red-500">*</span>
+            <label className="block text-xs text-ink-2 mb-1">
+              리뷰 내용 <span className="text-accent">*</span>
             </label>
             <textarea
               value={content}
               onChange={(e) => setContent(e.target.value)}
               rows={5}
               placeholder="헌터의 활동은 어떠셨나요?"
-              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg
-                         focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none
-                         transition-colors resize-none"
+              className="w-full px-3 py-2 text-sm border border-hair rounded-lg transition-colors resize-none"
             />
           </div>
 
           {errorMsg && (
-            <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+            <p className="text-sm text-accent bg-accent/8 border border-accent/15 rounded-lg px-3 py-2">
               {errorMsg}
             </p>
           )}
         </Modal.Body>
 
         <Modal.Footer>
-          <GhostButton onClick={onClose} disabled={isPending}>취소</GhostButton>
-          <PrimaryButton type="submit" disabled={isPending}>
+          <Button variant="ghost" size="md" onClick={onClose} disabled={isPending}>취소</Button>
+          <Button variant="primary" size="md" type="submit" disabled={isPending}>
             {isPending ? '저장 중...' : isCreate ? '작성하기' : '수정하기'}
-          </PrimaryButton>
+          </Button>
         </Modal.Footer>
       </form>
     </Modal>
@@ -168,13 +166,13 @@ function RatingPicker({ value, onChange }) {
           aria-checked={value === n}
           aria-label={`${n}점`}
           className={`text-2xl transition-colors ${
-            n <= value ? 'text-amber-400' : 'text-gray-200 hover:text-amber-200'
+            n <= value ? 'text-amber-400' : 'text-hair-strong hover:text-amber-200'
           }`}
         >
           ★
         </button>
       ))}
-      <span className="ml-2 text-sm text-gray-600">{value}점</span>
+      <span className="ml-2 text-sm text-ink-2">{value}점</span>
     </div>
   )
 }

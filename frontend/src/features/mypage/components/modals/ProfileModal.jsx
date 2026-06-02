@@ -12,7 +12,7 @@
  */
 import { useEffect, useState } from 'react'
 import Modal from '../Modal'
-import { PrimaryButton, GhostButton } from '../Buttons'
+import Button from '../Button'
 import { useMyInfo } from '../../hooks/queries'
 import { useUpdateMyInfo } from '../../hooks/mutations'
 
@@ -98,28 +98,28 @@ export default function ProfileModal({ open, onClose }) {
 
           {/* 이메일은 변경 불가 — 안내만 표시 */}
           <div>
-            <label className="block text-xs text-gray-500 mb-1">이메일</label>
-            <div className="px-3 py-2 text-sm text-gray-500 bg-gray-50 border border-gray-100 rounded-lg">
+            <label className="block text-xs text-ink-2 mb-1">이메일</label>
+            <div className="px-3 py-2 text-sm text-ink-2 bg-hair/30 border border-hair rounded-lg">
               {myInfo?.email}
-              <span className="ml-2 text-[10px] text-gray-400">(변경 불가)</span>
+              <span className="ml-2 text-[10px] text-muted">(변경 불가)</span>
             </div>
           </div>
 
           {errorMsg && (
-            <p className="text-sm text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+            <p className="text-sm text-accent bg-accent/8 border border-accent/15 rounded-lg px-3 py-2">
               {errorMsg}
             </p>
           )}
         </Modal.Body>
 
         <Modal.Footer>
-          <GhostButton onClick={onClose} disabled={isPending}>
+          <Button variant="ghost" size="md" onClick={onClose} disabled={isPending}>
             취소
-          </GhostButton>
+          </Button>
           {/* form submit이 동작하도록 type=submit 명시 */}
-          <PrimaryButton type="submit" disabled={isPending}>
+          <Button variant="primary" size="md" type="submit" disabled={isPending}>
             {isPending ? '저장 중...' : '저장'}
-          </PrimaryButton>
+          </Button>
         </Modal.Footer>
       </form>
     </Modal>
@@ -131,15 +131,13 @@ export default function ProfileModal({ open, onClose }) {
 function Field({ label, required, ...inputProps }) {
   return (
     <div>
-      <label className="block text-xs text-gray-500 mb-1">
+      <label className="block text-xs text-ink-2 mb-1">
         {label}
-        {required && <span className="text-red-500 ml-0.5">*</span>}
+        {required && <span className="text-accent ml-0.5">*</span>}
       </label>
       <input
         type="text"
-        className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg
-                   focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none
-                   transition-colors"
+        className="w-full px-3 py-2 text-sm border border-hair rounded-lg transition-colors"
         {...inputProps}
       />
     </div>

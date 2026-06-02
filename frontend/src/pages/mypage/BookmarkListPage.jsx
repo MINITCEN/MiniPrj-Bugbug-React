@@ -8,6 +8,7 @@ import { useMySavedHunters } from '../../features/mypage/hooks/queries'
 import HunterBookmarkCard from '../../features/mypage/components/cards/HunterBookmarkCard'
 import Pagination from '../../features/mypage/components/Pagination'
 import EmptyState from '../../features/mypage/components/EmptyState'
+import { Heart } from 'lucide-react'
 import BookmarkRemoveConfirmModal from '../../features/mypage/components/modals/BookmarkRemoveConfirmModal'
 
 export default function BookmarkListPage() {
@@ -23,8 +24,8 @@ export default function BookmarkListPage() {
   return (
     <div>
       <header className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">찜한 헌터</h1>
-        <p className="mt-1 text-sm text-gray-500">
+        <h1 className="text-2xl font-bold text-ink">찜한 헌터</h1>
+        <p className="mt-1 text-sm text-ink-2">
           관심 있는 헌터를 찜해두고 의뢰 시 빠르게 확인하세요.
         </p>
       </header>
@@ -37,7 +38,7 @@ export default function BookmarkListPage() {
         </p>
       ) : items.length === 0 ? (
         <EmptyState
-          icon="🔖"
+          icon={Heart}
           title="찜한 헌터가 없습니다"
           description="헌터 목록에서 마음에 드는 헌터를 찜해보세요."
           actionLabel="헌터 둘러보기"
@@ -75,12 +76,12 @@ function LoadingPlaceholder() {
       {[1, 2, 3].map((i) => (
         <div
           key={i}
-          className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm animate-pulse flex items-center gap-4"
+          className="bg-surface rounded-[18px] border border-hair p-5 animate-pulse flex items-center gap-4"
         >
-          <div className="w-14 h-14 rounded-full bg-gray-100 shrink-0" />
+          <div className="w-14 h-14 rounded-full bg-hair shrink-0" />
           <div className="flex-1">
-            <div className="h-5 bg-gray-100 rounded w-2/3 mb-2" />
-            <div className="h-3 bg-gray-100 rounded w-1/3" />
+            <div className="h-5 bg-hair rounded w-2/3 mb-2" />
+            <div className="h-3 bg-hair rounded w-1/3" />
           </div>
         </div>
       ))}
