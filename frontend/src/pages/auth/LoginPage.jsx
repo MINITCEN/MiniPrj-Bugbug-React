@@ -9,7 +9,7 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const { fetchMe } = useAuthStore()
+  const { fetchMe, setAccessToken } = useAuthStore()
   const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
@@ -17,7 +17,8 @@ export default function LoginPage() {
     setError('')
     setIsLoading(true)
     try {
-      await login(email, password)
+      const { accessToken } = await login(email, password)
+      setAccessToken(accessToken)
       await fetchMe()
       navigate('/')
     } catch (err) {
