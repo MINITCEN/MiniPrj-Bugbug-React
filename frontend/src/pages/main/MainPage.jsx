@@ -128,10 +128,10 @@ function PhoneMockup() {
       <div
         className="relative"
         style={{
-          width: 260, height: 530,
+          width: 308, height: 532, // 💡 수정: 9:16 비율을 맞추기 위해 너비와 높이 조정
           background: '#0c0c0e',
           borderRadius: 42,
-          padding: 10,
+          padding: 10, // 상하좌우 패딩 10px을 빼면 스크린 영역은 288x512px (정확한 9:16)이 됩니다.
           boxShadow: '0 30px 60px -30px rgba(15,40,30,.35)',
         }}
       >
@@ -140,8 +140,26 @@ function PhoneMockup() {
           className="absolute left-1/2 -translate-x-1/2"
           style={{ top: 8, width: 88, height: 20, background: '#0c0c0e', borderRadius: 12, zIndex: 2 }}
         />
-        {/* 스크린 — 영상 자리 보존 */}
-        <div className="w-full h-full flex items-center justify-center" style={{ borderRadius: 32, background: '#0c0c0e' }} />
+        
+        {/* 스크린 */}
+        <div 
+          className="relative w-full h-full flex items-center justify-center overflow-hidden" 
+          style={{ 
+            borderRadius: 32, 
+            background: '#0c0c0e',
+            transform: 'translateZ(0)' 
+          }}
+        >
+          <video
+            src="/버그버그_메인_동영상.mp4"
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="w-full h-full object-cover"
+            style={{ borderRadius: 32 }}
+          />
+        </div>
       </div>
     </div>
   )
