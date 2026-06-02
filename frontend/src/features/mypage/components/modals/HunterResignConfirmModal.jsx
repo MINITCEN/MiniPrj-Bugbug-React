@@ -23,11 +23,8 @@ export default function HunterResignConfirmModal({ open, onClose }) {
   const handleResign = () => {
     setErrorMsg('')
     mutate(undefined, {
-      onSuccess: () => {
-        onClose()
-        alert('헌터 자격이 해제되었습니다.')
-        // useResignHunter 내부에서 useAuthStore.fetchMe() 호출 → 사이드바/라우터가 자동 갱신
-      },
+      // useResignHunter가 logout + clearUser + redirect까지 처리하므로 여기선 안내만.
+      // alert는 redirect 직전 useResignHunter가 발생시키므로 별도 호출 없음.
       onError: (err) => {
         const serverMsg =
           err?.response?.data?.message ||
