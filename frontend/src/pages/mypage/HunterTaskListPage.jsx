@@ -39,7 +39,7 @@ export default function HunterTaskListPage() {
           title="수행 중인 의뢰가 없습니다"
           description="공개된 의뢰 목록에서 마음에 드는 의뢰에 지원해보세요."
           actionLabel="의뢰 둘러보기"
-          actionHref="/wholeRequestList"
+          actionHref="/requestView/list"
         />
       ) : (
         <>

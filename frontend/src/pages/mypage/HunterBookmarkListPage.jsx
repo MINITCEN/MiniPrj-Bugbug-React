@@ -41,7 +41,7 @@ export default function HunterBookmarkListPage() {
           title="찜한 의뢰가 없습니다"
           description="공개된 의뢰 목록에서 마음에 드는 의뢰를 찜해보세요."
           actionLabel="의뢰 둘러보기"
-          actionHref="/wholeRequestList"
+          actionHref="/requestView/list"
         />
       ) : (
         <>
