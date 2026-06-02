@@ -110,11 +110,21 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
     }
   })
 
+  // ⚠️ 파일 업로드 시작 시 하단 강제 스크롤 작동
+  useEffect(() => {
+    if (fileUploadMutation.isPending) {
+      scrollToBottom(true)
+    }
+  }, [fileUploadMutation.isPending])
+
   const handleSend = () => {
     const trimmed = inputValue.trim()
     if (!trimmed) return
     sendMessage(trimmed, 'TEXT')
     setInputValue('')
+    if (inputRef.current) {
+      inputRef.current.style.height = '36px'
+    }
     // ⚠️ 메시지 전송 후 입력 포커스 즉각 자동 유지! (인풋 커서 복구)
     setTimeout(() => {
       inputRef.current?.focus()
@@ -126,8 +136,16 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
     setActiveImageUrl(url)
   }
 
+  const handleInputChange = (e) => {
+    setInputValue(e.target.value)
+    const target = e.target
+    target.style.height = '36px'
+    target.style.height = `${Math.min(target.scrollHeight, 88)}px`
+  }
+
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
       handleSend()
     }
   }
@@ -162,25 +180,30 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
             <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
           </svg>
         </span>
-        <div className="flex flex-col items-center justify-center gap-0.5">
-          <span className="text-[13.5px] font-black tracking-wide">{otherNickname}</span>
-          {isConnected ? (
-            <span className="text-[9px] text-[#2E8C68] font-bold bg-[#E8F8F5] px-1.5 py-0.2 rounded-full flex items-center gap-0.8 scale-95 shadow-sm">
-              <span className="relative flex h-1.5 w-1.5 mr-0.5">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2E8C68] opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#2E8C68]"></span>
+        <div className="flex items-center gap-2.5">
+          <div className="w-8.5 h-8.5 rounded-full bg-white/10 text-white flex items-center justify-center text-[12px] font-black shrink-0 border border-white/15 shadow-inner select-none">
+            {otherNickname?.charAt(0) || '👤'}
+          </div>
+          <div className="flex flex-col items-start gap-0.5">
+            <span className="text-[13.5px] font-black tracking-wide">{otherNickname}</span>
+            {isConnected ? (
+              <span className="text-[9px] text-[#52BE80] font-bold bg-[#E8F8F5]/10 px-1.5 py-0.2 rounded-full flex items-center gap-0.8 scale-95 shadow-sm">
+                <span className="relative flex h-1.5 w-1.5 mr-0.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#52BE80] opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#52BE80]"></span>
+                </span>
+                실시간 연결 완료
               </span>
-              실시간 연결 완료
-            </span>
-          ) : (
-            <span className="text-[9px] text-gray-500 font-bold bg-gray-100 px-1.5 py-0.2 rounded-full flex items-center gap-0.8 scale-95 shadow-sm">
-              <span className="relative flex h-1.5 w-1.5 mr-0.5">
-                <span className="animate-pulse absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-gray-400"></span>
+            ) : (
+              <span className="text-[9px] text-gray-300 font-bold bg-white/10 px-1.5 py-0.2 rounded-full flex items-center gap-0.8 scale-95 shadow-sm">
+                <span className="relative flex h-1.5 w-1.5 mr-0.5">
+                  <span className="animate-pulse absolute inline-flex h-full w-full rounded-full bg-gray-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-gray-400"></span>
+                </span>
+                연결 조율 중...
               </span>
-              연결 조율 중...
-            </span>
-          )}
+            )}
+          </div>
         </div>
         <span onClick={onClose} className="cursor-pointer text-white/80 hover:text-white transition-colors">
           <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -287,15 +310,28 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
             </Fragment>
           )
         })}
+        {fileUploadMutation.isPending && (
+          <div className="self-end items-end flex flex-col max-w-[72%]">
+            <div className="flex items-end gap-2 flex-row-reverse">
+              <div className="px-4.5 py-2.5 text-[14px] leading-relaxed bg-[#2E8C68]/80 text-white rounded-2xl rounded-tr-sm shadow-[0_2px_10px_rgba(29,58,46,0.04)] font-medium flex items-center gap-2 select-none animate-pulse">
+                <svg className="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                <span>미디어 전송 중...</span>
+              </div>
+            </div>
+          </div>
+        )}
         <div ref={messagesEndRef} />
       </div>
 
       {/* 하단 전송창 영역 */}
       {/* ⚠️ 럭셔리 라운드 섀도우 보더 및 Outline SVG 첨부/전송 버튼 개편 */}
-      <div className="bg-white p-3.5 flex items-center gap-3 border-t border-[#E8E7E3]/60 shadow-[0_-4px_12px_rgba(0,0,0,0.02)]">
+      <div className="bg-white p-3.5 flex items-end gap-3 border-t border-[#E8E7E3]/60 shadow-[0_-4px_12px_rgba(0,0,0,0.02)]">
         <span
           onClick={() => fileInputRef.current?.click()}
-          className="cursor-pointer select-none transition-colors"
+          className="cursor-pointer select-none transition-colors mb-2"
         >
           <svg className="w-5.5 h-5.5 text-gray-400 hover:text-[#2E8C68] transition-colors" fill="none" stroke="currentColor" strokeWidth="2.2" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M18.364 5.636l-3.536 3.536m0 0A3 3 0 1110.64 6.22l3.536-3.536m0 0a5 5 0 017.072 7.072l-7.656 7.656a7 7 0 11-9.9-9.9l1.414-1.414" />
@@ -308,18 +344,19 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
           className="hidden"
           accept="image/*,video/*,audio/*"
         />
-        <input
+        <textarea
           ref={inputRef}
-          type="text"
+          rows={1}
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           placeholder="메시지를 입력하세요..."
-          className="flex-1 border-none bg-[#F4F4F1] px-4.5 py-2.2 rounded-full outline-none text-[13px] text-gray-800 focus:bg-gray-200/70 transition-colors"
+          className="flex-1 border-none bg-[#F4F4F1] px-4.5 py-2 rounded-2xl outline-none text-[13px] text-gray-800 focus:bg-gray-200/70 transition-all resize-none max-h-[88px] min-h-[36px] leading-relaxed [&::-webkit-scrollbar]:hidden"
+          style={{ height: '36px' }}
         />
         <button
           onClick={handleSend}
-          className="bg-gradient-to-tr from-[#1D3A2E] to-[#2E8C68] hover:to-[#38a57b] w-9.5 h-9.5 flex items-center justify-center rounded-full cursor-pointer transition-all select-none border-none text-white shadow-sm hover:shadow active:scale-95 shrink-0"
+          className="bg-gradient-to-tr from-[#1D3A2E] to-[#2E8C68] hover:to-[#38a57b] w-9.5 h-9.5 flex items-center justify-center rounded-full cursor-pointer transition-all select-none border-none text-white shadow-sm hover:shadow active:scale-95 shrink-0 mb-0.5"
         >
           <svg className="w-4.5 h-4.5 text-white" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 12L3.269 3.126A59.768 59.768 0 0121.485 12 59.77 59.77 0 013.27 20.876L5.999 12zm0 0h7.5" />

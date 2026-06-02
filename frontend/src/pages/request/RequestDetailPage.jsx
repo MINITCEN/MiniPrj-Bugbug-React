@@ -192,6 +192,10 @@ export default function RequestDetailPage() {
 
   const handleApply = () => {
     if (applyMutation.isPending) return
+    if (request.status && request.status !== '대기 중') {
+      alert('이미 예약 또는 매칭이 완료된 의뢰에는 지원할 수 없습니다.')
+      return
+    }
     if (!window.confirm('이 의뢰에 지원하시겠습니까? 지원 시 의뢰인과의 1:1 대화방이 자동으로 개설됩니다.')) return
     applyMutation.mutate()
   }
@@ -370,14 +374,24 @@ export default function RequestDetailPage() {
                       {savedMutation.isPending ? '처리 중' : isSaved ? '♥ 찜 취소' : '♡ 찜하기'}
                     </button>
 
-                    <button
-                      type="button"
-                      onClick={handleApply}
-                      disabled={applyMutation.isPending}
-                      className="inline-flex h-10 w-36 items-center justify-center rounded-full bg-green-900 px-4 text-sm font-semibold text-white hover:bg-green-800 disabled:opacity-60 disabled:cursor-not-allowed"
-                    >
-                      {applyMutation.isPending ? '지원 중...' : '⚡ 헌터 지원하기'}
-                    </button>
+                    {request.status && request.status !== '대기 중' ? (
+                      <button
+                        type="button"
+                        disabled
+                        className="inline-flex h-10 px-5 items-center justify-center rounded-full bg-gray-200 text-gray-400 text-xs font-extrabold border-none cursor-not-allowed select-none"
+                      >
+                        {request.status === '예약 완료' ? '🔒 예약 완료 (지원 마감)' : '🔒 완료된 의뢰 (지원 마감)'}
+                      </button>
+                    ) : (
+                      <button
+                        type="button"
+                        onClick={handleApply}
+                        disabled={applyMutation.isPending}
+                        className="inline-flex h-10 w-36 items-center justify-center rounded-full bg-green-900 px-4 text-sm font-semibold text-white hover:bg-green-800 disabled:opacity-60 disabled:cursor-not-allowed"
+                      >
+                        {applyMutation.isPending ? '지원 중...' : '⚡ 헌터 지원하기'}
+                      </button>
+                    )}
                   </>
                 )}
 

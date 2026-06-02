@@ -49,6 +49,11 @@ public class ChatRoomService {
         // 2. DB에서 실제 의뢰글을 찾아와서 의뢰인(작업 요청자) 정보를 꺼냅니다.
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 의뢰입니다."));
+
+        // 의뢰 상태 검증: "대기 중" 상태에서만 신규 지원 가능
+        if (request.getStatus() != null && !"대기 중".equals(request.getStatus())) {
+            throw new IllegalArgumentException("이미 예약 또는 매칭이 완료된 의뢰에는 지원할 수 없습니다. (현재 상태: " + request.getStatus() + ")");
+        }
                 
         User user = request.getUser(); // 의뢰글 주인이 진짜 방 주인이 됨
 

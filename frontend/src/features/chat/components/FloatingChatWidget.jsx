@@ -191,8 +191,8 @@ export default function FloatingChatWidget() {
           </g>
         </svg>
         {totalUnread > 0 && (
-          <span className="absolute -top-1.5 -right-1.5 bg-[#e5573a] text-white text-[10px] font-black rounded-full min-w-[20px] h-5 px-1.5 flex items-center justify-center border-2 border-white shadow-md animate-pulse">
-            {totalUnread > 99 ? '99+' : totalUnread}
+          <span className="absolute top-1 right-1 bg-[#2E8C68] w-3.5 h-3.5 rounded-full border-2 border-white shadow-md flex items-center justify-center">
+            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2E8C68] opacity-75"></span>
           </span>
         )}
       </button>
