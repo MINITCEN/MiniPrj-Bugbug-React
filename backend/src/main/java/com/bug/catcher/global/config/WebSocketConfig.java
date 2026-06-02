@@ -29,6 +29,19 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private static final String CHAT_ROOM_TOPIC_PREFIX = "/topic/chat/room/";
     private static final String AUTH_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
+    /**
+     * WebSocket 세션 attributes 안에 인증 객체를 보관할 키.
+     *
+     * Spring은 매 inbound STOMP 메시지(SEND/SUBSCRIBE 등)마다
+     * StompSubProtocolHandler.handleMessageFromClient에서 user를
+     * session.getPrincipal()로 재설정한다. JWT는 HTTP 핸드셰이크 시점에
+     * 인증 정보가 없으므로 session.getPrincipal()이 null → 후속 메시지에서
+     * accessor.getUser()가 null이 되어버린다.
+     *
+     * 따라서 CONNECT 시점의 인증 객체를 세션 attributes에 저장해두고,
+     * 후속 메시지의 preSend에서 user가 null이면 여기서 복원한다.
+     */
+    private static final String AUTH_ATTR = "jwt.auth";
 
     private final ChatRoomPermissionChecker chatRoomPermissionChecker;
     private final JwtProvider jwtProvider;
@@ -58,7 +71,19 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
 
                 if (StompCommand.CONNECT == accessor.getCommand()) {
-                    authenticateConnect(accessor);
+                    Authentication auth = authenticateConnect(accessor);
+                    accessor.setUser(auth);
+                    // 후속 메시지를 위해 세션 attributes에도 저장
+                    if (accessor.getSessionAttributes() != null) {
+                        accessor.getSessionAttributes().put(AUTH_ATTR, auth);
+                    }
+                } else if (accessor.getUser() == null && accessor.getSessionAttributes() != null) {
+                    // SEND/SUBSCRIBE 등 — Spring이 user를 null로 덮어쓴 상태.
+                    // 세션 attributes에서 CONNECT 시점에 저장한 인증 객체로 복원.
+                    Object stored = accessor.getSessionAttributes().get(AUTH_ATTR);
+                    if (stored instanceof Authentication stashedAuth) {
+                        accessor.setUser(stashedAuth);
+                    }
                 }
 
                 if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
@@ -73,13 +98,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     /**
      * STOMP CONNECT frame의 Authorization 헤더에서 JWT를 꺼내 인증을 수립한다.
      *
-     * 인증 결과는 accessor.setUser로 세션 단위 보관 → 이후 SUBSCRIBE/SEND에서
-     * accessor.getUser() 호출로 그대로 동일 사용자 식별.
-     *
      * 토큰이 없거나 무효하면 AccessDeniedException으로 CONNECT 자체 차단.
-     * 기존 SUBSCRIBE 단계의 권한 체크는 변경 없음.
      */
-    private void authenticateConnect(StompHeaderAccessor accessor) {
+    private Authentication authenticateConnect(StompHeaderAccessor accessor) {
         String header = accessor.getFirstNativeHeader(AUTH_HEADER);
         if (header == null || !header.startsWith(BEARER_PREFIX)) {
             throw new AccessDeniedException("STOMP 연결에 인증이 필요합니다.");
@@ -97,9 +118,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         String role = claims.get("role", String.class);
         CustomUserPrincipal principal = CustomUserPrincipal.stateless(userId, role);
 
-        Authentication authentication = new UsernamePasswordAuthenticationToken(
+        return new UsernamePasswordAuthenticationToken(
                 principal, null, principal.getAuthorities());
-        accessor.setUser(authentication);
     }
 
     private void validateSubscription(StompHeaderAccessor accessor) {
