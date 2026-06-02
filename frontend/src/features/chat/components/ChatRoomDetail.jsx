@@ -79,9 +79,12 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
   // ⚠️ 실시간 메시지가 추가되었을 때 정독 여부 판정 스크롤 작동
   useEffect(() => {
     if (messages.length > 0) {
-      scrollToBottom(false)
+      const lastMsg = messages[messages.length - 1]
+      const isMine = lastMsg && Number(lastMsg.senderId) === Number(userId)
+      // 내가 보낸 메시지라면 무조건 하단 강제 스크롤, 다른 사람 메시지는 바닥 근처일 때만 스크롤!
+      scrollToBottom(isMine)
     }
-  }, [messages])
+  }, [messages, userId])
 
   // 웹소켓 메시지 수신 연동
   const { isConnected, sendMessage } = useChatSocket(roomId, (newMessage) => {
@@ -240,7 +243,10 @@ export default function ChatRoomDetail({ roomId, otherNickname, initialReservedA
 
       {/* 메시지 리스트 영역 */}
       {/* ⚠️ 과거 정독 시 스크롤 고정용 scrollContainerRef 바인딩. 시원한 가시성을 위해 간격을 gap-4로 확장! */}
-      <div ref={scrollContainerRef} className="flex-1 overflow-y-auto p-4.5 flex flex-col gap-4.5">
+      <div
+        ref={scrollContainerRef}
+        className="flex-1 overflow-y-auto p-4.5 flex flex-col gap-4.5 [&::-webkit-scrollbar]:w-[6px] [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-black/20 [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-black/35 [scrollbar-width:thin] [scrollbar-color:rgba(0,0,0,0.2)_transparent]"
+      >
         {isLoading && (
           <div className="text-center text-xs text-gray-600">
             이전 대화 내용을 불러오는 중...
