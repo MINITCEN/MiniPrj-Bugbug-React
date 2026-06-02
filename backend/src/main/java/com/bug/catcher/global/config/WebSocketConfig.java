@@ -13,6 +13,7 @@ import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -68,12 +69,18 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registration.interceptors(new ChannelInterceptor() {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
-                StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+                // MessageHeaderAccessor.getAccessor → 메시지에 부착된 mutable accessor 반환.
+                // StompHeaderAccessor.wrap()은 사본을 만들어 setUser가 원본 메시지에
+                // 반영되지 않으므로, mutable 가져와 수정해야 컨트롤러의 Principal이 채워짐.
+                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+                if (accessor == null) {
+                    return message;
+                }
 
                 if (StompCommand.CONNECT == accessor.getCommand()) {
                     Authentication auth = authenticateConnect(accessor);
                     accessor.setUser(auth);
-                    // 후속 메시지를 위해 세션 attributes에도 저장
+                    // 후속 메시지를 위해 세션 attributes에도 저장.
                     if (accessor.getSessionAttributes() != null) {
                         accessor.getSessionAttributes().put(AUTH_ATTR, auth);
                     }
