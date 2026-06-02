@@ -8,7 +8,7 @@ import useChatNotificationStore from '../store/useChatNotificationStore'
 
 // ⚠️ 사용자가 다른 일 할때도 백그라운드에서 모든 채팅방 소켓을 째려보며 새 연락이 오는지 감시하는 리스너 훅!
 export default function useChatNotificationListener() {
-  const { user, isLoggedIn } = useAuthStore()
+  const { user, isLoggedIn, accessToken } = useAuthStore()
   const { incrementUnread } = useChatNotificationStore()
   const stompClientRef = useRef(null)
 
@@ -24,8 +24,8 @@ export default function useChatNotificationListener() {
   const roomIdsString = rooms.map((r) => r.roomId).sort().join(',')
 
   useEffect(() => {
-    // 로그인 안 되어있거나 방이 아예 없으면 소켓 연결 할 필요 없음
-    if (!isLoggedIn || !user || rooms.length === 0) {
+    // 로그인 안 되어있거나 방이 아예 없거나 토큰 없으면 소켓 연결 X
+    if (!isLoggedIn || !user || rooms.length === 0 || !accessToken) {
       if (stompClientRef.current) {
         stompClientRef.current.deactivate()
         stompClientRef.current = null
@@ -37,6 +37,10 @@ export default function useChatNotificationListener() {
 
     const stompClient = new Client({
       webSocketFactory: () => new SockJS(socketUrl),
+      // STOMP CONNECT frame Authorization — 서버 JWT 인증용
+      connectHeaders: {
+        Authorization: `Bearer ${accessToken}`,
+      },
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,
@@ -46,7 +50,7 @@ export default function useChatNotificationListener() {
           stompClient.subscribe(`/topic/chat/room/${room.roomId}`, (message) => {
             if (message.body) {
               const parsedMessage = JSON.parse(message.body)
-              
+
               // 내가 쓴 메시지가 아니고, 상대방이 보낸 거라면 즉시 안 읽은 카운트 1 올리기!
               if (Number(parsedMessage.senderId) !== Number(user.userId)) {
                 incrementUnread(room.roomId)
@@ -69,5 +73,6 @@ export default function useChatNotificationListener() {
         stompClientRef.current = null
       }
     }
-  }, [isLoggedIn, user?.userId, roomIdsString, incrementUnread])
+    // accessToken 변경(refresh rotation) 시 자동 재연결
+  }, [isLoggedIn, user?.userId, roomIdsString, incrementUnread, accessToken])
 }
