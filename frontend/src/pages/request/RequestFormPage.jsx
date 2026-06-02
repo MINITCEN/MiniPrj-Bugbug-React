@@ -328,6 +328,8 @@ function RequestFormContent({ requestId, isEditMode, editForm }) {
         queryClient.invalidateQueries({ queryKey: ['requestEditForm', requestId] }),
         queryClient.invalidateQueries({ queryKey: ['requestList'] }),
         queryClient.invalidateQueries({ queryKey: ['mypage', 'requests'] }),
+        // status가 "완료"로 전환되면 백엔드가 헌터 등급/완료 수를 재산정한다.
+        queryClient.invalidateQueries({ queryKey: ['hunters'] }),
       ])
       navigate(`/requestView/detail/${requestId}`)
     },
