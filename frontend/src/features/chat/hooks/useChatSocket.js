@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { Client } from '@stomp/stompjs'
 import SockJS from 'sockjs-client'
+import useAuthStore from '../../auth/store/useAuthStore'
 
 // Vite + SockJS 브라우저 전역 객체(global) 호환 설정
 if (typeof window !== 'undefined' && typeof window.global === 'undefined') {
@@ -24,9 +25,11 @@ export default function useChatSocket(roomId, onMessageReceived) {
 
     // 백엔드 소켓 서버 주소로 직접 연결하여 Vite HMR(핫 리로딩) 웹소켓과의 포트 충돌을 완벽히 회피합니다.
     const socketUrl = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}/ws/chats`
+    const accessToken = useAuthStore.getState().accessToken
 
     const stompClient = new Client({
       webSocketFactory: () => new SockJS(socketUrl),
+      connectHeaders: accessToken ? { Authorization: `Bearer ${accessToken}` } : {},
       reconnectDelay: 5000,
       heartbeatIncoming: 4000,
       heartbeatOutgoing: 4000,

@@ -2,6 +2,9 @@ package com.bug.catcher.global.config;
 
 import com.bug.catcher.domain.chat.security.ChatRoomPermissionChecker;
 import com.bug.catcher.global.auth.CustomUserPrincipal;
+import com.bug.catcher.global.auth.JwtProvider;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.Message;
@@ -10,8 +13,10 @@ import org.springframework.messaging.simp.config.ChannelRegistration;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
+import org.springframework.messaging.support.MessageHeaderAccessor;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
@@ -25,6 +30,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     private static final String CHAT_ROOM_TOPIC_PREFIX = "/topic/chat/room/";
 
     private final ChatRoomPermissionChecker chatRoomPermissionChecker;
+    private final JwtProvider jwtProvider;
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
@@ -48,7 +54,12 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
         registration.interceptors(new ChannelInterceptor() {
             @Override
             public Message<?> preSend(Message<?> message, MessageChannel channel) {
-                StompHeaderAccessor accessor = StompHeaderAccessor.wrap(message);
+                StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
+                if (accessor == null) return message;
+
+                if (StompCommand.CONNECT == accessor.getCommand()) {
+                    authenticateFromHeader(accessor);
+                }
 
                 if (StompCommand.SUBSCRIBE == accessor.getCommand()) {
                     validateSubscription(accessor);
@@ -57,6 +68,24 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
                 return message;
             }
         });
+    }
+
+    private void authenticateFromHeader(StompHeaderAccessor accessor) {
+        String authHeader = accessor.getFirstNativeHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) return;
+
+        String token = authHeader.substring(7).trim();
+        try {
+            Claims claims = jwtProvider.parseAccessToken(token);
+            Long userId = Long.parseLong(claims.getSubject());
+            String role = claims.get("role", String.class);
+            CustomUserPrincipal principal = CustomUserPrincipal.stateless(userId, role);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(
+                    principal, null, principal.getAuthorities());
+            accessor.setUser(authentication);
+        } catch (JwtException | IllegalArgumentException ignored) {
+            // 유효하지 않은 토큰 — 익명 유지, 보호 채널에서 차단
+        }
     }
 
     private void validateSubscription(StompHeaderAccessor accessor) {
