@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -126,6 +127,11 @@ public class AuthService {
             return authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(requestDto.getEmail(), requestDto.getPassword())
             );
+        } catch (InternalAuthenticationServiceException e) {
+            if (e.getCause() instanceof DisabledException) {
+                throw new IllegalArgumentException(e.getCause().getMessage());
+            }
+            throw new IllegalArgumentException("로그인에 실패했습니다.");
         } catch (DisabledException e) {
             throw new IllegalArgumentException(e.getMessage());
         } catch (BadCredentialsException e) {

@@ -29,10 +29,15 @@ public class CustomUserDetailsService implements UserDetailsService {
             if (user.getBanEndDate() != null && LocalDateTime.now().isAfter(user.getBanEndDate())) {
                 user.activate();
             } else {
-                String endDateStr = user.getBanEndDate() != null
-                        ? user.getBanEndDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
-                        : "영구";
-                throw new DisabledException("정지된 계정입니다. (정지 해제 일시: " + endDateStr + ")");
+                boolean isPermanent = user.getBanEndDate() == null || 
+                        user.getBanEndDate().isAfter(LocalDateTime.now().plusYears(50));
+                
+                if (isPermanent) {
+                    throw new DisabledException("영구 정지된 계정입니다.");
+                } else {
+                    String endDateStr = user.getBanEndDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+                    throw new DisabledException("정지된 계정입니다. (정지 해제 일시: " + endDateStr + ")");
+                }
             }
         }
 

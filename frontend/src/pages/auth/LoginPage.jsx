@@ -22,7 +22,11 @@ export default function LoginPage() {
       await fetchMe()
       navigate('/')
     } catch (err) {
-      setError(err.response?.data?.message || '이메일 또는 비밀번호가 올바르지 않습니다.')
+      const serverError = err.response?.data
+      const errorMsg = typeof serverError === 'object' && serverError !== null
+        ? serverError?.message 
+        : serverError
+      setError(errorMsg || '이메일 또는 비밀번호가 올바르지 않습니다.')
     } finally {
       setIsLoading(false)
     }
