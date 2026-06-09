@@ -260,6 +260,7 @@ npm run dev
  
 ### 🛡️ 헌터 매칭
 - 헌터 목록과 상세 프로필을 조회하고, 의뢰에 지원/수락하는 흐름으로 매칭됩니다.
+  
 | 헌터 목록 | 헌터 상세 |
 | :---: | :---: |
 | <img src="docs/images/hunter-list.png" width="100%" /> | <img src="docs/images/hunter-detail.png" width="100%" /> |
@@ -267,30 +268,35 @@ npm run dev
 ### 💬 실시간 채팅
 - STOMP WebSocket으로 의뢰자–헌터 간 1:1 실시간 채팅을 제공합니다.
 - 플로팅 위젯과 채팅 알림으로 새 메시지를 확인할 수 있습니다.
+  
 | 채팅 |
 | :---: |
 | <img src="docs/images/chat.png" width="60%" /> |
  
 ### ⭐ 리뷰
 - 완료된 의뢰에 대해 사용자가 헌터 리뷰를 작성하고, 마이페이지에서 관리합니다.
+  
 | 리뷰 작성 |
 | :---: |
 | <img src="docs/images/review.png" width="60%" /> |
  
 ### 📊 마이페이지 대시보드
 - 로그인 사용자의 역할(USER/HUNTER)에 맞춰 활동 현황, 북마크, 작업 내역을 보여줍니다.
+  
 | 대시보드 |
 | :---: |
 | <img src="docs/images/mypage.png" width="80%" /> |
  
 ### 🦟 모기지수 지도
 - Leaflet 지도 위에 지역별 모기지수를 시각화하여 위험 지역을 직관적으로 보여줍니다.
+  
 | 모기지수 지도 |
 | :---: |
 | <img src="docs/images/mosquito-map.png" width="80%" /> |
  
 ### 🧑‍💼 관리자
 - 헌터 신청을 검토·승인하고, 사용자 계정을 관리합니다.
+  
 | 헌터 신청 관리 | 사용자 관리 |
 | :---: | :---: |
 | <img src="docs/images/admin-applications.png" width="100%" /> | <img src="docs/images/admin-users.png" width="100%" /> |
