@@ -245,6 +245,7 @@ npm run dev
 ### 🔐 회원가입 / 로그인
 - 이메일·비밀번호 기반 회원가입과 로그인을 제공합니다.
 - 입력값 유효성 검사 후 로그인 성공 시 메인 페이지로 이동합니다.
+  
 | 회원가입 | 로그인 |
 | :---: | :---: |
 | <img src="docs/images/signup.png" width="100%" /> | <img src="docs/images/login.png" width="100%" /> |
@@ -252,6 +253,7 @@ npm run dev
 ### 📝 의뢰 등록 / 조회
 - 사용자가 해충 피해 의뢰글을 작성하고, 목록·상세 페이지에서 확인합니다.
 - 작성자는 본인 의뢰를 수정·삭제할 수 있습니다.
+  
 | 의뢰 목록 | 의뢰 상세 |
 | :---: | :---: |
 | <img src="docs/images/request-list.png" width="100%" /> | <img src="docs/images/request-detail.png" width="100%" /> |
