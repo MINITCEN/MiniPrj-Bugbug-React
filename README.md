@@ -23,11 +23,11 @@
 </div>
 <br/>
 **🧪 테스트 계정**
-| 구분 | 아이디 | 비밀번호 |
-|------|--------|----------|
-| 일반 사용자 | user01@bugbug.local | test1234! |
-| 헌터 | hunter01@bugbug.local | test1234! |
-| 관리자 | admin01@bugbug.local | test1234! |
+> | 구분 | 아이디 | 비밀번호 |
+> |------|--------|----------|
+> | 일반 사용자 | user01@bugbug.local | test1234! |
+> | 헌터 | hunter01@bugbug.local | test1234! |
+> | 관리자 | admin01@bugbug.local | test1234! |
  
 <br/>
 ## 📑 목차
