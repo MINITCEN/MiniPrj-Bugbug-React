@@ -3,6 +3,10 @@
 ### 해충 방제 의뢰자와 헌터를 연결하는 매칭 플랫폼
 <div align="center">
 <img width="945" height="528" alt="버그버그 피피티 메인" src="https://github.com/user-attachments/assets/c0f74aed-d213-489f-9e1f-8c63014179c5" />
+
+https://github.com/user-attachments/assets/6fbec80e-9712-4904-97f5-9934c10ebb3f
+
+
  
 사용자가 해충 피해 의뢰를 등록하면, 방역 전문가(헌터)가 수락하여 처리하는<br/>
 **의뢰–매칭–채팅–리뷰**까지 한 흐름으로 이어지는 O2O 서비스입니다.
