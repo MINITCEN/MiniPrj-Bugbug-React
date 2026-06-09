@@ -69,15 +69,16 @@ public class AdminService {
         User user = application.getUser();
         user.updateRole("HUNTER");
 
-        // 3. 헌터 전용 프로필 생성 또는 재사용
+        // 3. 헌터 전용 프로필 생성 또는 재사용 (재가입 시 루키로 완전 리셋)
         Hunter hunter = hunterRepository.findTopByUserIdOrderByIdDesc(user.getId())
                 .orElseGet(() -> Hunter.builder()
                         .user(user)
-                        .grade("루키")
                         .requestCount(0)
                         .responseCount(0)
                         .build());
 
+        hunter.updateGrade("루키");
+        hunter.syncCompletionCount(0);
         hunter.updateProfile(application.getName(), application.getPledgeAgreed());
         hunterRepository.save(hunter);
     }

@@ -24,6 +24,7 @@ public class RequestDetailResponseDto {
     private LocalDateTime occurrenceTime;
     private Integer viewCount;
     private String videoUrl;
+    private LocalDateTime createdAt;
     private List<String> imageUrls;
     private Long completedHunterId;
     private String completedHunterName;
@@ -46,6 +47,7 @@ public class RequestDetailResponseDto {
                 .imageUrls(request.getRequestImages().stream().map(RequestImage :: getImageUrl).toList())
                 .completedHunterId(request.getCompletedHunter() != null ? request.getCompletedHunter().getId() : null)
                 .completedHunterName(request.getCompletedHunter() != null ? request.getCompletedHunter().getName() : null)
+                .createdAt(request.getCreatedAt())
                 .build();
     }
 }

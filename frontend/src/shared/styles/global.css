@@ -1,0 +1,81 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #fbfaf6;
+  --ink: #1d1d1f;
+  --ink-2: #6e6e73;
+  --muted: #86868b;
+  --hair: #d2d2d7;
+  --hair-2: #e8e7e3;
+  --brand: #1d3a2e;
+  --brand-2: #2e8c68;
+  --accent: #e5573a;
+}
+
+/* Tailwind v4 토큰 매핑.
+   CSS 변수를 utility 클래스(bg-brand, text-ink, border-hair 등)로 노출.
+   마이페이지 등 Tailwind 기반 화면에서 className만으로 토큰 사용 가능. */
+@theme {
+  --color-bg: var(--bg);
+  --color-surface: #ffffff;
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted);
+  --color-hair: var(--hair-2);
+  --color-hair-strong: var(--hair);
+  --color-brand: var(--brand-2);
+  --color-brand-dark: var(--brand);
+  --color-accent: var(--accent);
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  background: var(--bg);
+  font-family: 'Pretendard', system-ui, -apple-system, sans-serif;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  word-break: keep-all;
+  letter-spacing: -0.015em;
+}
+
+/* 폼 인풋 포커스 — outline 제거한 모든 입력 필드에 일괄 적용 */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  border-color: var(--brand-2) !important;
+  box-shadow: 0 0 0 3px rgba(46, 140, 104, 0.14);
+}
+
+/* 모기지수 지도 - 자치구 폴리곤 위 라벨 */
+.leaflet-tooltip.mosquito-region-label-wrap {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  pointer-events: none;
+}
+.leaflet-tooltip.mosquito-region-label-wrap::before {
+  display: none;
+}
+.mosquito-region-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+  color: #1d1d1f;
+  paint-order: stroke fill;
+  -webkit-text-stroke: 3px #fff;
+  text-shadow:
+    -1px -1px 0 #fff, 1px -1px 0 #fff,
+    -1px 1px 0 #fff, 1px 1px 0 #fff;
+}
+.mosquito-region-label .region-name {
+  font-size: 12px;
+  font-weight: 700;
+}
+.mosquito-region-label .region-index {
+  font-size: 16px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}

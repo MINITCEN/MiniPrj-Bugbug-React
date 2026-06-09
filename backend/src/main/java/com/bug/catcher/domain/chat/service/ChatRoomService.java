@@ -5,6 +5,7 @@ import com.bug.catcher.domain.chat.dto.ChatRoomDto;
 import com.bug.catcher.domain.chat.repository.ChatMessageRepository;
 import com.bug.catcher.domain.chat.repository.ChatRoomRepository;
 import com.bug.catcher.domain.entity.ChatRoom;
+import com.bug.catcher.domain.entity.ChatMessage;
 import com.bug.catcher.domain.entity.Hunter;
 import com.bug.catcher.domain.entity.Request;
 import com.bug.catcher.domain.entity.User;
@@ -17,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,6 +49,11 @@ public class ChatRoomService {
         // 2. DB에서 실제 의뢰글을 찾아와서 의뢰인(작업 요청자) 정보를 꺼냅니다.
         Request request = requestRepository.findById(requestId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 의뢰입니다."));
+
+        // 의뢰 상태 검증: "대기 중" 상태에서만 신규 지원 가능
+        if (request.getStatus() != null && !"대기 중".equals(request.getStatus())) {
+            throw new IllegalArgumentException("이미 예약 또는 매칭이 완료된 의뢰에는 지원할 수 없습니다. (현재 상태: " + request.getStatus() + ")");
+        }
                 
         User user = request.getUser(); // 의뢰글 주인이 진짜 방 주인이 됨
 
@@ -81,19 +88,30 @@ public class ChatRoomService {
         }
 
         // 가져온 방 목록을 DTO 형태로 변환
-        return rooms.stream().map(room -> {
+        List<ChatRoomDto.ListResponse> list = rooms.stream().map(room -> {
             // 진짜 의뢰 제목과 상대방 닉네임을 꺼내옵니다 (땜빵 코드 삭제)
             String title = room.getRequest().getTitle();
             String otherNickname = "HUNTER".equals(role) ? room.getUser().getNickname() : room.getHunter().getName();
             
+            // 마지막 메시지 내용 및 전송 일시 조회
+            List<ChatMessage> messages = chatMessageRepository.findByChatRoomIdOrderByCreatedAtDesc(room.getId());
+            String lastMessage = messages.isEmpty() ? "대화 내용이 없습니다." : messages.get(0).getContent();
+            LocalDateTime lastMessageSentAt = messages.isEmpty() ? room.getCreatedAt() : messages.get(0).getCreatedAt();
+
             return ChatRoomDto.ListResponse.builder()
                     .roomId(room.getId())
                     .title(title)
                     .otherNickname(otherNickname)
+                    .lastMessage(lastMessage)
+                    .lastMessageSentAt(lastMessageSentAt)
                     .createdAt(room.getCreatedAt())
                     .reservedAt(room.getReservedAt())
                     .build();
         }).collect(Collectors.toList());
+
+        // 마지막 대화 전송 시간 기준으로 내림차순 정렬 (최신 활성 대화방이 맨 위로)
+        list.sort((a, b) -> b.getLastMessageSentAt().compareTo(a.getLastMessageSentAt()));
+        return list;
     }
 
     /**

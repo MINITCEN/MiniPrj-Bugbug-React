@@ -16,10 +16,17 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody SignupRequestDto requestDto) {
-        // 1. DTO을 받아서 Service에게 전달합니다.
         userService.signup(requestDto);
-
-        // 2. 문제 없이 저장이 완료되면 성공 메시지와 201(Created) 상태 코드를 반환합니다.
         return ResponseEntity.status(HttpStatus.CREATED).body("회원가입이 성공적으로 완료되었습니다.");
+    }
+
+    @GetMapping("/check-email")
+    public ResponseEntity<java.util.Map<String, Boolean>> checkEmail(@RequestParam String email) {
+        return ResponseEntity.ok(java.util.Map.of("available", userService.isEmailAvailable(email)));
+    }
+
+    @GetMapping("/check-nickname")
+    public ResponseEntity<java.util.Map<String, Boolean>> checkNickname(@RequestParam String nickname) {
+        return ResponseEntity.ok(java.util.Map.of("available", userService.isNicknameAvailable(nickname)));
     }
 }

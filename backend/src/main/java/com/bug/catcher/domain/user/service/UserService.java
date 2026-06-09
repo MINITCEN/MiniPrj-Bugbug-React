@@ -15,6 +15,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    public boolean isEmailAvailable(String email) {
+        return !userRepository.existsByEmail(email);
+    }
+
+    public boolean isNicknameAvailable(String nickname) {
+        return !userRepository.existsByNickname(nickname);
+    }
+
     @Transactional
     public void signup(SignupRequestDto requestDto) {
         // 1. 개인정보 필수 동의 체크 검증

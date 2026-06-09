@@ -28,7 +28,6 @@ public class MainPageController {
 
     /**
      * 메인 홈 화면(/)을 렌더링합니다.
-     * 최근 등록된 실제 방역 의뢰글 4건을 내림차순으로 조회하여 상대 시간("N분 전")과 함께 뷰에 전달합니다.
      */
     @GetMapping("/")
     public String mainPage(Model model) {
