@@ -10,7 +10,7 @@
 -->
 <div align="center">
 <!-- 🔲 로고/배너 이미지 (없으면 이 줄 삭제) -->
-<img src="docs/images/logo.png" alt="Bugbug 로고" width="160" />
+<img src="<img width="945" height="528" alt="버그버그 피피티 메인" src="https://github.com/user-attachments/assets/cb539585-d287-4344-a6b6-ac93a22176e9" />" alt="Bugbug 로고" width="160" />
 # 🐛 버그버그 (Bugbug)
  
 ### 해충 방제 의뢰자와 헌터를 연결하는 매칭 플랫폼
@@ -74,26 +74,9 @@
 | 담당 파트 | 담당 파트 | 담당 파트 | 담당 파트 |
 </div>
 
-> **개발 기간** : `~`
+> **개발 기간** : `2026.05.~2026.06`
 
 ## 4. 기술 스택
-
- 
-<!-- 🔲 팀원 수에 맞춰 칸을 늘리거나 줄여주세요. 아바타는 GitHub 프로필 이미지 URL입니다. -->
- 
-<div align="center">
-| <!-- 이름 --> | <!-- 이름 --> | <!-- 이름 --> | <!-- 이름 --> |
-| :---: | :---: | :---: | :---: |
-| <img src="https://avatars.githubusercontent.com/u/0?v=4" width="110" /> | <img src="https://avatars.githubusercontent.com/u/0?v=4" width="110" /> | <img src="https://avatars.githubusercontent.com/u/0?v=4" width="110" /> | <img src="https://avatars.githubusercontent.com/u/0?v=4" width="110" /> |
-| [@아이디](https://github.com/아이디) | [@아이디](https://github.com/아이디) | [@아이디](https://github.com/아이디) | [@아이디](https://github.com/아이디) |
-| 담당 파트 | 담당 파트 | 담당 파트 | 담당 파트 |
- 
-</div>
-> **개발 기간** : `<!-- YYYY.MM.DD -->` ~ `<!-- YYYY.MM.DD -->`
- 
-<br/>
-## 4. 기술 스택
- 
 ### 🖥️ Frontend
  
 ![React](https://img.shields.io/badge/React_19-61DAFB?style=flat-square&logo=react&logoColor=black)
