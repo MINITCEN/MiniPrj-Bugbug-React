@@ -59,7 +59,7 @@
 
 <div align="center">
   
-| <img src="이미지URL" width="100"/> | <img src="이미지URL" width="100"/> | <img src="이미지URL" width="100"/> | <img src="이미지URL" width="100"/> |
+| <img width="425" height="567" alt="remove_background" src="https://github.com/user-attachments/assets/ff10ea46-f075-41af-943b-9cb1457f1aac" />| <img src="이미지URL" width="100"/> | <img src="이미지URL" width="100"/> | <img src="이미지URL" width="100"/> |
 | :---: | :---: | :---: | :---: |
 | [@아이디](https://github.com/아이디) | [@아이디](https://github.com/아이디) | [@아이디](https://github.com/아이디) | [@아이디](https://github.com/아이디) |
 | 담당 파트 | 담당 파트 | 담당 파트 | 담당 파트 |
