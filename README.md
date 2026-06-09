@@ -108,6 +108,7 @@ https://github.com/user-attachments/assets/d9cb196d-b83e-40a6-a942-bb55aa834015
  
 <details>
 <summary><b>📦 주요 라이브러리 한눈에 보기</b></summary>
+ 
 | 구분 | 사용 기술 | 선택 이유 |
 | --- | --- | --- |
 | 서버 상태 | TanStack Query | 캐싱·리페치·로딩 상태를 선언적으로 관리하여 API 코드 단순화 |
@@ -130,6 +131,7 @@ bugbug/
 <details>
 <summary><b>🖥️ Frontend 구조 (FSD)</b></summary>
 ```
+ 
 frontend/src/
 ├── app/                # 앱 전역 설정
 │   ├── providers/       # QueryProvider 등
@@ -155,6 +157,7 @@ frontend/src/
 <details>
 <summary><b>⚙️ Backend 구조 (Domain-Driven)</b></summary>
 ```
+ 
 backend/src/main/java/com/bug/catcher/
 ├── domain/             # 도메인별 패키지 (controller·service·repository·dto)
 │   ├── auth/            # 로그인 / 인증
