@@ -1,11 +1,3 @@
-/**
- * 헌터 등급 안내 모달 (정보성).
- *
- * 5개 등급의 이미지 / 설명 / 달성 조건을 표 형태로 나열.
- * 데이터는 6단계의 constants.js에서 가져옴.
- *
- * mutation 없음, API 호출 없음 — 순수 정적 컨텐츠.
- */
 import Modal from '../Modal'
 import ItemCard from '../ItemCard'
 import { HUNTER_GRADES } from '../dashboard/constants'
@@ -35,7 +27,6 @@ export default function HunterGradeInfoModal({ open, onClose }) {
 function GradeCard({ grade }) {
   return (
     <ItemCard className="flex items-center gap-4 p-4">
-      {/* 등급 이미지 */}
       <div className="shrink-0 w-16 h-16">
         <img
           src={grade.image}
@@ -44,7 +35,6 @@ function GradeCard({ grade }) {
         />
       </div>
 
-      {/* 설명 */}
       <div className="flex-1 min-w-0">
         <h3 className="font-bold text-ink">
           {grade.name}{' '}
@@ -55,7 +45,6 @@ function GradeCard({ grade }) {
         <p className="text-xs text-ink-2 mt-1 leading-relaxed">{grade.description}</p>
       </div>
 
-      {/* 달성 조건 */}
       <div className="shrink-0 text-right">
         <p className="text-[10px] text-muted mb-1">달성 조건</p>
         <p className="text-xs font-semibold text-brand">✓ {grade.condition}</p>

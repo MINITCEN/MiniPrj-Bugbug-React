@@ -1,16 +1,3 @@
-/**
- * 리뷰 관리 페이지.
- * 경로: /mypage/reviews
- * 권한: USER + HUNTER (둘 다 접근 가능)
- *
- * 동작:
- *  - USER: 본인이 작성한 리뷰 목록 + 수정/삭제 가능
- *  - HUNTER: 본인이 USER 시절 작성한 리뷰 목록 (수정/삭제 불가)
- *    → 헌터로서 "받은" 리뷰는 대시보드의 리뷰 막대 그래프에서 요약 확인
- *
- * 리뷰 신규 작성 진입점은 이 페이지가 아닌 RequestListPage의 카드.
- * (어떤 의뢰에 대한 리뷰인지 컨텍스트가 필요해서)
- */
 import { useState } from 'react'
 import useAuthStore from '../../features/auth/store/useAuthStore'
 import { useMyReviews } from '../../features/mypage/hooks/queries'
@@ -23,12 +10,11 @@ import ReviewDeleteConfirmModal from '../../features/mypage/components/modals/Re
 
 export default function ReviewListPage() {
   const { user } = useAuthStore()
-  const canEdit = user?.role === 'USER'  // 작성/수정/삭제는 USER만
+  const canEdit = user?.role === 'USER'  
 
   const [page, setPage] = useState(0)
   const { data, isLoading, isError } = useMyReviews(page)
 
-  // 모달 타겟 관리 (어떤 리뷰를 수정/삭제할지)
   const [editTarget, setEditTarget] = useState(null)
   const [deleteTarget, setDeleteTarget] = useState(null)
 
@@ -82,7 +68,6 @@ export default function ReviewListPage() {
         </>
       )}
 
-      {/* 수정 모달 */}
       <ReviewFormModal
         open={!!editTarget}
         onClose={() => setEditTarget(null)}
@@ -90,7 +75,6 @@ export default function ReviewListPage() {
         review={editTarget}
       />
 
-      {/* 삭제 확인 모달 */}
       <ReviewDeleteConfirmModal
         open={!!deleteTarget}
         onClose={() => setDeleteTarget(null)}

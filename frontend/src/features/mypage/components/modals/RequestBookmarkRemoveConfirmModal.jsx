@@ -1,10 +1,3 @@
-/**
- * 의뢰 찜 해제 확인 모달.
- *
- * BookmarkRemoveConfirmModal(헌터 찜 해제)과 거의 동일한 구조이지만,
- * 대상이 다르고(헌터 vs 의뢰) 사용하는 mutation이 달라 별도 컴포넌트.
- * 두 모달 모두 5분 이내 작성 가능한 단순 확인 모달이라 통합보단 분리가 명확.
- */
 import { useState, useEffect } from 'react'
 import Modal from '../Modal'
 import Button from '../Button'

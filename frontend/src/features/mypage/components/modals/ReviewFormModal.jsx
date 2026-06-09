@@ -1,20 +1,3 @@
-/**
- * 리뷰 작성/수정 통합 모달.
- *
- * mode prop으로 두 가지 모드 지원:
- *  - 'create': 의뢰에 대해 새 리뷰 작성. request 객체 필요.
- *  - 'update': 기존 리뷰 수정. review 객체 필요.
- *
- * 백엔드 DTO:
- *   - 작성: ReviewCreateRequestDto { requestId, hunterId, rating, reviewContent }
- *   - 수정: ReviewUpdateRequestDto { rating, reviewContent }
- *
- * Props:
- *   - open, onClose
- *   - mode: 'create' | 'update'
- *   - request: (create 모드) MyRequestResponseDto
- *   - review:  (update 모드) ReviewResponseDto
- */
 import { useEffect, useState } from 'react'
 import Modal from '../Modal'
 import Button from '../Button'
@@ -31,7 +14,6 @@ export default function ReviewFormModal({ open, onClose, mode = 'create', reques
   const isCreate = mode === 'create'
   const isPending = isCreate ? createMutation.isPending : updateMutation.isPending
 
-  // 모달 열릴 때마다 초기값 설정
   useEffect(() => {
     if (!open) return
     if (isCreate) {
@@ -39,7 +21,6 @@ export default function ReviewFormModal({ open, onClose, mode = 'create', reques
       setContent('')
     } else if (review) {
       setRating(review.rating ?? 5)
-      // 백엔드 ReviewResponseDto의 필드명은 `content` (MyRequestResponseDto의 reviewContent와는 다름)
       setContent(review.content ?? review.reviewContent ?? '')
     }
     setErrorMsg('')
@@ -85,7 +66,6 @@ export default function ReviewFormModal({ open, onClose, mode = 'create', reques
     }
   }
 
-  // 표시용 상단 의뢰/헌터 정보
   const headerInfo = isCreate
     ? { title: request?.title, subtitle: request?.completedHunterName && `${request.completedHunterName} 헌터` }
     : { title: review?.requestTitle, subtitle: review?.hunterName && `${review.hunterName} 헌터` }
@@ -99,7 +79,6 @@ export default function ReviewFormModal({ open, onClose, mode = 'create', reques
     >
       <form onSubmit={handleSubmit}>
         <Modal.Body className="space-y-4">
-          {/* 어떤 의뢰/헌터에 대한 리뷰인지 안내 */}
           {(headerInfo.title || headerInfo.subtitle) && (
             <div className="p-3 rounded-lg bg-hair/30 border border-hair">
               {headerInfo.title && (
@@ -113,13 +92,11 @@ export default function ReviewFormModal({ open, onClose, mode = 'create', reques
             </div>
           )}
 
-          {/* 별점 선택 */}
           <div>
             <label className="block text-xs text-ink-2 mb-2">평점</label>
             <RatingPicker value={rating} onChange={setRating} />
           </div>
 
-          {/* 본문 */}
           <div>
             <label className="block text-xs text-ink-2 mb-1">
               리뷰 내용 <span className="text-accent">*</span>
@@ -151,9 +128,7 @@ export default function ReviewFormModal({ open, onClose, mode = 'create', reques
   )
 }
 
-/* ───────────── 보조 ───────────── */
 
-/** 클릭으로 1~5 별점을 선택할 수 있는 컴포넌트 */
 function RatingPicker({ value, onChange }) {
   return (
     <div className="flex items-center gap-1" role="radiogroup" aria-label="평점 선택">

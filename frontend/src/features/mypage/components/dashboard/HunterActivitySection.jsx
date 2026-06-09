@@ -1,10 +1,3 @@
-/**
- * HUNTER 활동 요약 섹션.
- *
- * 두 미니 패널:
- *  - 리뷰 요약: 별점별 막대 그래프 (useMyHunterReviewSummary)
- *  - 최근 활동: 최근 수행 의뢰 (useHunterTasks, 최대 3건)
- */
 import { Link } from 'react-router-dom'
 import { useMyHunterReviewSummary, useHunterTasks } from '../../hooks/queries'
 import SectionShell from '../SectionShell'
@@ -18,7 +11,6 @@ export default function HunterActivitySection() {
   )
 }
 
-/* ───────────── 리뷰 요약 (별점별 막대) ───────────── */
 
 function ReviewSummaryPanel() {
   const { data, isLoading, isError } = useMyHunterReviewSummary()
@@ -71,7 +63,6 @@ function ReviewSummaryPanel() {
   )
 }
 
-/* ───────────── 최근 활동 ───────────── */
 
 function RecentTasksPanel() {
   const { data, isLoading } = useHunterTasks(0)

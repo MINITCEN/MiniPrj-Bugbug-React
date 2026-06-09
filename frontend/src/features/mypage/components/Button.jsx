@@ -1,17 +1,3 @@
-/**
- * 마이페이지 공용 Button.
- *
- * variant × size 매트릭스를 단일 컴포넌트로 일관.
- * 사이드바 CTA, 카드 액션, 모달 footer, EmptyState 액션 모두 이 컴포넌트로.
- *
- * Props:
- *  - variant: 'primary' | 'secondary' | 'ghost' | 'danger' (기본 primary)
- *  - size: 'sm' | 'md' (기본 md)
- *  - as: 'button' | 'a' | React.ElementType (기본 'button')
- *       react-router의 Link 등도 그대로 넘길 수 있음.
- *  - 그 외 props는 underlying 엘리먼트에 그대로 전달.
- */
-
 const VARIANT_CLASS = {
   primary:
     'bg-brand text-white border border-transparent ' +
@@ -45,7 +31,6 @@ export default function Button({
   children,
   ...rest
 }) {
-  // <button>일 때만 기본 type="button" 부여 (form submit 사고 방지)
   const buttonType = Component === 'button' ? (type ?? 'button') : undefined
 
   const base = 'inline-flex items-center justify-center gap-2 rounded-[10px] font-semibold transition-colors'

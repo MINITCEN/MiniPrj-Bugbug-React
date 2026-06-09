@@ -1,15 +1,3 @@
-/**
- * 헌터 등록 신청 모달.
- *
- * 기존 dashboard.js의 applyHunter()는 confirm() 한 번으로 끝났지만,
- * 실제 헌터 활동을 시작한다는 중요한 액션이라 다음 정보를 제공:
- *   - 헌터로 활동하면 어떤 권한이 생기는지
- *   - 활동 시 책임 (서약)
- *
- * 사용자가 서약에 동의(체크박스)해야 [신청] 버튼 활성화.
- *
- * 백엔드 DTO: HunterApplyRequestDto { pledgeAgreed: Boolean }
- */
 import { useState, useEffect } from 'react'
 import { Check } from 'lucide-react'
 import Modal from '../Modal'
@@ -21,7 +9,6 @@ export default function HunterApplyModal({ open, onClose }) {
   const [pledged, setPledged] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
 
-  // 모달 열릴 때마다 상태 초기화
   useEffect(() => {
     if (open) {
       setPledged(false)
@@ -30,7 +17,7 @@ export default function HunterApplyModal({ open, onClose }) {
   }, [open])
 
   const handleApply = () => {
-    if (!pledged) return  // 동의 안 했으면 진행 안 함 (이중 안전장치)
+    if (!pledged) return  
     setErrorMsg('')
 
     mutate(
@@ -38,7 +25,6 @@ export default function HunterApplyModal({ open, onClose }) {
       {
         onSuccess: () => {
           onClose()
-          // 성공 알림은 일단 alert로 (토스트 시스템은 향후 도입)
           alert('헌터 신청이 접수되었습니다.')
         },
         onError: (err) => {

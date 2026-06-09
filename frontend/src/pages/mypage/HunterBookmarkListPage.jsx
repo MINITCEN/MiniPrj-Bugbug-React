@@ -1,8 +1,3 @@
-/**
- * 찜한 의뢰 목록 페이지 (헌터가 관심 있는 의뢰들).
- * 경로: /mypage/hunter/bookmarks/requests
- * 권한: HUNTER 전용
- */
 import { useState } from 'react'
 import { useHunterSavedRequests } from '../../features/mypage/hooks/queries'
 import RequestBookmarkCard from '../../features/mypage/components/cards/RequestBookmarkCard'
@@ -15,7 +10,6 @@ export default function HunterBookmarkListPage() {
   const [page, setPage] = useState(0)
   const { data, isLoading, isError } = useHunterSavedRequests(page)
 
-  // 어떤 의뢰를 해제할지 모달에 전달
   const [removeTarget, setRemoveTarget] = useState(null)
 
   const items = data?.content ?? []

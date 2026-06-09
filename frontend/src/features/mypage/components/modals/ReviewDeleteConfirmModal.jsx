@@ -1,6 +1,3 @@
-/**
- * 리뷰 삭제 확인 모달.
- */
 import { useState, useEffect } from 'react'
 import Modal from '../Modal'
 import Button from '../Button'

@@ -1,8 +1,3 @@
-/**
- * "더보기" 기타 서비스 바로가기 섹션 (공용).
- *
- * ADMIN role인 경우 관리자 대시보드 링크 추가 노출.
- */
 import useAuthStore from '../../../auth/store/useAuthStore'
 import SectionShell from '../SectionShell'
 import Button from '../Button'

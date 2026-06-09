@@ -1,9 +1,3 @@
-/**
- * 헌터 공개 정보 섹션 (HUNTER 전용).
- *
- * 데이터: useMyHunterProfile (GET /api/mypage/hunter/profile)
- *  → grade, completionCount, averageRating, responseCount, gradeStory
- */
 import { useMyHunterProfile } from '../../hooks/queries'
 import { getGradeImage } from './constants'
 import SectionShell from '../SectionShell'
@@ -74,7 +68,6 @@ export default function HunterPublicSection({ onResignHunter }) {
   )
 }
 
-/* ───────────── 보조 컴포넌트 ───────────── */
 
 function StatCard({ label, value, extra }) {
   return (
@@ -86,10 +79,6 @@ function StatCard({ label, value, extra }) {
   )
 }
 
-/**
- * 별점을 0~5점 스케일로 별 5개 채워서 표시.
- * 소수점 부분은 반올림으로 처리.
- */
 function RatingStars({ rating }) {
   const filled = Math.round(rating)
   return (

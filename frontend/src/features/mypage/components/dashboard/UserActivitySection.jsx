@@ -1,12 +1,3 @@
-/**
- * USER 활동 요약 섹션.
- *
- * 두 미니 패널을 좌우로 배치:
- *  - 최근 의뢰 (useMyRequests, 최대 3건)
- *  - 찜한 헌터 (useMySavedHunters, 최대 3건)
- *
- * 각 패널은 "더보기" 링크로 해당 페이지로 이동.
- */
 import { Link } from 'react-router-dom'
 import { useMyRequests, useMySavedHunters } from '../../hooks/queries'
 import SectionShell from '../SectionShell'
@@ -22,8 +13,6 @@ export default function UserActivitySection() {
     </section>
   )
 }
-
-/* ───────────── 최근 의뢰 ───────────── */
 
 function RecentRequestsPanel() {
   // 대시보드에선 최근 3건만 필요. page=0이 첫 페이지 = 가장 최신.
@@ -57,7 +46,6 @@ function RecentRequestsPanel() {
   )
 }
 
-/* ───────────── 찜한 헌터 ───────────── */
 
 function SavedHuntersPanel() {
   const { data, isLoading } = useMySavedHunters(0)
@@ -90,7 +78,6 @@ function SavedHuntersPanel() {
   )
 }
 
-/* ───────────── 공통 보조 컴포넌트 ───────────── */
 
 function MiniPanel({ title, moreLink, children }) {
   return (

@@ -1,16 +1,3 @@
-/**
- * 리뷰 카드 (ReviewListPage에서 사용).
- *
- * 데이터: ReviewResponseDto
- *   reviewId, requestId, requestTitle, hunterName, userName, rating, content, createdAt
- *
- * 동작:
- *  - USER인 경우 [수정] [삭제] 버튼 노출 (자기가 쓴 리뷰니까)
- *  - HUNTER인 경우 받은 리뷰 조회 — 액션 버튼 없음
- *  - 의뢰 제목 클릭 → 의뢰 상세 (/requestView/detail/{id})
- *
- * canEdit prop으로 액션 노출 여부 제어 (페이지에서 role 보고 전달).
- */
 import { formatDate } from '../../utils/format'
 import ItemCard from '../ItemCard'
 import Button from '../Button'
@@ -18,7 +5,6 @@ import Button from '../Button'
 export default function ReviewCard({ review, canEdit, onEdit, onDelete }) {
   return (
     <ItemCard>
-      {/* 헤더: 의뢰 제목 + 작성일 */}
       <div className="flex items-start justify-between gap-3 mb-2">
         <a
           href={`/requestView/detail/${review.requestId}`}
@@ -31,7 +17,6 @@ export default function ReviewCard({ review, canEdit, onEdit, onDelete }) {
         </span>
       </div>
 
-      {/* 별점 + 헌터명 */}
       <div className="flex items-center gap-3 mb-3">
         <RatingStars rating={review.rating ?? 0} />
         <span className="text-xs text-ink-2">
@@ -39,12 +24,10 @@ export default function ReviewCard({ review, canEdit, onEdit, onDelete }) {
         </span>
       </div>
 
-      {/* 본문 */}
       <p className="text-sm text-ink leading-relaxed whitespace-pre-wrap">
         {review.content}
       </p>
 
-      {/* 액션 버튼 (USER만) */}
       {canEdit && (
         <div className="mt-4 flex justify-end gap-2">
           <Button variant="secondary" size="sm" onClick={() => onEdit(review)}>

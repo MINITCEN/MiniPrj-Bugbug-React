@@ -1,13 +1,3 @@
-/**
- * 공통 포맷 유틸 (마이페이지 전반).
- *
- * 백엔드의 LocalDateTime이 JSON으로 직렬화되면 "2024-12-01T13:42:11" 형태로 옴.
- * UI 표기를 위해 한국식으로 변환.
- */
-
-/**
- * "2024-12-01T13:42:11" → "2024.12.01"
- */
 export function formatDate(isoString) {
   if (!isoString) return '-'
   const d = new Date(isoString)
@@ -19,9 +9,7 @@ export function formatDate(isoString) {
   return `${y}.${m}.${day}`
 }
 
-/**
- * "2024-12-01T13:42:11" → "2024.12.01 13:42"
- */
+
 export function formatDateTime(isoString) {
   if (!isoString) return '-'
   const d = new Date(isoString)
@@ -33,14 +21,6 @@ export function formatDateTime(isoString) {
   return `${date} ${hh}:${mm}`
 }
 
-/**
- * 의뢰 상태별 배지 색상 클래스 매핑.
- * Tailwind 클래스를 미리 빌드에 포함시키려면 동적 문자열로 만들면 안 되므로
- * 모든 분기를 명시적으로 작성.
- *
- * 완료는 brand 톤으로 토큰화. 진행중/대기/취소는 상태 의미를 시각적으로
- * 구분하기 위해 의도적으로 다른 hue(blue/amber/neutral)를 유지.
- */
 export function getStatusBadgeClass(status) {
   switch (status) {
     case '완료':

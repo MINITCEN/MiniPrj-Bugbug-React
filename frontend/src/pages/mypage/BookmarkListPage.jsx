@@ -1,8 +1,3 @@
-/**
- * 찜한 헌터 목록 페이지.
- * 경로: /mypage/bookmarks/hunters
- * 권한: USER 전용
- */
 import { useState } from 'react'
 import { useMySavedHunters } from '../../features/mypage/hooks/queries'
 import HunterBookmarkCard from '../../features/mypage/components/cards/HunterBookmarkCard'
@@ -15,7 +10,6 @@ export default function BookmarkListPage() {
   const [page, setPage] = useState(0)
   const { data, isLoading, isError } = useMySavedHunters(page)
 
-  // 어떤 헌터를 해제할지 모달에 전달하기 위해 함께 보관
   const [removeTarget, setRemoveTarget] = useState(null)
 
   const items = data?.content ?? []
@@ -60,7 +54,6 @@ export default function BookmarkListPage() {
         </>
       )}
 
-      {/* 찜 해제 확인 모달 */}
       <BookmarkRemoveConfirmModal
         open={!!removeTarget}
         onClose={() => setRemoveTarget(null)}

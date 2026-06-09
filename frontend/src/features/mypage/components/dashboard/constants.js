@@ -1,13 +1,3 @@
-/**
- * 헌터 등급 관련 상수.
- *
- * 백엔드 HunterProfileResponseDto.getGradeStory()와 dashboard.html 에 박혀있던
- * 등급 정보를 한 곳에 모았습니다. 등급 추가/변경 시 이 파일만 수정하면 됩니다.
- *
- * 이미지는 백엔드의 /image/ 정적 리소스를 사용 (vite proxy 설정에 의해 dev에서도 작동).
- */
-
-/** 등급명 → 훈장 이미지 경로 */
 export const GRADE_IMAGE = {
   루키: '/image/bugbug_rookie.png',
   브론즈: '/image/bugbug_bronze.png',
@@ -16,7 +6,6 @@ export const GRADE_IMAGE = {
   레전드: '/image/bugbug_legend.png',
 }
 
-/** 헌터 등급 카드 데이터 (헌터 등급 안내 모달용 — 7단계 모달에서도 재사용) */
 export const HUNTER_GRADES = [
   {
     name: '루키',
@@ -60,5 +49,4 @@ export const HUNTER_GRADES = [
   },
 ]
 
-/** 등급별 이미지 경로 안전하게 가져오기 */
 export const getGradeImage = (grade) => GRADE_IMAGE[grade] ?? GRADE_IMAGE['루키']

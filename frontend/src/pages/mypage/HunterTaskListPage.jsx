@@ -1,10 +1,3 @@
-/**
- * 수행 의뢰 목록 페이지 (헌터 본인이 신청한 의뢰들).
- * 경로: /mypage/hunter/tasks
- * 권한: HUNTER 전용
- *
- * 8단계의 패턴(목록 + 페이지네이션 + 카드 + 빈 상태)을 그대로 적용.
- */
 import { useState } from 'react'
 import { useHunterTasks } from '../../features/mypage/hooks/queries'
 import HunterTaskCard from '../../features/mypage/components/cards/HunterTaskCard'

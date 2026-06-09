@@ -14,31 +14,10 @@ import Button from '../../features/mypage/components/Button'
 import HunterApplyModal from '../../features/mypage/components/modals/HunterApplyModal'
 import HunterGradeInfoModal from '../../features/mypage/components/modals/HunterGradeInfoModal'
 
-/**
- * 마이페이지 공통 레이아웃.
- *
- * 구조:
- *   ┌─────────────────────────────────────────┐
- *   │ (Header — shared/layouts에서 처리)       │
- *   ├──────────┬──────────────────────────────┤
- *   │ Sidebar  │  <Outlet />                  │
- *   │ (role별  │  (각 마이페이지 자식 라우트가  │
- *   │  메뉴)    │   여기에 렌더링됨)            │
- *   └──────────┴──────────────────────────────┘
- *   │ (Footer)                                │
- *   └─────────────────────────────────────────┘
- *
- * 모달:
- *  - HunterApplyModal: USER만 (사이드바 CTA에서 호출)
- *  - HunterGradeInfoModal: 공용 (사이드바 "헌터 등급 제도" 버튼에서 호출)
- *
- * 사이드바 메뉴는 role(USER / HUNTER)에 따라 달라집니다.
- */
 export default function MyPageLayout() {
   const { user } = useAuthStore()
   const isHunter = user?.role === 'HUNTER'
 
-  // 모달 열림 상태 (사이드바에서 직접 트리거하는 두 모달)
   const [applyOpen, setApplyOpen] = useState(false)
   const [gradeOpen, setGradeOpen] = useState(false)
 

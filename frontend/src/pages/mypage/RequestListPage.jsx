@@ -1,13 +1,3 @@
-/**
- * 내 의뢰 목록 페이지.
- * 경로: /mypage/requests
- * 권한: USER 전용
- *
- * 기능:
- *  - 페이지네이션된 내 의뢰 목록 표시
- *  - 완료된 의뢰에 대해 "리뷰 작성" 진입점 제공
- *  - 빈 목록일 때 의뢰 등록으로 유도
- */
 import { useState } from 'react'
 import { useMyRequests } from '../../features/mypage/hooks/queries'
 import RequestCard from '../../features/mypage/components/cards/RequestCard'
@@ -20,7 +10,6 @@ export default function RequestListPage() {
   const [page, setPage] = useState(0)
   const { data, isLoading, isError } = useMyRequests(page)
 
-  // 리뷰 작성 모달 상태 — 어떤 의뢰에 대한 리뷰인지 함께 보관
   const [reviewTarget, setReviewTarget] = useState(null)
 
   const items = data?.content ?? []
@@ -65,7 +54,6 @@ export default function RequestListPage() {
         </>
       )}
 
-      {/* 리뷰 작성 모달 — reviewTarget이 set 되면 열림 */}
       <ReviewFormModal
         open={!!reviewTarget}
         onClose={() => setReviewTarget(null)}
@@ -76,7 +64,6 @@ export default function RequestListPage() {
   )
 }
 
-/** 로딩 중 표시할 스켈레톤 */
 function LoadingPlaceholder() {
   return (
     <div className="flex flex-col gap-3">

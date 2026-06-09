@@ -1,19 +1,3 @@
-/**
- * 빈 목록 상태 안내 컴포넌트.
- *
- * 사용 예:
- *   import { Inbox } from 'lucide-react'
- *   <EmptyState
- *     icon={Inbox}
- *     title="등록한 의뢰가 없습니다"
- *     description="첫 의뢰를 등록하고 헌터에게 도움을 받아보세요."
- *     actionLabel="의뢰 등록하러 가기"
- *     actionHref="/requestForm"
- *   />
- *
- * action은 href 또는 onClick 둘 중 하나만 (둘 다 주면 onClick 우선).
- * 액션이 필요 없으면 actionLabel을 생략.
- */
 import { Inbox } from 'lucide-react'
 import Button from './Button'
 

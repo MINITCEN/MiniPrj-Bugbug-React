@@ -1,15 +1,3 @@
-/**
- * 개인정보 변경 모달.
- *
- * 데이터 흐름:
- *   1. 열릴 때 useMyInfo의 현재 값으로 입력값 초기화
- *   2. 사용자 입력 → 로컬 state
- *   3. [저장] 클릭 → useUpdateMyInfo mutation
- *   4. 성공 시 query invalidate + 헤더 닉네임 갱신 (useUpdateMyInfo가 알아서 처리)
- *   5. 모달 닫기
- *
- * 백엔드 DTO: MyInfoUpdateRequestDto { nickname, phoneNumber, address }
- */
 import { useEffect, useState } from 'react'
 import Modal from '../Modal'
 import Button from '../Button'
@@ -23,13 +11,11 @@ export default function ProfileModal({ open, onClose }) {
   const [form, setForm] = useState({ nickname: '', phoneNumber: '', address: '' })
   const [errorMsg, setErrorMsg] = useState('')
 
-  // 모달이 열릴 때마다 현재 정보로 초기화
   useEffect(() => {
     if (open && myInfo) {
       setForm({
         nickname: myInfo.nickname ?? '',
         phoneNumber: myInfo.phoneNumber ?? '',
-        // 백엔드의 placeholder 문구는 빈 값으로 치환
         address: myInfo.address === '등록된 주소가 없습니다.' ? '' : (myInfo.address ?? ''),
       })
       setErrorMsg('')
@@ -43,8 +29,6 @@ export default function ProfileModal({ open, onClose }) {
   const handleSubmit = (e) => {
     e.preventDefault()
     setErrorMsg('')
-
-    // 클라이언트 측 검증 (백엔드도 검증함 — 이건 UX)
     if (!form.nickname.trim()) {
       setErrorMsg('닉네임을 입력해주세요.')
       return
@@ -61,7 +45,6 @@ export default function ProfileModal({ open, onClose }) {
         onClose()
       },
       onError: (err) => {
-        // axios 에러 메시지 추출 — 백엔드의 detail 메시지 우선, 없으면 일반 안내
         const serverMsg =
           err?.response?.data?.message ||
           err?.response?.data ||
@@ -96,7 +79,6 @@ export default function ProfileModal({ open, onClose }) {
             placeholder="활동 지역의 주소를 입력하세요"
           />
 
-          {/* 이메일은 변경 불가 — 안내만 표시 */}
           <div>
             <label className="block text-xs text-ink-2 mb-1">이메일</label>
             <div className="px-3 py-2 text-sm text-ink-2 bg-hair/30 border border-hair rounded-lg">
@@ -116,7 +98,6 @@ export default function ProfileModal({ open, onClose }) {
           <Button variant="ghost" size="md" onClick={onClose} disabled={isPending}>
             취소
           </Button>
-          {/* form submit이 동작하도록 type=submit 명시 */}
           <Button variant="primary" size="md" type="submit" disabled={isPending}>
             {isPending ? '저장 중...' : '저장'}
           </Button>
@@ -125,8 +106,6 @@ export default function ProfileModal({ open, onClose }) {
     </Modal>
   )
 }
-
-/* ───────────── 보조 컴포넌트 ───────────── */
 
 function Field({ label, required, ...inputProps }) {
   return (

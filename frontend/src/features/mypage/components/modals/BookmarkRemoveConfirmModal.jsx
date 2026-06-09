@@ -1,11 +1,3 @@
-/**
- * 헌터 찜 해제 확인 모달.
- *
- * 단순 confirm()을 모달로 대체. 헌터 이름을 명시해서
- * 실수로 다른 헌터를 해제하는 일을 줄임.
- *
- * 백엔드: POST /api/hunters/{hunterId}/bookmarks (토글)
- */
 import { useState, useEffect } from 'react'
 import Modal from '../Modal'
 import Button from '../Button'

@@ -1,8 +1,3 @@
-/**
- * 헌터 찜한 의뢰 섹션 (HUNTER 전용).
- *
- * 위 HunterActivitySection이 2열 grid라 균형을 위해 별도 풀너비 패널로 분리.
- */
 import { Link } from 'react-router-dom'
 import { useHunterSavedRequests } from '../../hooks/queries'
 import SectionShell from '../SectionShell'
