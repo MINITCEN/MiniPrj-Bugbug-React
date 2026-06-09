@@ -132,7 +132,6 @@ bugbug/
 <details>
 <summary><b>🖥️ Frontend 구조 (FSD)</b></summary>
 ```
- 
 frontend/src/
 ├── app/                # 앱 전역 설정
 │   ├── providers/       # QueryProvider 등
