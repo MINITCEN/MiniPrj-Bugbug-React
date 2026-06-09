@@ -128,29 +128,28 @@ bugbug/
 ├── backend/      # Spring Boot API 서버 (도메인형 패키지 구조)
 └── frontend/     # React 클라이언트 (Feature-Sliced Design 기반)
 ```
- 
+
 <details>
 <summary><b>🖥️ Frontend 구조 (FSD)</b></summary>
 ```
 frontend/src/
 ├── app/                # 앱 전역 설정
-│   ├── providers/       # QueryProvider 등
-│   └── router/          # 라우팅 정의 + 권한 가드
+│   ├── providers/      # QueryProvider 등
+│   └── router/         # 라우팅 정의 + 권한 가드
 ├── features/           # 도메인 단위 기능
-│   ├── auth/            # 인증 (상태 스토어)
-│   ├── chat/            # 실시간 채팅 (소켓 훅 / 플로팅 위젯)
-│   ├── mypage/          # 마이페이지 (대시보드·카드·모달)
-│   ├── mosquito-map/    # 모기지수 지도
-│   ├── admin/           # 관리자 API
-│   ├── hunter/ user/ request/ review/ comment/
+│   ├── auth/           # 인증 (상태 스토어)
+│   ├── chat/           # 실시간 채팅 (소켓 훅 / 플로팅 위젯)
+│   ├── mypage/         # 마이페이지 (대시보드·카드·모달)
+│   └── mosquito-map/   # 모기지수 지도
 ├── pages/              # 라우트 단위 페이지
-│   ├── auth/  request/  hunter/  admin/
-│   ├── mypage/  mosquito-map/  service-intro/  main/
-└── shared/             # 공용 모듈
-    ├── api/             # axios 인스턴스 + 도메인별 API
-    ├── components/auth/ # RequireAuth / RequireRole 가드
-    ├── layouts/         # Header / Footer / Layout
-    └── styles/          # 전역 스타일
+│   ├── admin/          # 관리자 API
+│   ├── auth/  hunter/  user/  request/  review/  comment/
+│   ├── hunter/  mypage/  mosquito-map/  service-intro/  main/
+├── shared/             # 공용 모듈
+│   ├── api/            # axios 인스턴스 + 도메인별 API
+│   ├── components/auth/ # RequireAuth / RequireRole 가드
+│   └── layouts/        # Header / Footer / Layout
+└── styles/             # 전역 스타일
 ```
  
 </details>
