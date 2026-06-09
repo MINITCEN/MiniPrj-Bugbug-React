@@ -64,6 +64,17 @@
 </div>
 <br/>
 ## 3. 팀원 구성
+
+| <img src="이미지URL" width="100"/> | <img src="이미지URL" width="100"/> | <img src="이미지URL" width="100"/> | <img src="이미지URL" width="100"/> |
+| :---: | :---: | :---: | :---: |
+| [@아이디](https://github.com/아이디) | [@아이디](https://github.com/아이디) | [@아이디](https://github.com/아이디) | [@아이디](https://github.com/아이디) |
+| 담당 파트 | 담당 파트 | 담당 파트 | 담당 파트 |
+
+> **개발 기간** : `~`
+
+## 4. 기술 스택
+
+## 3. 팀원 구성
  
 <!-- 🔲 팀원 수에 맞춰 칸을 늘리거나 줄여주세요. 아바타는 GitHub 프로필 이미지 URL입니다. -->
  
