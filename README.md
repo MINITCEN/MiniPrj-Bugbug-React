@@ -120,6 +120,7 @@ https://github.com/user-attachments/assets/d9cb196d-b83e-40a6-a942-bb55aa834015
  
 </details>
 <br/>
+
 ## 5. 프로젝트 구조
  
 ```
@@ -157,7 +158,6 @@ frontend/src/
 <details>
 <summary><b>⚙️ Backend 구조 (Domain-Driven)</b></summary>
 ```
- 
 backend/src/main/java/com/bug/catcher/
 ├── domain/             # 도메인별 패키지 (controller·service·repository·dto)
 │   ├── auth/            # 로그인 / 인증
@@ -180,6 +180,7 @@ backend/src/main/java/com/bug/catcher/
  
 </details>
 <br/>
+
 ## 6. 실행 방법
  
 ### 사전 요구사항
