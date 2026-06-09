@@ -102,9 +102,12 @@ https://github.com/user-attachments/assets/d9cb196d-b83e-40a6-a942-bb55aa834015
  
 ![Git](https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white)
 ![GitHub](https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white)
-<!-- 🔲 실제 사용한 협업 툴로 교체 (Notion / Discord / Figma 등) -->
 ![Notion](https://img.shields.io/badge/Notion-000000?style=flat-square&logo=notion&logoColor=white)
 ![Figma](https://img.shields.io/badge/Figma-F24E1E?style=flat-square&logo=figma&logoColor=white)
+![ERDCloud](https://img.shields.io/badge/ERDCloud-2965F1?style=flat-square&logo=&logoColor=white)
+![draw.io](https://img.shields.io/badge/draw.io-F08705?style=flat-square&logo=diagramsdotnet&logoColor=white)
+![Discord](https://img.shields.io/badge/Discord-5865F2?style=flat-square&logo=discord&logoColor=white)
+![Google Drive](https://img.shields.io/badge/Google%20Drive-4285F4?style=flat-square&logo=googledrive&logoColor=white)
  
 <details>
 <summary><b>📦 주요 라이브러리 한눈에 보기</b></summary>
