@@ -19,18 +19,15 @@
 **의뢰–매칭–채팅–리뷰**까지 한 흐름으로 이어지는 O2O 서비스입니다.
  
 <br/>
-<!-- 🔲 배포 / 데모 링크 (없으면 해당 줄 삭제) -->
-[![배포 링크](https://img.shields.io/badge/🔗_배포_바로가기-2F855A?style=for-the-badge)](배포-URL-입력)
-[![API 문서](https://img.shields.io/badge/📘_API_문서(Swagger)-1E40AF?style=for-the-badge)](Swagger-URL-입력)
  
 </div>
 <br/>
 > **🧪 테스트 계정**
 > | 구분 | 아이디 | 비밀번호 |
 > |------|--------|----------|
-> | 일반 사용자 | `<!-- 입력 -->` | `<!-- 입력 -->` |
-> | 헌터 | `<!-- 입력 -->` | `<!-- 입력 -->` |
-> | 관리자 | `<!-- 입력 -->` | `<!-- 입력 -->` |
+> | 일반 사용자 | `user01@bugbug.local` | `test1234!` |
+> | 헌터 | `hunter01@bugbug.local` | `test1234!` |
+> | 관리자 | `admin01@bugbug.local` | `test1234!` |
  
 <br/>
 ## 📑 목차
