@@ -214,6 +214,7 @@ npm run dev
 - 개발 서버: `http://localhost:5173`
 - 백엔드 연결: `.env.development`의 `VITE_API_BASE_URL` (기본값 `http://localhost:8080`)
 <br/>
+
 ## 7. 주요 기능
  
 | 기능 | 설명 |
@@ -229,6 +230,7 @@ npm run dev
 | 🧑‍💼 관리자 | 헌터 신청 승인, 사용자 계정 관리 |
  
 <br/>
+
 ## 8. 페이지별 기능
  
 <!--
