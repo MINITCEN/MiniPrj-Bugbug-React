@@ -314,6 +314,7 @@ ROLE_ADMIN   →  전체 관리 (헌터 승인, 계정 관리 등)
 - 헌터 자격은 **관리자 승인 후** `ROLE_USER` → `ROLE_HUNTER`로 전환됩니다.
 - 라우트는 `RequireAuth`(로그인 필수)와 `RequireRole`(권한별 접근) 가드로 보호하며,
   백엔드 `@PreAuthorize`와 권한 매트릭스를 일치시켜 운영합니다.
+
 | 경로 | 접근 권한 |
 | --- | --- |
 | `/mypage/dashboard` · `/mypage/reviews` | USER + HUNTER |
