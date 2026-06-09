@@ -2,7 +2,12 @@
  
 ### 해충 방제 의뢰자와 헌터를 연결하는 매칭 플랫폼
 <div align="center">
-https://github.com/user-attachments/assets/6fbec80e-9712-4904-97f5-9934c10ebb3f
+
+ 
+
+https://github.com/user-attachments/assets/d9cb196d-b83e-40a6-a942-bb55aa834015
+
+
 <img width="945" height="528" alt="버그버그 피피티 메인" src="https://github.com/user-attachments/assets/c0f74aed-d213-489f-9e1f-8c63014179c5" />
 
 
