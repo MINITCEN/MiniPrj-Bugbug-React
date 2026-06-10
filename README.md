@@ -67,13 +67,13 @@ https://github.com/user-attachments/assets/2821a3ec-86f6-4550-af13-d8af465c1dfb
 <br/>
 
 ## 3. 팀원 구성
-
 <div align="center">
   
 | <img width="140" height="200" alt="remove_background" src="https://github.com/user-attachments/assets/ff10ea46-f075-41af-943b-9cb1457f1aac" /> |<img width="140" height="200" alt="remove_background (3)" src="https://github.com/user-attachments/assets/99bad4bb-f208-4b9c-835a-5a1a25522a92" /> | <img width="160" height="200" alt="remove_background (1)" src="https://github.com/user-attachments/assets/97dc865d-4c3f-4f89-a077-210303a74172" />| <img width="140" height="200" alt="remove_background (2)" src="https://github.com/user-attachments/assets/52c71e05-3d7a-4888-831d-085efc91b256" />|
 | :---: | :---: | :---: | :---: |
-| [@아이디](https://github.com/아이디) | [@아이디](https://github.com/jiho422) | [@아이디](https://github.com/아이디) | [@이충헌](https://github.com/leechungheon) |
-| 담당 파트 | 담당 파트 | 담당 파트 | 담당 파트 |
+| [@정가영](https://github.com/junggayeong) | [@남지호](https://github.com/jiho422) | [@이재혁](https://github.com/ljhwogur) | [@이충헌](https://github.com/leechungheon) |
+| 마이페이지<br>헌터찾기<br>세션 인증 + security | 의뢰 게시글<br>헌터 의뢰 팀 | 채팅<br>관리자 대시보드<br>반응형 웹앱 UI/UX 디자인 | 모기지수 지도<br>메인 웹 서비스<br>계층형 대댓글 기능 |
+
 </div>
 
 > **개발 기간** : `2026.05.~2026.06`
@@ -297,8 +297,7 @@ npm run dev
   
 | 모기지수 지도 |
 | :---: |
-|<img width="1135" height="714" alt="image" src="https://github.com/user-attachments/assets/c354e4cb-c307-4881-b7d5-ca790a5cfd2c" />
-|
+|<img width="1135" height="714" alt="image" src="https://github.com/user-attachments/assets/c354e4cb-c307-4881-b7d5-ca790a5cfd2c" />|
  
 ### 🧑‍💼 관리자
 - 헌터 신청을 검토·승인하고, 사용자 계정을 관리합니다.
