@@ -283,7 +283,7 @@ npm run dev
   
 | 리뷰 작성 |
 | :---: |
-| <img src="docs/images/review.png" width="60%" /> |
+| <img width="1426" height="898" alt="리뷰작성" src="https://github.com/user-attachments/assets/aa1a5c85-2bcd-4e0f-8ec1-98286fa28cee" />|
  
 ### 📊 마이페이지 대시보드
 - 로그인 사용자의 역할(USER/HUNTER)에 맞춰 활동 현황, 북마크, 작업 내역을 보여줍니다.
