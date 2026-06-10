@@ -304,7 +304,7 @@ npm run dev
   
 | 헌터 신청 관리 | 사용자 관리 |
 | :---: | :---: |
-| <img width="997" height="781" alt="image (1)" src="https://github.com/user-attachments/assets/380009dc-821d-4a61-85ba-46b3355b04d1" /> |
+|<img width="812" height="243" alt="image (4)" src="https://github.com/user-attachments/assets/ed981fb6-c251-4f9f-8859-56d1c42c24ef" />|<img width="997" height="781" alt="image (1)" src="https://github.com/user-attachments/assets/380009dc-821d-4a61-85ba-46b3355b04d1" /> |
  
 <br/>
 
