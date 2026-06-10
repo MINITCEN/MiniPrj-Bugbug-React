@@ -68,7 +68,7 @@ https://github.com/user-attachments/assets/d9cb196d-b83e-40a6-a942-bb55aa834015
   
 | <img width="140" height="200" alt="remove_background" src="https://github.com/user-attachments/assets/ff10ea46-f075-41af-943b-9cb1457f1aac" /> |<img width="140" height="200" alt="remove_background (3)" src="https://github.com/user-attachments/assets/99bad4bb-f208-4b9c-835a-5a1a25522a92" /> | <img width="160" height="200" alt="remove_background (1)" src="https://github.com/user-attachments/assets/97dc865d-4c3f-4f89-a077-210303a74172" />| <img width="140" height="200" alt="remove_background (2)" src="https://github.com/user-attachments/assets/52c71e05-3d7a-4888-831d-085efc91b256" />|
 | :---: | :---: | :---: | :---: |
-| [@아이디](https://github.com/아이디) | [@아이디](https://github.com/아이디) | [@아이디](https://github.com/아이디) | [@아이디](https://github.com/leechungheon) |
+| [@아이디](https://github.com/아이디) | [@아이디](https://github.com/아이디) | [@아이디](https://github.com/아이디) | [@이충헌](https://github.com/leechungheon) |
 | 담당 파트 | 담당 파트 | 담당 파트 | 담당 파트 |
 </div>
 
