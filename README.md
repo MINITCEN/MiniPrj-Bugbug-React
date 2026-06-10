@@ -297,7 +297,8 @@ npm run dev
   
 | 모기지수 지도 |
 | :---: |
-| <img src="docs/images/mosquito-map.png" width="80%" /> |
+|<img width="1135" height="714" alt="image" src="https://github.com/user-attachments/assets/c354e4cb-c307-4881-b7d5-ca790a5cfd2c" />
+|
  
 ### 🧑‍💼 관리자
 - 헌터 신청을 검토·승인하고, 사용자 계정을 관리합니다.
