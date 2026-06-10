@@ -252,7 +252,7 @@ npm run dev
   
 | 회원가입 | 로그인 |
 | :---: | :---: |
-| <img src="docs/images/signup.png" width="100%" /> | <img src="docs/images/login.png" width="100%" /> |
+|<img width="241" height="319" alt="회원가입" src="https://github.com/user-attachments/assets/f5e970e4-8a29-4b94-9a60-90ee299fdd2a" />| <img width="213" height="201" alt="로그인" src="https://github.com/user-attachments/assets/33da43b8-0be4-46af-9597-45995d256ccb" />|
  
 ### 📝 의뢰 등록 / 조회
 - 사용자가 해충 피해 의뢰글을 작성하고, 목록·상세 페이지에서 확인합니다.
@@ -268,7 +268,7 @@ npm run dev
   
 | 헌터 목록 | 헌터 상세 |
 | :---: | :---: |
-|  |
+| <img width="469" height="404" alt="헌터목록" src="https://github.com/user-attachments/assets/541d9412-b785-4cc3-b064-31331cc5ca6f" />|<img width="472" height="264" alt="헌터찾기" src="https://github.com/user-attachments/assets/fb08202d-9f5e-4aa6-ab88-ba7437566cae" />|
  
 ### 💬 실시간 채팅
 - STOMP WebSocket으로 의뢰자–헌터 간 1:1 실시간 채팅을 제공합니다.
@@ -290,7 +290,7 @@ npm run dev
   
 | 대시보드 |
 | :---: |
-| <img src="docs/images/mypage.png" width="80%" /> |
+| <img width="483" height="417" alt="마이페이지 대시보드" src="https://github.com/user-attachments/assets/fcf73e9e-34f0-4741-8bce-5b999ea6b704" />|
  
 ### 🦟 모기지수 지도
 - Leaflet 지도 위에 지역별 모기지수를 시각화하여 위험 지역을 직관적으로 보여줍니다.
