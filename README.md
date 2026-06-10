@@ -260,7 +260,8 @@ npm run dev
   
 | 의뢰 목록 | 의뢰 상세 |
 | :---: | :---: |
-| <img src="docs/images/request-list.png" width="100%" /> | <img src="docs/images/request-detail.png" width="100%" /> |
+| <img src="[docs/images/request-list.png](https://github.com/user-attachments/assets/ddd6b3fc-f54e-463d-8121-33c1bbea9116)" width="100%" /> | <img src="[docs/images/request-detail.png](https://github.com/user-attachments/assets/f0263e5d-67b6-4edb-a9a4-58c8741e3235)" width="100%" /> |
+
  
 ### 🛡️ 헌터 매칭
 - 헌터 목록과 상세 프로필을 조회하고, 의뢰에 지원/수락하는 흐름으로 매칭됩니다.
