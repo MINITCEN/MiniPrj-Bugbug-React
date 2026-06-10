@@ -268,7 +268,7 @@ npm run dev
   
 | 헌터 목록 | 헌터 상세 |
 | :---: | :---: |
-| <img src="docs/images/hunter-list.png" width="100%" /> | <img src="docs/images/hunter-detail.png" width="100%" /> |
+|  |
  
 ### 💬 실시간 채팅
 - STOMP WebSocket으로 의뢰자–헌터 간 1:1 실시간 채팅을 제공합니다.
@@ -276,7 +276,7 @@ npm run dev
   
 | 채팅 |
 | :---: |
-| <img src="docs/images/chat.png" width="60%" /> |
+| <img width="561" height="450" alt="image" src="https://github.com/user-attachments/assets/7d2640a3-0ff5-4895-a130-89dc8216e07d" />|
  
 ### ⭐ 리뷰
 - 완료된 의뢰에 대해 사용자가 헌터 리뷰를 작성하고, 마이페이지에서 관리합니다.
@@ -304,7 +304,7 @@ npm run dev
   
 | 헌터 신청 관리 | 사용자 관리 |
 | :---: | :---: |
-| <img src="docs/images/admin-applications.png" width="100%" /> | <img src="docs/images/admin-users.png" width="100%" /> |
+| <img width="997" height="781" alt="image (1)" src="https://github.com/user-attachments/assets/380009dc-821d-4a61-85ba-46b3355b04d1" /> |
  
 <br/>
 
