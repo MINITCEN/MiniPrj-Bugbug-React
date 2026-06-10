@@ -260,7 +260,7 @@ npm run dev
   
 | 의뢰 목록 | 의뢰 상세 |
 | :---: | :---: |
-| <img src="[docs/images/request-list.png](https://github.com/user-attachments/assets/ddd6b3fc-f54e-463d-8121-33c1bbea9116)" width="100%" /> | <img src="[docs/images/request-detail.png](https://github.com/user-attachments/assets/f0263e5d-67b6-4edb-a9a4-58c8741e3235)" width="100%" /> |
+| <img width="1401" height="733" alt="image" src="https://github.com/user-attachments/assets/6447eff8-32f9-4078-b6e6-e80f991c12ec" /> | <img width="1091" height="815" alt="image" src="https://github.com/user-attachments/assets/173669e6-c25a-4f14-9c7b-46c7243df245" /> |
 
  
 ### 🛡️ 헌터 매칭
