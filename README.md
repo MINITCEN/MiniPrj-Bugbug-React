@@ -58,7 +58,11 @@ https://github.com/user-attachments/assets/d9cb196d-b83e-40a6-a942-bb55aa834015
  
 <!-- 🔲 메인 데모 GIF/영상 캡쳐 자리 (public 폴더에 시연 영상이 있습니다) -->
 <div align="center">
-  <img src="docs/images/demo-main.gif" alt="버그버그 메인 데모" width="80%" />
+ 
+
+https://github.com/user-attachments/assets/2821a3ec-86f6-4550-af13-d8af465c1dfb
+
+
 </div>
 <br/>
 
